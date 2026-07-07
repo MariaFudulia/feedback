@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %} — Top-10 asistenți{% endblock %}
+{% block content %}
+<h1>Top 10 asistenți</h1>
+<p class="caption">Prag de selecție (fix): asistent inclus doar dacă are ≥10 feedback-uri.</p>
+
+<form method="get">
+  <label>Sortează după:
+    <select name="order_by" onchange="this.form.submit()">
+      <option value="evaluare_prof" {{ "selected" if order_by == "evaluare_prof" else "" }}>Evaluare profesor</option>
+      <option value="evaluare_curs" {{ "selected" if order_by == "evaluare_curs" else "" }}>Evaluare curs</option>
+    </select>
+  </label>
+</form>
+
+<table>
+  <thead><tr><th>Persoană</th><th>N</th><th>Evaluare curs</th><th>Evaluare prof</th></tr></thead>
+  <tbody>
+    {% for row in rows %}
+    <tr><td>{{ row.persoana }}</td><td>{{ row.num_feedback }}</td><td>{{ row.evaluare_curs }}</td><td>{{ row.evaluare_prof }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
