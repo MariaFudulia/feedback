@@ -21,3 +21,8 @@ TAGS
 .gdb_history
 peda-session-*.txt
 core
+
+web-interface/.venv/
+web-interface/db/fixture.db
+web-interface/db/*.json
+web-interface/handoff/
