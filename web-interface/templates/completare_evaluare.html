@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %} — Completare și evaluare{% endblock %}
+{% block content %}
+<h1>Completare și evaluare pe an / semestru</h1>
+
+<h2>Cursuri cu feedback</h2>
+<table>
+  <thead><tr><th>Categorie</th><th>Nr. cursuri</th><th>%</th></tr></thead>
+  <tbody>
+    {% for row in coverage %}
+    <tr><td>{{ row.categorie }}</td><td>{{ row.num_cursuri }}</td><td>{{ row.pct }}%</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Procentaj completare și evaluare pe bucket</h2>
+<table>
+  <thead><tr><th>Bucket</th><th>Procentaj completare</th><th>Evaluare</th></tr></thead>
+  <tbody>
+    {% for row in period %}
+    <tr><td>{{ row.bucket }}</td><td>{{ row.proc_completare }}%</td><td>{{ row.evaluare }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

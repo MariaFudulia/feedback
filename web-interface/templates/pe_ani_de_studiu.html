@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %} — Pe ani de studiu{% endblock %}
+{% block content %}
+<h1>Completare și evaluare pe serie, per an de studiu</h1>
+
+<form method="get">
+  <label>An de studiu:
+    <select name="an" onchange="this.form.submit()">
+      {% for opt in [1, 2, 3] %}
+      <option value="{{ opt }}" {{ "selected" if opt == an else "" }}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+  </label>
+</form>
+
+<table>
+  <thead><tr><th>Serie</th><th>Procentaj completare</th><th>Evaluare</th></tr></thead>
+  <tbody>
+    {% for row in rows %}
+    <tr><td>{{ row.serie }}</td><td>{{ row.proc_completare }}%</td><td>{{ row.evaluare }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

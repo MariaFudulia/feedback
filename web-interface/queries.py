@@ -12,6 +12,7 @@ configurable in the UI):
     titular   >= 7%  proc_feedback (mediu pe cursurile unde e titular) AND >= 15 feedback-uri
     asistent  >= 10  feedback-uri
 """
+
 import mocks
 
 

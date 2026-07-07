@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<title>Feedback POLITEHNICA{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <div class="brand">Feedback POLITEHNICA</div>
+  <nav>
+    <a href="{{ url_for('sumar') }}">Sumar</a>
+    <a href="{{ url_for('completare_evaluare') }}">Completare &amp; evaluare</a>
+    <a href="{{ url_for('pe_ani_de_studiu') }}">Pe ani de studiu</a>
+    <a href="{{ url_for('top10_cursuri') }}">Top-10 cursuri</a>
+    <a href="{{ url_for('top10_titulari') }}">Top-10 titulari</a>
+    <a href="{{ url_for('top10_asistenti') }}">Top-10 asistenți</a>
+    <a href="{{ url_for('evaluare_pe_zone') }}">Evaluare pe zone</a>
+  </nav>
+</header>
+<main>
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

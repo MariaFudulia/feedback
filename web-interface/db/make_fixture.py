@@ -7,6 +7,7 @@ before PR #3 merges upstream and a real moodle_analytics.db exists.
 
 Run: python3 db/make_fixture.py  ->  writes db/fixture.db
 """
+
 import sqlite3
 from pathlib import Path
 
@@ -34,8 +35,7 @@ def main():
         "VALUES (1, '03-ACS-L-CTI-A1-S1-LS1E-CA', 'Programarea Calculatoarelor', 1)"
     )
     conn.execute(
-        "INSERT INTO feedback_instances (instance_id, course_id, name) "
-        "VALUES (1, 1, 'Feedback semestrial')"
+        "INSERT INTO feedback_instances (instance_id, course_id, name) VALUES (1, 1, 'Feedback semestrial')"
     )
     conn.execute(
         "INSERT INTO feedback_responses (attempt_id, instance_id, prof_name, eval_overall) "

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} — Sumar{% endblock %}
+{% block content %}
+<h1>Sumar comparativ</h1>
+
+<div class="metrics">
+  <div class="metric"><span class="ml">Feedback-uri</span><span class="mv">{{ total.num_feedback }}</span></div>
+  <div class="metric"><span class="ml">Grad completare</span><span class="mv">{{ "%.1f"|format(total.proc_completare) }}%</span></div>
+  <div class="metric"><span class="ml">Cursuri cu feedback</span><span class="mv">{{ total.num_cursuri }}</span></div>
+  <div class="metric"><span class="ml">Evaluare generală</span><span class="mv">{{ "%.2f"|format(total.evaluare) }}</span></div>
+</div>
+
+<h2>Pe ani universitari</h2>
+<table>
+  <thead>
+    <tr><th>An universitar</th><th>Nivel</th><th>Feedback-uri</th><th>Grad completare</th><th>Cursuri</th><th>Evaluare</th></tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.an_universitar }}</td>
+      <td>{{ row.nivel }}</td>
+      <td>{{ row.num_feedback }}</td>
+      <td>{{ "%.1f"|format(row.proc_completare) }}%</td>
+      <td>{{ row.num_cursuri }}</td>
+      <td>{{ "%.2f"|format(row.evaluare) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
