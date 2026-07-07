@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feedback POLITEHNICA — interfață web · plan &amp; documentație</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc">
+  <div class="brand">Interfață web feedback</div>
+  <a href="#obiective">Obiective</a>
+  <a href="#context">Context</a>
+  <a href="#arhitectura">Arhitectură</a>
+  <a href="#stack">Stack</a>
+  <a href="#viitor">Considerații viitoare</a>
+  <a href="#sursa-date">Sursa de date</a>
+  <a href="#contract">Contractul de date</a>
+  <a href="#mockup">Mockup vizual</a>
+  <a href="#impartire">Împărțirea muncii</a>
+  <a href="#git">Workflow Git</a>
+  <a href="#guardrails">Ce rulează automat</a>
+  <a href="#tema1">Tema: generare + rulare</a>
+  <a href="#intrebari">Întrebări</a>
+</nav>
+
+<main>
+  <h1>Interfață web feedback — plan de lucru</h1>
+  <p class="subtitle">
+    Dashboard web care afișează, filtrează și compară rezultatele feedback-ului
+    curs.pub.ro, peste ceea ce există deja în pipeline-ul de retrieve/process.
+    Mai jos e planul nostru, deciziile pe care le-am luat, și cele pe care încă
+    le discutăm.
+  </p>
+
+  <section id="obiective">
+    <h2>Obiective</h2>
+    <p>
+      Construim o interfață web pentru un admin care are acces la toate datele de
+      feedback și poate filtra pe an universitar, ciclu, an de studiu, semestru,
+      track, curs și cadru didactic. Interfața <strong>doar citește</strong> datele
+      deja existente — nu modificăm nimic din <code>retrieve-feedback/</code>,
+      <code>process-feedback/</code> sau din scripturile de bază de date (PR&nbsp;#3).
+    </p>
+    <div class="callout">
+      <p>
+        Echipa: <span class="tag a">Claudiu</span> coordonare + strat de date,
+        <span class="tag b">Maria</span> shell &amp; sumar,
+        <span class="tag c">Vlad</span> clasamente &amp; zone.
+        Vezi <a href="#impartire">Împărțirea muncii</a>.
+      </p>
+    </div>
+  </section>
+
+  <section id="context">
+    <h2>Context</h2>
+    <ul>
+      <li>
+        Lucrăm în repo-ul <code>MariaFudulia/feedback</code>, pe branch-ul
+        <code>develop</code> (acolo e pipeline-ul UPB activ — <code>master</code> a
+        rămas în urmă, din 2021).
+      </li>
+      <li>
+        Interfața citește CSV-urile produse de <code>process-feedback/</code>.
+        Scriem <code>queries.py</code> ca strat separat, ca să putem trece ulterior
+        pe baza SQLite din PR&nbsp;#3 fără să schimbăm restul aplicației. Vezi
+        <a href="#sursa-date">Sursa de date</a>.
+      </li>
+    </ul>
+  </section>
+
+  <section id="arhitectura">
+    <h2>Arhitectură</h2>
+    <p>
+      Separăm complet logica de date de logica de interfață: frontend-ul nu știe
+      nimic despre sursa reală a datelor; singura legătură este contractul din
+      <code>web-interface/queries.py</code>.
+    </p>
+    <figure>
+      <img src="img/arhitectura.png" alt="Diagrama de arhitectură">
+      <figcaption>
+        Sursa de date curentă (CSV din <code>process-feedback/</code>) vs. viitoare
+        (baza SQLite, PR&nbsp;#3), stratul de interogări, și cei trei proprietari
+        de fișiere.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section id="stack">
+    <h2>Stack și motivație</h2>
+    <p>
+      <strong>Flask</strong>, confirmat cu Razvan. Motivul e arhitectural, nu de
+      gust: Flask are rutare și autentificare per-pagină reale — necesare pentru
+      planul de mai încolo cu acces public pentru studenți (vezi mai jos). Streamlit
+      nu are așa ceva (o singură aplicație, un singur public), deci am construi
+      direct pe ce ne trebuie și mai târziu, nu doar pe ce e mai rapid acum.
+    </p>
+    <p>
+      Templating cu Jinja2 (inclus în Flask). Scheletul actual are filtre/sortare
+      ca formulare simple (submit → reîncarcă pagina) — zero JS, cel mai puțin
+      cod posibil. <a href="https://htmx.org">htmx</a> rămâne o opțiune pentru mai
+      târziu, dacă vrem schimbări de filtru fără reload, fără să scriem JS de
+      mână.
+    </p>
+    <p>
+      A existat și un prototip Streamlit, construit într-o explorare anterioară —
+      a fost șters (nimeni nu apucase să construiască pe el), nu mai există în
+      repo. Mockup-ul de mai jos vine din acel prototip și rămâne valabil ca
+      țintă vizuală.
+    </p>
+  </section>
+
+  <section id="viitor">
+    <h2>Acces public pentru studenți (mai încolo)</h2>
+    <p>
+      Acum interfața e strict pentru admin, fără roluri — așa cum ni s-a cerut
+      pentru moment. Planul pe termen lung (al lui Razvan) e ca o parte din date să
+      devină <strong>publice, fără cont</strong>, pentru studenți. Când vine
+      momentul, structura Flask o suportă direct: rute publice fără autentificare +
+      rute de admin cu <code>@login_required</code>, fără să rescriem stratul de
+      date.
+    </p>
+    <div class="callout ok">
+      <p>
+        De-aia contează separarea din <a href="#contract">Contractul de date</a>:
+        <code>queries.py</code> e un modul Python simplu, fără nimic specific de
+        framework web. Rutele publice și cele de admin importă amândouă direct din
+        <code>queries.py</code>.
+      </p>
+    </div>
+    <div class="callout warn">
+      <p>
+        <strong>Regulă</strong>: <code>queries.py</code> nu importă niciodată
+        Flask (sau orice alt framework web) — rămâne un modul Python simplu,
+        testabil independent. Cache-ul și logica de request/sesiune stau doar în
+        rutele Flask.
+      </p>
+    </div>
+  </section>
+
+  <section id="sursa-date">
+    <h2>Sursa de date</h2>
+    <p>
+      <span class="tag done">decis</span>
+      Interfața citește acum CSV-urile produse de <code>process-feedback/</code>
+      (branch <code>upb</code>), nu baza SQLite. Baza de date din PR&nbsp;#3 rămâne
+      un pas ulterior — de-aia ținem toată logica de citire a datelor izolată în
+      <code>web-interface/queries.py</code>, ca atunci când trecem pe DB să schimbăm
+      doar ce e în interiorul acelor funcții, nu și paginile care le folosesc.
+    </p>
+    <h3>Ce citim, concret</h3>
+    <p>
+      <code>do-all</code> produce, pentru fiecare fișier brut din <code>csv/raw/</code>,
+      un fișier procesat cu același nume în <code>processed/raw/</code> (rândurile
+      Minim/Mediu/Maxim + câte un rând per titular și per asistent, pentru cursul
+      respectiv). Pentru agregări pe mai multe cursuri, aceleași rânduri există deja
+      calculate, pe alte niveluri:
+    </p>
+    <ul>
+      <li><code>processed/entire/{L,M,all}.csv</code> — agregat pe tot Licența/Master/global,
+        pentru un an universitar (baza pentru „Sumar comparativ”).</li>
+      <li><code>processed/per-semestru/&lt;an&gt;-&lt;semestru&gt;.csv</code> — ex.
+        <code>L-A1-S1.csv</code> (pagina „Completare și evaluare”).</li>
+      <li><code>processed/per-series/&lt;an&gt;-&lt;semestru&gt;-&lt;serie&gt;.csv</code> — ex.
+        <code>L-A1-S1-CA.csv</code> (pagina „Pe ani de studiu”).</li>
+      <li><code>sep-processed/{cti,is}/average/</code> — adaugă mediile unui titular pe
+        toate seriile/cursurile lui, utile pentru Top-10 titulari.</li>
+    </ul>
+    <p>
+      <code>courses.shortname</code>/numele fișierelor codifică toate dimensiunile de
+      filtrare, ex. <code>03-ACS-L-CTI-Calculatoare-A2-S1-DEEA-CA</code> = facultate ·
+      Licență/Master · CTI/IS · An2 · Sem1 · curs DEEA · serie CA.
+    </p>
+    <div class="callout ok">
+      <p>
+        <strong>num_utilizatori</strong> (nr. studenți înscriși, pentru procentaj
+        feedback) — găsit: <code>retrieve-feedback/dump_enrolled_users.py</code> descarcă
+        studenții înscriși per curs, iar <code>mappings/num_students_per_course</code>
+        transformă asta deja în <code>num_users.csv</code>. Nu apărea în schema din
+        PR&nbsp;#3, dar există în pipeline-ul de CSV.
+      </p>
+    </div>
+    <h3>Schema DB (PR #3, pentru mai târziu)</h3>
+    <pre><code>categories(category_id PK, name, parent_id, path, depth, sortorder)
+courses(course_id PK, shortname UNIQUE, fullname, startdate, enddate, category_id)
+feedback_instances(instance_id PK, course_id, name, anonymous)
+feedback_responses(response_id PK, attempt_id UNIQUE, instance_id,
+    prof_name, assist_name, eval_overall, expected_grade, load, equipment,
+    part_percent, prof_know, prof_teach, prof_interact, prof_behave, lecture_doc,
+    assist_know, assist_teach, assist_interact, assist_behave, lab_doc,
+    assign_time, assign_diff, assign_useful,
+    positive_text, negative_text, difficulty_text, other_text)</code></pre>
+  </section>
+
+  <section id="contract">
+    <h2>Contractul de date</h2>
+    <p>
+      Tot ce afișează UI-ul trece prin <code>web-interface/queries.py</code> —
+      nicio pagină nu importă direct din altă sursă. Pragurile de selecție (fixe,
+      din cerințele coordonatorului) se aplică <em>în</em> aceste funcții, nu în UI:
+      curs ≥7%&nbsp;proc_feedback şi ≥3 feedback-uri · titular ≥7%&nbsp;mediu şi
+      ≥15 feedback-uri · asistent ≥10 feedback-uri.
+    </p>
+    <pre><code>get_summary(nivel=None)                              -&gt; an_universitar, nivel, num_feedback, proc_completare, num_cursuri, evaluare
+get_course_coverage()                                 -&gt; categorie, num_cursuri, pct
+get_period_breakdown(ciclu=None)                      -&gt; bucket, proc_completare, evaluare
+get_year_breakdown(an, ciclu="L")                      -&gt; serie, proc_completare, evaluare
+get_top_courses(order_by="evaluare_curs", ciclu=None)  -&gt; curs, prof, num_feedback, proc_feedback, num_utilizatori, evaluare_curs
+get_top_titulari(order_by="evaluare_prof")             -&gt; persoana, num_cursuri, num_feedback, proc_feedback, num_utilizatori, evaluare_curs, evaluare_prof
+get_top_asistenti(order_by="evaluare_prof")            -&gt; persoana, num_feedback, evaluare_curs, evaluare_prof
+get_score_distribution(entitate)                       -&gt; banda, num, pct</code></pre>
+    <p>
+      Momentan toate delegă către <code>mocks.py</code> (date derivate din deck-ul
+      coordonatorului) — deja testat (<code>tests/test_contract.py</code>, 8/8
+      trec) și consumat de cele 7 rute Flask reale (<code>tests/test_smoke.py</code>,
+      toate răspund 200). Următorul pas e să înlocuim corpul fiecărei funcții cu
+      citire din CSV-urile din <a href="#sursa-date">Sursa de date</a>;
+      semnăturile de mai sus rămân aceleași și când trecem pe baza de date.
+    </p>
+  </section>
+
+  <section id="mockup">
+    <h2>Mockup vizual</h2>
+    <figure>
+      <img src="img/mockup.png" alt="Mockup interfață — filtre, metrici, tabel, grafic">
+      <figcaption>
+        Schiță făcută cât stabileam ce fel de interfață vrem — filtre, metrici,
+        tabel sortabil, grafic comparativ (construită inițial ca prototip Streamlit,
+        vezi <a href="#stack">Stack</a>). Rămâne ținta vizuală; implementarea reală
+        e în Flask/HTML/CSS. Ecranele urmează structura din deck-ul coordonatorului:
+        sumar comparativ, clasamente Top-10, evaluare pe zone.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section id="impartire">
+    <h2>Împărțirea muncii — ce face fiecare, în paralel</h2>
+    <p>
+      Regula de bază: rutele Flask importă <em>doar</em> din <code>queries</code>,
+      niciodată din <code>mocks</code> direct. Există deja un schelet Flask
+      funcțional — cele 7 rute de mai jos răspund 200 și afișează date reale
+      (<code>tests/test_smoke.py</code>) — dar minimal: formulare simple, fără
+      filtrele în cascadă complete. Fiecare completează partea lui peste ce
+      există deja.
+    </p>
+
+    <div class="owner-card">
+      <h3><span class="tag a">Claudiu</span> Strat de date + coordonare</h3>
+      <div class="files"><code>web-interface/queries.py</code> ·
+        <code>web-interface/db/</code></div>
+      <p>
+        Implementează funcțiile din contract citind CSV-urile din
+        <a href="#sursa-date">Sursa de date</a>, plus generatorul propriu de date
+        de test (vezi <a href="#tema1">Tema</a>). Coordonează repo/branch/CI și
+        ține la zi acest document.
+      </p>
+    </div>
+
+    <div class="owner-card">
+      <h3><span class="tag b">Maria</span> Shell, filtre, sumar</h3>
+      <div class="files"><code>web-interface/app.py</code> (rute Flask + shell) ·
+        <code>web-interface/templates/base.html</code> ·
+        <code>web-interface/templates/sumar.html</code> ·
+        <code>web-interface/templates/completare_evaluare.html</code></div>
+      <p>
+        Layout comun (navigare, filtre în cascadă an → ciclu → track → an studiu
+        → semestru), pagina „Sumar comparativ”, pagina de completare/evaluare pe
+        an-semestru.
+      </p>
+    </div>
+
+    <div class="owner-card">
+      <h3><span class="tag c">Vlad</span> Clasamente și evaluare pe zone</h3>
+      <div class="files"><code>web-interface/templates/pe_ani_de_studiu.html</code> ·
+        <code>web-interface/templates/top10_cursuri.html</code> ·
+        <code>web-interface/templates/top10_titulari.html</code> ·
+        <code>web-interface/templates/top10_asistenti.html</code> ·
+        <code>web-interface/templates/evaluare_pe_zone.html</code></div>
+      <p>
+        Clasamente Top-10 (cursuri/titulari/asistenți), sortabile după evaluare și
+        procentaj, plus distribuțiile de scor pe benzi (4-5/3-4/2-3/1-2). Rutele
+        corespunzătoare din <code>app.py</code> se coordonează cu Maria (un singur
+        fișier de rute, deocamdată).
+      </p>
+    </div>
+  </section>
+
+  <section id="git">
+    <h2>Workflow Git</h2>
+    <ol>
+      <li>
+        <code>git fetch origin &amp;&amp; git checkout develop &amp;&amp; git pull</code>
+        — <strong>develop</strong>, nu master.
+      </li>
+      <li>Branch propriu, cu prefix de nume: <code>maria-b/...</code>, <code>vlad-c/...</code>.</li>
+      <li>
+        Setup local: <code>cd web-interface &amp;&amp; python3 -m venv .venv &amp;&amp;
+        source .venv/bin/activate &amp;&amp; pip install -r requirements.txt &amp;&amp;
+        flask --app app run --debug</code>
+      </li>
+      <li>Draft PR devreme, către <code>develop</code> (nu master, nu upstream direct).</li>
+      <li>Merge când pagina proprie rulează fără erori pe mock — nu se așteaptă pe ceilalți.</li>
+    </ol>
+  </section>
+
+  <section id="guardrails">
+    <h2>Ce rulează automat</h2>
+    <p>
+      Toate astea sunt deja în repo, scopate strict la <code>web-interface/</code> —
+      nu ating restul proiectului (<code>process-feedback/</code>, <code>analysis/</code> etc.).
+    </p>
+    <h3>Local, înainte de commit</h3>
+    <p>
+      <code>.pre-commit-config.yaml</code> rulează <code>ruff</code> (lint + format)
+      doar pe fișiere din <code>web-interface/</code>. Instalare, o singură dată:
+    </p>
+    <pre><code>pip install pre-commit
+pre-commit install</code></pre>
+    <p>
+      Pentru rulat testele local (<code>pytest tests/</code>) sau <code>ruff</code>
+      manual, e nevoie de <code>requirements-dev.txt</code> (adaugă pytest/ruff peste
+      <code>requirements.txt</code>): <code>pip install -r requirements-dev.txt</code>.
+    </p>
+    <h3>CI, pe fiecare push/PR</h3>
+    <p>
+      <code>.github/workflows/web-interface-ci.yml</code> — declanșat doar când se
+      modifică ceva în <code>web-interface/</code> (nu rulează degeaba pe commit-uri
+      din altă parte a repo-ului). Două job-uri:
+    </p>
+    <ul>
+      <li><code>lint</code> — <code>ruff check</code> + <code>ruff format --check</code>.</li>
+      <li><code>test</code> — <code>web-interface/tests/</code>: <code>test_contract.py</code>
+        (fiecare din cele 8 funcții din <code>queries.py</code> întoarce exact coloanele
+        din contract — asta prinde imediat dacă cineva rupe contractul din greșeală) +
+        <code>test_smoke.py</code> (fiecare din cele 7 rute Flask răspunde 200,
+        via <code>test_client()</code>).</li>
+    </ul>
+    <p>Testat local înainte de a fi împins: 15/15 teste trec, lint curat, pre-commit rulează curat.</p>
+    <div class="callout warn">
+      <p>
+        <strong>De cerut Mariei</strong>: niciunul dintre noi nu poate activa singur
+        protecție pe branch (verificat — acces „Write”, nu „Admin”, pe repo).
+        Maria are nevoie să pună pe <code>develop</code>: PR obligatoriu înainte de
+        merge, status check-urile <code>lint</code>/<code>test</code> de mai sus
+        obligatorii, fără push direct/force-push.
+      </p>
+    </div>
+  </section>
+
+  <section id="tema1">
+    <h2>Tema: generare feedback + rulare process-feedback/</h2>
+    <span class="tag done">temă dusă la capăt</span>
+    <p>
+      Am urmat pașii ceruți: am generat feedback folosind branch-ul
+      <code>feedback</code> al repo-ului Cătălinei (directorul
+      <code>generate-feedback/</code>), apoi am rulat scripturile din
+      <code>process-feedback/</code> (branch <code>upb</code>) peste datele
+      generate. Mai jos, concret, ce am întâlnit.
+    </p>
+    <h3>Ce am observat</h3>
+    <p>
+      Formularele generate au <strong>12 întrebări</strong>, cu text placeholder
+      în engleză (unele trunchiate cu <code>...</code> direct în cod). Scripturile
+      de procesare pe care le-am găsit — atât cele vechi, cât și cele noi —
+      presupun un formular cu <strong>~25 de întrebări</strong>, text exact în
+      română. Concret:
+    </p>
+    <ul>
+      <li>
+        <code>json2csv-file</code> presupune 25 de întrebări per tentativă
+        (<code>head -25</code> hardcodat în script). Cu doar 12, fereastra de
+        25 de linii ajunge să ia și răspunsuri din tentativa următoare, iar
+        rândurile ies amestecate. Am rulat pe toate cele 9654 fișiere generate —
+        toate ies amestecate la fel.
+      </li>
+      <li>
+        <code>process_feedback.py</code> crapă cu <code>IndexError</code>/
+        <code>ValueError</code> pe fișierele rezultate, pentru că pozițiile de
+        coloană pe care le așteaptă nu se mai potrivesc după amestecul de mai sus.
+      </li>
+      <li>
+        <code>processor.py</code> (pipeline-ul Python mai nou) are o verificare
+        separată, <code>len(responses) == 25</code>, folosită ca să decidă dacă un
+        fișier e feedback valid de curs — cu 12 întrebări, niciun fișier generat
+        nu trece de ea.
+      </li>
+      <li>
+        Am încercat și <code>migrate.py</code> din PR&nbsp;#3 (varianta cu bază de
+        date): potrivește text exact în română, iar formularele generate au text
+        în engleză — 0 din 878 rânduri migrate au ieșit cu vreun câmp numeric
+        completat. Numele de profesor/asistent ies și ele identice pe fiecare curs.
+      </li>
+    </ul>
+    <div class="callout warn">
+      <p>
+        Ni se pare că firul comun e diferența de format: scripturile pe care
+        le-am găsit așteaptă un formular de ~25 de întrebări, în română; cel
+        generat are 12, în engleză. Nu știm dacă ne scapă nouă un pas de
+        conversie, sau dacă merită ajustat generatorul.
+      </p>
+    </div>
+    <p>
+      Am mai observat că <code>process-feedback/README.md</code> descrie
+      <code>process_feedback.py so2/</code> (cu argument de folder), dar scriptul
+      citește acum doar din stdin — probabil README-ul a rămas în urmă față de cod.
+    </p>
+    <h3>Am verificat dacă exista deja o rezolvare</h3>
+    <p>
+      Înainte să scriem ceva nou, ne-am uitat la celelalte PR-uri deschise pe
+      <code>generate-feedback/</code> — Irina Zamfir (PR&nbsp;#17) și Bianca Geica
+      (PR&nbsp;#18). PR&nbsp;#18 chiar pare să rezolve exact problema noastră:
+      „Schema Fix: Updated from 15 to 25 questions to match the real Moodle
+      structure”, plus nume variate în loc de „Prenume NUME” peste tot. Am clonat-o
+      și am rulat-o efectiv.
+    </p>
+    <p>
+      Numărul de întrebări e într-adevăr 25 acum — <code>json2csv-file</code> nu
+      mai amestecă rândurile. Dar am verificat coloană cu coloană valorile rezultate
+      față de ce așteaptă <code>process_feedback.py</code>, și ordinea tot nu se
+      potrivește: generatorul are o întrebare „evaluare generală” în plus înaintea
+      secvenței pe care <code>process_feedback.py</code> o tratează ca date, ceea ce
+      mută totul cu o poziție. Empiric: coloana pe care <code>process_feedback.py</code>
+      o citește ca <code>eval_overall</code> ajunge să fie de fapt nota așteptată
+      (1-10), iar <code>get_eval()</code> recunoaște doar cifre 0-5 — pe un eșantion
+      de 200 de răspunsuri, 70 au ieșit tăcut 0. Nu mai crapă, dar iese greșit fără
+      nicio eroare — mai greu de prins decât bug-ul inițial.
+    </p>
+    <p>
+      Am mai găsit, verificând independent, o a doua problemă: <code>json2csv-file</code>
+      folosește intern <code>pr -25 -a -t -s,</code>, care trunchiază silențios orice
+      valoare mai lungă de ~19-20 caractere (verificat izolat, în afara oricărui
+      generator). Afectează nume lungi și tot ce ține de text liber, indiferent de
+      generatorul folosit.
+    </p>
+    <p>
+      Ne-am uitat și la PR&nbsp;#7 (rescriere din bash în Python) — nu atinge
+      <code>process_feedback.py</code>, iar <code>json2csv-folder.py</code> al lor
+      cheamă în continuare același <code>json2csv-file</code> nereparat.
+    </p>
+    <div class="callout ok">
+      <p>
+        Concluzie: nicio soluție existentă nu rezolvă de fapt problema, chiar dacă
+        una dintre ele (PR&nbsp;#18) pare la prima vedere s-o facă. Ne întărește
+        decizia de mai jos — ocolim complet <code>json2csv-file</code>.
+      </p>
+    </div>
+    <h3>Ce am decis</h3>
+    <p>
+      Am recitit exact ce așteaptă <code>process_feedback.py</code> ca input (poziția
+      fiecărei coloane, formatul fiecărui răspuns) și rândul brut are, de fapt, o
+      formă simplă și fixă: 26 de coloane, indexate 0-25 — coloanele 0-1 neutilizate,
+      coloana 2 = numele titularului, coloana 3 = numele asistentului, coloanele 4-21 =
+      cele 18 întrebări de evaluare, coloanele 22-25 = text liber. Scriem un generator propriu, mic,
+      care produce direct rânduri în acest format — ocolim complet pasul JSON→CSV
+      (acolo sunt ambele bug-uri de mai sus), fără să depindem de niciunul dintre
+      generatoarele existente sau de <code>migrate.py</code>.
+    </p>
+  </section>
+
+  <section id="intrebari">
+    <h2>Întrebări / decizii</h2>
+    <p>
+      Am decis să scriem un generator propriu pentru date de test (vezi
+      <a href="#tema1">Tema</a>) — mic, țintit direct pe formatul pe care
+      <code>process_feedback.py</code> îl citește. Am verificat întâi dacă exista
+      deja o rezolvare (PR-urile #17, #18, #7) — niciuna nu funcționează corect
+      la o verificare atentă, deci mergem înainte cu varianta proprie. Spunem aici
+      dacă apare ceva de reconsiderat, dar nu blocăm pe un răspuns ca să continuăm.
+    </p>
+    <p>
+      PR&nbsp;#20 (Vlad, Flask „Hello World") — acum că mergem tot pe Flask, merită
+      văzut cu Vlad dacă branch-ul ăla se coordonează cu munca de aici, sau rămâne
+      separat.
+    </p>
+  </section>
+
+  <footer>
+    Repo: <code>MariaFudulia/feedback</code>, branch <code>develop</code>.
+  </footer>
+</main>
+</div>
+</body>
+</html>
