@@ -1,7 +1,7 @@
-# Interfață web feedback — Streamlit
+# Interfață web feedback — Flask
 
-Vezi `web-interface-plan-v2.docx` (rădăcina repo) pentru planul complet. Rezumat aici doar
-pentru pornire rapidă.
+Vezi `docs/index.html` (rădăcina repo) pentru planul complet — obiective, arhitectură,
+contractul de date, împărțirea muncii. Rezumat aici doar pentru pornire rapidă.
 
 ## Rulare
 
@@ -9,7 +9,7 @@ pentru pornire rapidă.
 cd web-interface
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-streamlit run app.py
+flask --app app run --debug
 ```
 
 Chiar acum, tot ce vezi rulează pe **date mock** din `mocks.py` (numere reale din deck-ul
@@ -19,7 +19,7 @@ cele câteva serii care sunt doar placeholder de formă). Nimeni nu așteaptă b
 
 ## Cum lucrăm în paralel, de azi
 
-Regula de bază: **toate paginile importă doar din `queries.py`**, niciodată din `mocks.py`
+Regula de bază: **rutele Flask importă doar din `queries.py`**, niciodată din `mocks.py`
 direct. Asta e contractul — semnăturile din `queries.py` sunt fixate, restul poate schimba.
 
 - **Coleg A — strat de date**
@@ -30,16 +30,20 @@ direct. Asta e contractul — semnăturile din `queries.py` sunt fixate, restul 
   aplicate în `mocks.py` ca referință de comportament așteptat.
 
 - **Coleg B — shell, filtre, sumar**
-  `sidebar.py` (filtre în cascadă), `app.py` (pagina Sumar — slide 3),
-  `pages/1_Completare_si_evaluare.py` (slide-uri 4, 5, 6).
+  `app.py` (rute + shell), `templates/base.html` (layout comun), `templates/sumar.html`
+  (slide 3), `templates/completare_evaluare.html` (slide-uri 4-6).
 
 - **Coleg C — clasamente și ani de studiu**
-  `pages/2_Pe_ani_de_studiu.py` (slide-uri 7-9), `pages/3_Top10_Cursuri.py`,
-  `pages/4_Top10_Titulari.py`, `pages/5_Top10_Asistenti.py` (slide-uri 10-16),
-  `pages/6_Evaluare_pe_zone.py` (slide-uri 17-19).
+  `templates/pe_ani_de_studiu.html` (slide-uri 7-9), `templates/top10_cursuri.html`,
+  `templates/top10_titulari.html`, `templates/top10_asistenti.html` (slide-uri 10-16),
+  `templates/evaluare_pe_zone.html` (slide-uri 17-19).
 
 Niciunul dintre B și C nu așteaptă pe A — deja rulează pe mock. Când A termină o funcție reală,
 nimic din B/C nu se schimbă (aceleași coloane, același nume de funcție).
+
+Există deja un schelet Flask funcțional (cele 7 rute de mai sus răspund 200,
+`tests/test_smoke.py`) — minimal: formulare simple, fără filtrele în cascadă complete.
+Fiecare completează partea lui peste ce există deja.
 
 ## Workflow Git
 
@@ -48,6 +52,9 @@ Draft PR devreme. Merge-uiește când pagina ta rulează fără erori pe mock.
 
 ## De clarificat cu coordonatorul (nu blochează codul de mai sus)
 
-- Sursa lui `num_utilizatori` (enrolment) — nu există în schema DB din PR #3.
-- Ce se întâmplă cu PR #20 (Vlad, Flask, doar „Hello World") — se abandonează sau se
-  redenumește branch-ul spre acest plan.
+`num_utilizatori` (enrolment) e rezolvat pe partea de CSV: `dump_enrolled_users.py` +
+`mappings/num_students_per_course` produc `num_users.csv`. Nu apare în schema DB din PR #3,
+deci rămâne de adăugat acolo dacă trecem pe bază de date.
+
+PR #20 (Vlad, Flask „Hello World") — acum că mergem tot pe Flask, merită văzut cu Vlad dacă
+branch-ul ăla se coordonează cu munca de aici, sau rămâne separat.
