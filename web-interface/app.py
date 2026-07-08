@@ -161,9 +161,10 @@ def sumar():
 
 @app.route("/completare-evaluare")
 def completare_evaluare():
-    ciclu, _track, semestru, _an = _coarse_scope()
+    f = current_filters()
     coverage = queries.get_course_coverage()
-    period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
+    # Adaugă filtrul de semestru conform actualizării de contract
+    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["semestru"] or None)
     return render_template(
         "completare_evaluare.html",
         coverage=coverage.to_dict("records"),
