@@ -20,8 +20,8 @@
     {% for row in rows %}
     <tr>
       <td>{{ row.persoana }}</td><td>{{ row.num_cursuri }}</td><td>{{ row.num_feedback }}</td>
-      <td>{{ row.proc_feedback }}%</td><td>{{ row.num_utilizatori }}</td>
-      <td>{{ row.evaluare_curs }}</td><td>{{ row.evaluare_prof }}</td>
+      <td>{{ "%.1f"|format(row.proc_feedback) }}%</td><td>{{ row.num_utilizatori }}</td>
+      <td>{{ "%.2f"|format(row.evaluare_curs) }}</td><td>{{ "%.2f"|format(row.evaluare_prof) }}</td>
     </tr>
     {% endfor %}
   </tbody>

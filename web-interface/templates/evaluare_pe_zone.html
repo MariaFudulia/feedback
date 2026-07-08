@@ -17,7 +17,7 @@
   <thead><tr><th>Bandă</th><th>Nr.</th><th>%</th></tr></thead>
   <tbody>
     {% for row in rows %}
-    <tr><td>{{ row.banda }}</td><td>{{ row.num }}</td><td>{{ row.pct }}%</td></tr>
+    <tr><td>{{ row.banda }}</td><td>{{ row.num }}</td><td>{{ "%.1f"|format(row.pct) }}%</td></tr>
     {% endfor %}
   </tbody>
 </table>

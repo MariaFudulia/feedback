@@ -17,7 +17,7 @@
   <thead><tr><th>Serie</th><th>Procentaj completare</th><th>Evaluare</th></tr></thead>
   <tbody>
     {% for row in rows %}
-    <tr><td>{{ row.serie }}</td><td>{{ row.proc_completare }}%</td><td>{{ row.evaluare }}</td></tr>
+    <tr><td>{{ row.serie }}</td><td>{{ "%.1f"|format(row.proc_completare) }}%</td><td>{{ "%.2f"|format(row.evaluare) }}</td></tr>
     {% endfor %}
   </tbody>
 </table>
