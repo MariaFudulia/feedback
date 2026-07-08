@@ -3,17 +3,14 @@ exactly the documented column set. This is what protects pages/*.py from
 silently breaking when queries.py's internals change (mocks -> real CSV ->
 eventually DB) -- the columns below must stay stable regardless of backend.
 
-Force the synthetic taxonomy fallback so the cascade tests never depend on the
-private pickle export (a dev may have it in web-interface/data/).
+The synthetic taxonomy is forced globally by tests/conftest.py, so the cascade
+tests never depend on the private pickle export.
 """
 
-import os
+import pandas as pd
 
-os.environ["FEEDBACK_DATA_DIR"] = "/tmp/feedback-no-such-data-dir"
-
-import pandas as pd  # noqa: E402
-
-import queries  # noqa: E402
+import queries
+import taxonomy
 
 
 def _assert_columns(df, expected):
@@ -241,3 +238,23 @@ def test_offer_structure_counts_are_real_and_consistent():
     assert sum(d["num_cursuri"] for d in o["pe_domeniu"]) == o["total_cursuri"]
     # instances (with series) are at least as many as distinct courses
     assert o["total_instante"] >= o["total_cursuri"] > 0
+
+
+def test_content_seam_routes_to_real_content_when_present():
+    # The scoring seam: once _load_content returns data, the content functions read it
+    # and content_is_synthetic() flips (clearing the "date demonstrative" badge app-wide).
+    # Synthetic offerings carry course_id=None, so the fake payload is keyed by None.
+    curs = taxonomy.all_offerings()[0]["curs"]
+    probe = {
+        "nume": "SeamProbe",
+        "tip": "titular",
+        "num_feedback": 7,
+        **{k: 4.5 for k in taxonomy.QUESTION_KEYS},
+    }
+    taxonomy._CONTENT = {None: {"responses": 42, "students": 100, "cadre": [probe]}}
+    try:
+        assert taxonomy.content_is_synthetic() is False
+        assert taxonomy.course_detail(curs)[0]["nume"] == "SeamProbe"
+    finally:
+        taxonomy._CONTENT = None
+    assert taxonomy.content_is_synthetic() is True

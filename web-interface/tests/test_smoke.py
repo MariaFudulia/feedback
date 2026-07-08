@@ -1,16 +1,11 @@
 """Smoke test: every route must respond 200 without raising. Catches
 template errors, broken url_for references, and queries.py mismatches
-before merge. Force the synthetic taxonomy fallback (no dependency on a dev's
-private pickle export).
+before merge. The synthetic taxonomy is forced globally by tests/conftest.py.
 """
 
-import os
+import pytest
 
-os.environ["FEEDBACK_DATA_DIR"] = "/tmp/feedback-no-such-data-dir"
-
-import pytest  # noqa: E402
-
-import app as app_module  # noqa: E402
+import app as app_module
 
 ROUTES = [
     "/",
