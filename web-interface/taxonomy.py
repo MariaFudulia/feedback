@@ -384,30 +384,64 @@ def _parse_users_file(path):
     return students, role_of
 
 
-def _load_content(data_dir):
-    """Real per-course feedback content, or None while the content export is
-    absent (today's state -- the zip we have is structure-only).
+def _cadru(nume, tip_default, rows, key_slots, role_of):
+    """One cadru row: the mean of each mapped slot over `rows`, plus num_feedback.
+    `tip` prefers the users-file role, falling back to which name-slot grouped it."""
+    scores = {}
+    for key, slot in key_slots.items():
+        vals = [r[slot] for r in rows if r.get(slot) is not None]
+        scores[key] = round(sum(vals) / len(vals), 2) if vals else 0.0
+    return {"nume": nume, "tip": role_of.get(nume, tip_default), "num_feedback": len(rows), **scores}
 
-    Contract, once implemented -> {course_id: {
-        "responses": int,   # unique student submissions
-        "students":  int,   # enrolled (from users/<course_id>_users.json)
-        "cadre":     [ {nume, tip, num_feedback, **{q: float for q in QUESTION_KEYS}}, ... ],
-    }}
 
-    Swap steps when feedback_contents/ + users/ arrive:
-      1. for each course_id, read feedback_contents/<fid>.json for every fid in that
-         offering's `feedback_ids`; each response carries `.name` (question) + `.printval`.
-      2. read users/<course_id>_users.json -> roles (editingteacher = titular, else asistent).
-      3. aggregate into the shape above and return it (drop the `return None`).
-    A logical `curs` is summed across its series' course_ids by `_content_for`, so this
-    function stays keyed per course_id. Returning None keeps the synthetic scores and the
-    'date demonstrative' badge until step 3 lands.
-    """
+def _aggregate_course(attempts, students, role_of):
+    """Decoded attempts -> {responses, students, cadre}. Cadre are grouped by the titular
+    (slot `prof`) and asistent (slot `assist`) names; each gets the mean of its role-specific
+    slots plus the course-level eval_gen / indepl_ob (shared by all cadre of the course)."""
+    by_titular, by_asistent = {}, {}
+    for a in attempts:
+        if a.get("prof"):
+            by_titular.setdefault(a["prof"], []).append(a)
+        if a.get("assist"):
+            by_asistent.setdefault(a["assist"], []).append(a)
+    cadre = [_cadru(n, "titular", rows, _KEY_SLOTS_TITULAR, role_of) for n, rows in by_titular.items()]
+    cadre += [_cadru(n, "asistent", rows, _KEY_SLOTS_ASISTENT, role_of) for n, rows in by_asistent.items()]
+    return {"responses": len(attempts), "students": students, "cadre": cadre}
+
+
+def _load_content(data_dir, offerings):
+    """Real per-course feedback content, or None while the export is absent -- the single
+    adapter that turns the demonstrative scores real. Reads feedback_contents/<fid>.json
+    (responses, via `_parse_feedback_file`) and users/<course_id>.json (roles/enrolment, via
+    `_parse_users_file`) for every offering with a course_id, and aggregates to:
+
+        {course_id: {"responses": int, "students": int,
+                     "cadre": [{nume, tip, num_feedback, **QUESTION_KEYS}, ...]}}
+
+    Returns None when the two export dirs aren't both present, which keeps the synthetic
+    scores and the 'date demonstrative' badge on. Once it returns data, `content_is_synthetic()`
+    flips and `course_detail`/`course_students`/`course_responses`/`faculty_average` read it
+    (a logical `curs` is summed across its series' course_ids by `_content_for`)."""
     contents_dir = os.path.join(data_dir, "feedback_contents")
     users_dir = os.path.join(data_dir, "users")
     if not (os.path.isdir(contents_dir) and os.path.isdir(users_dir)):
         return None
-    return None  # TODO: parse per the docstring; until then, synthetic fallback
+    out = {}
+    for o in offerings:
+        cid = o.get("course_id")
+        if cid is None:
+            continue
+        attempts = []
+        for fid in o.get("feedback_ids", []):  # merge valid attempts across the course's forms
+            fpath = os.path.join(contents_dir, f"{fid}.json")
+            if os.path.exists(fpath):
+                attempts.extend(_parse_feedback_file(fpath))
+        if not attempts:
+            continue
+        upath = os.path.join(users_dir, f"{cid}.json")
+        students, role_of = _parse_users_file(upath) if os.path.exists(upath) else (0, {})
+        out[cid] = _aggregate_course(attempts, students, role_of)
+    return out or None
 
 
 def _content_for(curs):
@@ -450,7 +484,7 @@ def _init():
         _SOURCE = "synthetic"
     _UNRESOLVED = stats["unresolved"]
     _EXCLUDED = stats["excluded_research"]
-    _CONTENT = _load_content(data_dir)  # None until feedback_contents/ + users/ arrive
+    _CONTENT = _load_content(data_dir, _OFFERINGS)  # None until feedback_contents/ + users/ arrive
     _BY_CURS = {}
     for r in _OFFERINGS:
         _BY_CURS.setdefault(r["curs"], r)

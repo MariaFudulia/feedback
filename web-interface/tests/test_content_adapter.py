@@ -54,3 +54,29 @@ def test_parse_users_file_classifies_roles():
     assert students == 3
     assert role_of["Ion Popescu"] == "titular"  # editingteacher
     assert role_of["Maria Ionescu"] == "asistent"
+
+
+def test_load_content_none_without_export():
+    # no feedback_contents/ + users/ dirs -> None (keeps synthetic scores + the badge)
+    assert taxonomy._load_content("/tmp/feedback-no-such-dir", []) is None
+
+
+def test_load_content_aggregates_per_course():
+    offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "test-curs"}]
+    content = taxonomy._load_content(_FIX, offerings)
+    assert content is not None
+    c = content[2802]
+    assert c["responses"] == 2  # two attempts
+    assert c["students"] == 3
+    cadre = {row["nume"]: row for row in c["cadre"]}
+    tit = cadre["Ion Popescu"]
+    assert tit["tip"] == "titular" and tit["num_feedback"] == 2
+    # titular: means over the two attempts (rawval reversed to 5-best)
+    assert tit["eval_gen"] == 4.5 and tit["preg"] == 5.0 and tit["expl_clare"] == 4.5
+    assert tit["comport"] == 5.0 and tit["indepl_ob"] == 3.5
+    asi = cadre["Maria Ionescu"]
+    assert asi["tip"] == "asistent" and asi["num_feedback"] == 2
+    assert asi["preg"] == 4.0 and asi["expl_clare"] == 3.5 and asi["comport"] == 4.5
+    assert asi["eval_gen"] == 4.5  # course-level, shared with the titular
+    # cadre keys match the contract shape
+    assert set(tit) == {"nume", "tip", "num_feedback", *taxonomy.QUESTION_KEYS}
