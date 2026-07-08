@@ -13,6 +13,7 @@ from flask import Flask, redirect, render_template, request, session, url_for
 
 import config
 import queries
+import plotly.express as px
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
@@ -151,12 +152,32 @@ def sumar():
     oferta = queries.get_offer_structure()  # real, no scores
     summary = queries.get_summary(nivel=nivel, track=track)  # deck mock, demonstrative
     if summary.empty:
-        return render_template("sumar.html", oferta=oferta, total=None, rows=[])
+        return render_template("sumar.html", oferta=oferta, total=None, rows=[], plot_div=None)
     latest_an = summary["an_universitar"].iloc[-1]
     latest = summary[summary["an_universitar"] == latest_an]
     total_rows = latest[latest["nivel"] == "total"]
     total_row = total_rows.iloc[0] if not total_rows.empty else latest.iloc[0]
-    return render_template("sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"))
+
+    plot_div = None
+    if not summary.empty:
+        df_chart = summary
+        if track:
+            df_chart = summary[summary["nivel"] == nivel]
+
+        df_sorted = df_chart.sort_values("an_universitar")
+        fig = px.bar(
+            df_sorted, 
+            x="an_universitar", 
+            y="num_feedback", 
+            color="nivel",
+            barmode="group",
+            title="Evoluția volumului de feedback primit",
+            labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"}
+        )
+
+        plot_div = fig.to_html(full_html=False, include_plotly_js='cdn')
+
+    return render_template("sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div)
 
 
 @app.route("/completare-evaluare")
