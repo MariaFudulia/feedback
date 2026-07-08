@@ -4,18 +4,12 @@
 <h1>Top 10 cursuri</h1>
 <p class="caption">Prag de selecție (fix): curs inclus doar dacă are ≥7% procentaj feedback și ≥3 feedback-uri.</p>
 
+<p class="caption">Ciclul se filtrează din filtrul global (sus) -- nu mai are dropdown local.</p>
 <form method="get">
   <label>Sortează după:
     <select name="order_by" onchange="this.form.submit()">
       <option value="evaluare_curs" {{ "selected" if order_by == "evaluare_curs" else "" }}>Evaluare</option>
       <option value="proc_feedback" {{ "selected" if order_by == "proc_feedback" else "" }}>Procentaj feedback</option>
-    </select>
-  </label>
-  <label>Ciclu:
-    <select name="ciclu" onchange="this.form.submit()">
-      <option value="" {{ "selected" if not ciclu else "" }}>Toate</option>
-      <option value="L" {{ "selected" if ciclu == "L" else "" }}>Licență</option>
-      <option value="M" {{ "selected" if ciclu == "M" else "" }}>Master</option>
     </select>
   </label>
 </form>
