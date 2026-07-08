@@ -358,12 +358,21 @@ Two distinct sources of placeholder data exist, and they are different things:
 
 ### 6.3 The seam where real scores plug in
 
-The swap to real scores is a **single, documented adaptor**, not a rewrite. Each course already
-carries its `feedback_ids` (the join key to `feedback_contents/<id>.json`), and `_load_content`
-is the one function to implement when the content export arrives; once it returns data, the four
+The swap to real scores is a **single adaptor**, not a rewrite. Each course carries its
+`feedback_ids` (the join key to `feedback_contents/<id>.json`); `_load_content` reads those
+responses + `users/<course_id>.json` and aggregates per course, and once it returns data the four
 content functions read it and the "date demonstrative" badge clears automatically
-[`web-interface/taxonomy.py`, `_load_content` / `content_is_synthetic`]. A test exercises this
-routing with an injected payload [`web-interface/tests/test_contract.py`].
+[`web-interface/taxonomy.py`].
+
+The adapter is **implemented against the pipeline's verified format** — 25-slot *positional*
+responses (the pipeline never matches on question text), Likert read from `rawval` and reversed
+`6 - x` (5 = best), roles via `editingteacher`/`asistent` — and tested against a fixture in the
+real shape [`web-interface/tests/test_content_adapter.py`; format from
+`process-feedback/processor.py`]. Two mappings and the scale carry a `# VERIFY` comment: the
+best-guess bridges of the real 18-question form onto our 6 keys (the asistent "clarity" slot;
+the "objectives" key), to confirm against the first real `feedback_contents` file — a ~10-minute
+check, not a re-implementation. Until the export lands, `_load_content` returns `None` and
+everything stays synthetic.
 
 ### 6.4 Honesty made visible: the badge discipline
 

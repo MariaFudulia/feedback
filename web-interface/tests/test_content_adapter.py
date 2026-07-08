@@ -80,3 +80,22 @@ def test_load_content_aggregates_per_course():
     assert asi["eval_gen"] == 4.5  # course-level, shared with the titular
     # cadre keys match the contract shape
     assert set(tit) == {"nume", "tip", "num_feedback", *taxonomy.QUESTION_KEYS}
+
+
+def test_seam_flips_and_public_functions_read_real_content():
+    # end-to-end: fixture content, installed, flows through the public API and flips the badge
+    offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "seam-curs", "serie": None}]
+    content = taxonomy._load_content(_FIX, offerings)
+    saved = (taxonomy._OFFERINGS, taxonomy._BY_CURS, taxonomy._CONTENT)
+    taxonomy._OFFERINGS = offerings
+    taxonomy._BY_CURS = {"seam-curs": offerings[0]}
+    taxonomy._CONTENT = content
+    try:
+        assert taxonomy.content_is_synthetic() is False  # badge clears app-wide
+        assert taxonomy.course_responses("seam-curs") == 2
+        assert taxonomy.course_students("seam-curs") == 3
+        detail = {r["nume"]: r for r in taxonomy.course_detail("seam-curs")}
+        assert detail["Ion Popescu"]["comport"] == 5.0  # real score, not synthetic
+        assert set(taxonomy.faculty_average()) == set(taxonomy.QUESTION_KEYS)
+    finally:
+        taxonomy._OFFERINGS, taxonomy._BY_CURS, taxonomy._CONTENT = saved
