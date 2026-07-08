@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %} — Evaluare pe zone{% endblock %}
 {% block content %}
-<h1>Evaluare pe zone (benzi de scor)</h1>
+{% from "_chips.html" import demo_badge %}
+<div class="section-head"><h1>Evaluare pe zone (benzi de scor)</h1>{{ demo_badge() }}</div>
 
 <form method="get">
   <label>Entitate:

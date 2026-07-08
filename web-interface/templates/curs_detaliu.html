@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %} — Detaliu curs{% endblock %}
+
+{% block sidebar_context %}
+{% if cadre %}
+<form class="filters" method="get" action="{{ url_for('curs_detaliu') }}">
+  <input type="hidden" name="order_by" value="{{ order_by }}">
+  {% if doar_titulari %}<input type="hidden" name="doar_titulari" value="1">{% endif %}
+  <div class="field">
+    <span class="field-label">Cadru didactic</span>
+    <select name="cadru" onchange="this.form.submit()">
+      {% for row in cadre %}
+      <option value="{{ row.nume }}" {{ "selected" if row.nume == selected_nume else "" }}>{{ row.nume }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
+
+<form class="filters" method="get" action="{{ url_for('curs_detaliu') }}">
+  <input type="hidden" name="order_by" value="{{ order_by }}">
+  <label class="switch-row">
+    <input type="checkbox" name="doar_titulari" value="1" onchange="this.form.submit()"
+           {{ "checked" if doar_titulari else "" }}>
+    <span class="switch"></span>
+    Doar titulari
+  </label>
+</form>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% from "_chips.html" import demo_badge %}
+{% if not cadre %}
+<h1>Detaliu curs</h1>
+<p class="caption">Alege un curs din filtrele din stânga (Ciclu → An → … → Curs) ca să vezi detaliul.</p>
+{% else %}
+<h1>{{ denumire }}</h1>
+<div class="breadcrumb">
+  <span>{{ breadcrumb }}</span>
+  <span class="agg-chip">agregare: {{ "seria " + serie if serie else "pe serie" }}</span>
+  {% if date_demonstrative %}{{ demo_badge("Structura (curs, serie, taxonomie) e reală; notele, cadrele didactice și procentele sunt demonstrative până la importul feedback_contents/ + users/.") }}{% endif %}
+</div>
+
+<div class="metrics">
+  <div class="metric">
+    <span class="ml">Răspunsuri</span>
+    <span class="mv">{{ raspunsuri }}</span>
+    <span class="ms">din {{ num_studenti }} studenți · {{ proc_completare }}%</span>
+  </div>
+  <div class="metric">
+    <span class="ml">Medie curs</span>
+    <span class="mv">{{ "%.2f"|format(medie_curs) }}</span>
+    {% if delta_facultate >= 0 %}
+    <span class="ms up">▲ +{{ "%.2f"|format(delta_facultate) }} vs. facultate</span>
+    {% else %}
+    <span class="ms down">▼ {{ "%.2f"|format(delta_facultate) }} vs. facultate</span>
+    {% endif %}
+  </div>
+  <div class="metric">
+    <span class="ml">Minim / Maxim</span>
+    <span class="mv">{{ eval_min }} <span class="dash">–</span> {{ eval_max }}</span>
+    <span class="ms">interval răspunsuri</span>
+  </div>
+  <div class="metric">
+    <span class="ml">Cadre didactice</span>
+    <span class="mv">{{ cadre|length }}</span>
+    <span class="ms">{{ num_titulari }} titulari · {{ num_asistenti }} asistenți</span>
+  </div>
+</div>
+
+<div class="section-head">
+  <h2>Cadre didactice</h2>
+  <span class="hint-chip">sortabil · click pe antet</span>
+</div>
+
+{% set cols = [("nume", "Nume"), ("tip", "Tip"), ("num_feedback", "N"), ("eval_gen", "Eval gen"),
+               ("preg", "Preg."), ("expl_clare", "Expl. clare"), ("interes", "Interes"),
+               ("comport", "Comport."), ("indepl_ob", "Îndepl. ob.")] %}
+<table class="grid">
+  <thead>
+    <tr>
+      {% for key, label in cols %}
+      <th>
+        <a href="{{ url_for('curs_detaliu', cadru=selected_nume,
+                             doar_titulari='1' if doar_titulari else None, order_by=key) }}">
+          {{ label }}{% if order_by == key %} <span class="sort-arrow">▼</span>{% endif %}
+        </a>
+      </th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in cadre %}
+    <tr class="{{ 'row-selected' if row.nume == selected_nume else '' }}">
+      <td>
+        <a class="cadru-link" href="{{ url_for('curs_detaliu', order_by=order_by,
+                                       doar_titulari='1' if doar_titulari else None, cadru=row.nume) }}">{{ row.nume }}</a>
+      </td>
+      <td><span class="tag-{{ row.tip }}">{{ row.tip }}</span></td>
+      <td>{{ row.num_feedback }}</td>
+      <td>{{ "%.2f"|format(row.eval_gen) }}</td>
+      <td>{{ "%.2f"|format(row.preg) }}</td>
+      <td>{{ "%.2f"|format(row.expl_clare) }}</td>
+      <td>{{ "%.2f"|format(row.interes) }}</td>
+      <td>{{ "%.2f"|format(row.comport) }}</td>
+      <td>{{ "%.2f"|format(row.indepl_ob) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if selected_row %}
+<div class="section-head">
+  <h2>Cadru selectat vs. media facultății</h2>
+  <span class="hint-chip">{{ selected_row.nume }}</span>
+</div>
+<div class="chart-card">
+  <div class="chart-legend">
+    <span><i class="sw sw-sel"></i> {{ selected_row.nume }}</span>
+    <span><i class="sw sw-avg"></i> Media facultății</span>
+    <span class="scale">scală 0–5</span>
+  </div>
+  <div class="compare-chart">
+    {% for key, label in [("eval_gen", "Eval gen"), ("preg", "Preg."), ("expl_clare", "Expl. clare"),
+                          ("interes", "Interes"), ("comport", "Comport."), ("indepl_ob", "Indepl. ob.")] %}
+    <div class="compare-col">
+      <div class="compare-bars">
+        <div class="bar bar-selected" style="height: {{ (selected_row[key] / 5 * 100)|round|int }}%"
+             title="{{ selected_row.nume }}: {{ "%.2f"|format(selected_row[key]) }}"></div>
+        <div class="bar bar-avg" style="height: {{ (faculty_avg[key] / 5 * 100)|round|int }}%"
+             title="Media facultății: {{ "%.2f"|format(faculty_avg[key]) }}"></div>
+      </div>
+      <div class="compare-label">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

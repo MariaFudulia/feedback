@@ -1,16 +1,28 @@
-"""Hand-written mock data matching the queries.py contract exactly.
+"""Deck-sourced MOCK aggregates for the report pages -- read this before trusting a number.
 
-Numbers are taken from the coordinator's reference deck (2025-2026 sem1,
-CTI) wherever a slide was legible, so pages B/C build against these should
-look visually right when compared to the deck. A few series are shape-only
-placeholders (noted below) because the source slide couldn't be read
-precisely — that's fine for UI development, just don't treat these numbers
-as real for anything user-facing.
+WHAT THIS IS. Hand-transcribed aggregates from the coordinator's reference deck
+(ACS, ~2025-2026 sem1, mostly CTI). It backs the six report pages -- Sumar's
+year-over-year table, Completare, Pe ani, the three Top-10s, Evaluare pe zone --
+through the get_* functions below. Every one of those pages carries a "date
+demonstrative" badge in the UI (templates/_chips.html) *because* these numbers are
+illustrative, not measured.
 
-Coleg A: do not edit call sites in queries.py that reference this file —
-just replace each function body in queries.py with a real SQL query
-returning a DataFrame with the SAME columns, then queries.py stops
-importing from here at all.
+REAL NAMES, DECK NUMBERS. Some rows carry real professor names (they were legible
+on the slides) next to deck/placeholder scores. Fine inside the project repo and
+badged as demonstrative; sanitize only if this ever goes truly public. A few series
+are shape-only placeholders where a slide wasn't legible -- shape is right, values
+are not.
+
+HOW IT GETS REPLACED (and how it does NOT). Separate from the taxonomy layer. The
+real STRUCTURE (courses, cascade, offer counts) already comes from taxonomy.py;
+per-course scores on the DETAIL page swap in via taxonomy._load_content once the
+feedback_contents/ + users/ export arrives. These DECK AGGREGATES (summary / top-10
+/ zone) are a different, later swap: they need the pipeline's already-processed CSVs
+(processed/entire/, sep-processed/{cti,is}/average/, ...), NOT this file and NOT a
+DB/SQL. When those land, replace each function BODY below with a read of those CSVs,
+keeping the SAME columns -- queries.py signatures never change.
+
+Only queries.py imports this -- never app.py or the templates.
 """
 
 import pandas as pd
@@ -49,20 +61,35 @@ _SUMMARY_RAW = {
 }
 
 
-def get_summary(nivel=None):
-    """columns: an_universitar, nivel, num_feedback, proc_completare, num_cursuri, evaluare"""
+# _SUMMARY_RAW is CTI-only (see module docstring -- deck was CTI, 2025-2026 sem1).
+# IS split below is SYNTHETIC (no real IS numbers exist yet): a fixed 0.6 scale on
+# volume metrics, same rates -- illustrative only, replace with real per-track
+# numbers once the CSV pipeline actually breaks summary out by track.
+_IS_SCALE = 0.6
+
+
+def get_summary(nivel=None, track=None):
+    """columns: an_universitar, nivel, num_feedback, proc_completare, num_cursuri, evaluare
+    track in {None, "CTI", "IS"} -- None/"CTI" return the deck's real numbers;
+    "IS" is a synthetic scaled placeholder (see _IS_SCALE above).
+    """
     rows = []
     for lvl, d in _SUMMARY_RAW.items():
         if nivel is not None and lvl != nivel:
             continue
         for i, an in enumerate(_YEARS):
+            num_feedback = d["num_feedback"][i]
+            num_cursuri = d["num_cursuri"][i]
+            if track == "IS":
+                num_feedback = round(num_feedback * _IS_SCALE)
+                num_cursuri = round(num_cursuri * _IS_SCALE)
             rows.append(
                 {
                     "an_universitar": an,
                     "nivel": lvl,
-                    "num_feedback": d["num_feedback"][i],
+                    "num_feedback": num_feedback,
                     "proc_completare": d["proc_completare"][i],
-                    "num_cursuri": d["num_cursuri"][i],
+                    "num_cursuri": num_cursuri,
                     "evaluare": d["evaluare"][i],
                 }
             )
@@ -117,14 +144,24 @@ _PERIOD_PROC = [
 _PERIOD_EVAL = [4.13, 4.19, 4.20, 4.20, 4.10, 4.10, 4.01, 4.01, 4.13, 4.13, 4.35, 4.43, 4.43, 4.10, 4.10]
 
 
-def get_period_breakdown(ciclu=None):
-    """columns: bucket, proc_completare, evaluare  (slides 5+6, same x-axis)"""
+def get_period_breakdown(ciclu=None, semestru=None):
+    """columns: bucket, proc_completare, evaluare  (slides 5+6, same x-axis)
+    semestru in {None, "S1", "S2"} -- KNOWN GAP: all current buckets are S1-only
+    (or semester-agnostic aggregates like "L"/"all"); semestru="S2" returns an
+    empty DataFrame until real per-semester-2 data exists. Don't treat the empty
+    result as a bug -- it's an honest "we don't have this yet", same pattern as
+    the an=4 gap in get_year_breakdown.
+    """
     df = pd.DataFrame({"bucket": _PERIOD_BUCKETS, "proc_completare": _PERIOD_PROC, "evaluare": _PERIOD_EVAL})
     if ciclu == "L":
-        return df[df["bucket"].str.startswith(("all", "L"))].reset_index(drop=True)
-    if ciclu == "M":
-        return df[df["bucket"].str.startswith(("all", "M"))].reset_index(drop=True)
-    return df
+        df = df[df["bucket"].str.startswith(("all", "L"))]
+    elif ciclu == "M":
+        df = df[df["bucket"].str.startswith(("all", "M"))]
+    if semestru == "S1":
+        df = df[df["bucket"].str.endswith("-S1")]
+    elif semestru == "S2":
+        df = df[df["bucket"].str.endswith("-S2")]
+    return df.reset_index(drop=True)
 
 
 # An 2 / An 3 numbers are shape-only placeholders (slide images for these two
@@ -236,13 +273,57 @@ _TOP_COURSES = pd.DataFrame(
             num_utilizatori=134,
             evaluare_curs=4.87,
         ),
+        # IS/semestru-2 entries added for track/semestru filtering -- illustrative,
+        # not from the deck (the deck's slides were CTI/sem1-only, see module docstring).
+        dict(
+            curs="03-ACS-L-IS-A1-S1-PSD-CA",
+            prof="Bogdan Alexandru URSU",
+            num_feedback=18,
+            proc_feedback=13.85,
+            num_utilizatori=130,
+            evaluare_curs=4.80,
+        ),
+        dict(
+            curs="03-ACS-M-IS-A1-S1-SDA-G",
+            prof="Elena Simona LOHAN",
+            num_feedback=8,
+            proc_feedback=11.27,
+            num_utilizatori=71,
+            evaluare_curs=4.76,
+        ),
+        dict(
+            curs="03-ACS-L-CTI-A1-S2-LS2E-CA",
+            prof="Daniela TANASE",
+            num_feedback=12,
+            proc_feedback=9.60,
+            num_utilizatori=125,
+            evaluare_curs=4.70,
+        ),
     ]
 )
 
 
-def get_top_courses(order_by="evaluare_curs", ciclu=None, limit=10):
+def _course_track(curs):
+    if "-CTI-" in curs:
+        return "CTI"
+    if "-IS-" in curs:
+        return "IS"
+    return None
+
+
+def _course_semestru(curs):
+    if "-S1-" in curs or curs.endswith("-S1"):
+        return "S1"
+    if "-S2-" in curs or curs.endswith("-S2"):
+        return "S2"
+    return None
+
+
+def get_top_courses(order_by="evaluare_curs", ciclu=None, track=None, semestru=None, limit=10):
     """columns: curs, prof, num_feedback, proc_feedback, num_utilizatori, evaluare_curs
     Applies the deck's fixed selection threshold internally: curs >=7% & >=3 feedback-uri.
+    track in {None, "CTI", "IS"}; semestru in {None, "S1", "S2"} -- derived from the
+    course shortname, same convention analysis/ and the CSV pipeline already use.
     """
     df = _TOP_COURSES.copy()
     df = df[(df["proc_feedback"] >= 7) & (df["num_feedback"] >= 3)]
@@ -250,6 +331,10 @@ def get_top_courses(order_by="evaluare_curs", ciclu=None, limit=10):
         df = df[df["curs"].str.contains("-L-")]
     elif ciclu == "M":
         df = df[df["curs"].str.contains("-M-")]
+    if track:
+        df = df[df["curs"].apply(_course_track) == track]
+    if semestru:
+        df = df[df["curs"].apply(_course_semestru) == semestru]
     return df.sort_values(order_by, ascending=False).head(limit).reset_index(drop=True)
 
 
@@ -397,3 +482,168 @@ def get_score_distribution(entitate):
     """columns: banda, num, pct  (slides 17-19, entitate in {'curs','titular','asistent'})"""
     rows = _SCORE_DIST[entitate]
     return pd.DataFrame(rows, columns=["banda", "num", "pct"])
+
+
+# Per-question breakdown (Eval gen / Preg. / Expl. clare / Interes / Comport. /
+# Indepl. ob.) for a curated set of illustrative courses -- NOT from the deck,
+# added later once we confirmed process_feedback.py already computes a
+# per-question average (18 columns) per titular/asistent, per course, and just
+# never exposed it. Faculty-wide average is a placeholder until real data
+# lands (see get_faculty_average).
+_COURSE_DETAIL = {
+    "03-ACS-L-CTI-A1-S1-LS1E-CC": {
+        "denumire": "Programarea Calculatoarelor",
+        "num_studenti": 156,
+        "serii": ["CA", "CB", "CC", "CD"],
+        "cadre": [
+            dict(
+                nume="Popescu Ion",
+                tip="titular",
+                num_feedback=49,
+                eval_gen=4.61,
+                preg=4.95,
+                expl_clare=4.59,
+                interes=4.71,
+                comport=4.98,
+                indepl_ob=4.24,
+            ),
+            dict(
+                nume="Ionescu Maria",
+                tip="titular",
+                num_feedback=22,
+                eval_gen=4.50,
+                preg=4.90,
+                expl_clare=4.60,
+                interes=4.75,
+                comport=4.95,
+                indepl_ob=4.25,
+            ),
+            dict(
+                nume="Georgescu Andrei",
+                tip="asistent",
+                num_feedback=16,
+                eval_gen=4.50,
+                preg=4.85,
+                expl_clare=4.63,
+                interes=4.81,
+                comport=4.90,
+                indepl_ob=4.31,
+            ),
+            dict(
+                nume="Dumitrescu Elena",
+                tip="asistent",
+                num_feedback=9,
+                eval_gen=4.78,
+                preg=4.92,
+                expl_clare=4.78,
+                interes=4.56,
+                comport=4.95,
+                indepl_ob=4.22,
+            ),
+            dict(
+                nume="Vasilescu Radu",
+                tip="asistent",
+                num_feedback=6,
+                eval_gen=4.67,
+                preg=4.80,
+                expl_clare=4.17,
+                interes=4.50,
+                comport=4.60,
+                indepl_ob=3.83,
+            ),
+            dict(
+                nume="Marin Cristina",
+                tip="asistent",
+                num_feedback=26,
+                eval_gen=4.20,
+                preg=4.70,
+                expl_clare=4.40,
+                interes=4.35,
+                comport=4.75,
+                indepl_ob=4.10,
+            ),
+        ],
+    },
+    "03-ACS-L-CTI-A1-S1-LS1E-CA": {
+        "denumire": "Structuri de Date și Algoritmi",
+        "num_studenti": 149,
+        "serii": ["CA", "CB", "CC", "CD"],
+        "cadre": [
+            dict(
+                nume="Daniela Tănase",
+                tip="titular",
+                num_feedback=41,
+                eval_gen=4.72,
+                preg=4.90,
+                expl_clare=4.68,
+                interes=4.66,
+                comport=4.93,
+                indepl_ob=4.40,
+            ),
+            dict(
+                nume="Andrei-Cristian Lambru",
+                tip="asistent",
+                num_feedback=19,
+                eval_gen=4.55,
+                preg=4.80,
+                expl_clare=4.52,
+                interes=4.60,
+                comport=4.88,
+                indepl_ob=4.29,
+            ),
+            dict(
+                nume="Bianca Popa",
+                tip="asistent",
+                num_feedback=23,
+                eval_gen=4.38,
+                preg=4.71,
+                expl_clare=4.45,
+                interes=4.30,
+                comport=4.70,
+                indepl_ob=4.12,
+            ),
+        ],
+    },
+}
+
+_FACULTY_AVERAGE = dict(eval_gen=4.42, preg=4.83, expl_clare=4.53, interes=4.61, comport=4.86, indepl_ob=4.16)
+
+
+def get_course_list():
+    """columns: curs, denumire, num_studenti"""
+    return pd.DataFrame(
+        [
+            {"curs": k, "denumire": v["denumire"], "num_studenti": v["num_studenti"]}
+            for k, v in _COURSE_DETAIL.items()
+        ]
+    )
+
+
+def get_course_series(curs):
+    """list of serie codes for a course (e.g. ['CA','CB',...]); [] if unknown."""
+    entry = _COURSE_DETAIL.get(curs)
+    return list(entry["serii"]) if entry else []
+
+
+def get_course_detail(curs):
+    """columns: nume, tip, num_feedback, eval_gen, preg, expl_clare, interes, comport, indepl_ob"""
+    entry = _COURSE_DETAIL.get(curs)
+    columns = [
+        "nume",
+        "tip",
+        "num_feedback",
+        "eval_gen",
+        "preg",
+        "expl_clare",
+        "interes",
+        "comport",
+        "indepl_ob",
+    ]
+    if entry is None:
+        return pd.DataFrame(columns=columns)
+    return pd.DataFrame(entry["cadre"])[columns]
+
+
+def get_faculty_average():
+    """dict: eval_gen, preg, expl_clare, interes, comport, indepl_ob"""
+    return dict(_FACULTY_AVERAGE)

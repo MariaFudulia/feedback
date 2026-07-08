@@ -1,8 +1,37 @@
 {% extends "base.html" %}
 {% block title %} — Sumar{% endblock %}
 {% block content %}
-<h1>Sumar comparativ</h1>
+{% from "_chips.html" import demo_badge, real_badge %}
+<h1>Sumar</h1>
 
+<div class="section-head">
+  <h2>Structura ofertei — {{ oferta.an_universitar }}</h2>
+  {{ real_badge() }}
+</div>
+<p class="caption">Cursuri distincte cu formular de feedback, pe toată facultatea (ACS). {{ oferta.total_instante }} instanțe cu serie.</p>
+<div class="metrics">
+  <div class="metric"><span class="ml">Cursuri distincte</span><span class="mv">{{ oferta.total_cursuri }}</span></div>
+  {% for c in oferta.pe_ciclu %}
+  <div class="metric"><span class="ml">{{ c.label }}</span><span class="mv">{{ c.num_cursuri }}</span></div>
+  {% endfor %}
+</div>
+<table>
+  <thead><tr><th>Ciclu</th><th>Domeniu</th><th>Cursuri</th></tr></thead>
+  <tbody>
+    {% for d in oferta.pe_domeniu %}
+    <tr><td>{{ d.ciclu }}</td><td>{{ d.label }}</td><td>{{ d.num_cursuri }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="section-head" style="margin-top:32px">
+  <h2>Evoluție pe ani universitari</h2>
+  {{ demo_badge("Numere din deck-ul de referință (CTI). Feedback-uri, grad de completare și evaluare devin reale la importul feedback_contents/ + users/.") }}
+</div>
+
+{% if total is none %}
+<p>Nu există date pentru filtrele selectate.</p>
+{% else %}
 <div class="metrics">
   <div class="metric"><span class="ml">Feedback-uri</span><span class="mv">{{ total.num_feedback }}</span></div>
   <div class="metric"><span class="ml">Grad completare</span><span class="mv">{{ "%.1f"|format(total.proc_completare) }}%</span></div>
@@ -10,7 +39,6 @@
   <div class="metric"><span class="ml">Evaluare generală</span><span class="mv">{{ "%.2f"|format(total.evaluare) }}</span></div>
 </div>
 
-<h2>Pe ani universitari</h2>
 <table>
   <thead>
     <tr><th>An universitar</th><th>Nivel</th><th>Feedback-uri</th><th>Grad completare</th><th>Cursuri</th><th>Evaluare</th></tr>
@@ -28,4 +56,5 @@
     {% endfor %}
   </tbody>
 </table>
+{% endif %}
 {% endblock %}

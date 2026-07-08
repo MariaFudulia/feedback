@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %} — Taxonomie{% endblock %}
+{% block content %}
+<h1>Taxonomie — spațiul complet de combinații valide</h1>
+<p class="caption">
+  Derivat din arborele real de categorii Moodle (<code>taxonomy.py</code>) — exact ce te
+  lasă filtrele să atingi. Sursa datelor:
+  <strong>{{ "reală (export pickle)" if source == "real" else "sintetică (fallback)" }}</strong>.
+</p>
+
+{% if issues %}
+<div class="tax-issues bad">
+  <strong>{{ issues|length }} observații pe datele reale:</strong>
+  <ul>{% for i in issues %}<li>{{ i }}</li>{% endfor %}</ul>
+</div>
+{% else %}
+<div class="tax-issues ok">✓ Toate cursurile cu feedback din scope s-au rezolvat curat la ciclu · domeniu · an.</div>
+{% endif %}
+
+{% for ciclu, domenii in tree.items() %}
+<h2>{{ ciclu }}</h2>
+{% for domeniu, specs in domenii.items() %}
+<div class="tax-dom">
+  <div class="tax-dom-name">{{ domeniu }}</div>
+  {% for spec, ani in specs|dictsort %}
+  <div class="tax-spec">
+    {% if spec != "—" %}<span class="tax-spec-name">{{ spec }}</span>
+    {% else %}<span class="tax-spec-name none">direct pe an (fără specializare)</span>{% endif %}
+    {% for an, seme in ani|dictsort %}
+    <div class="tax-an">
+      <span class="tax-an-name">{{ an }}</span>
+      {% for sem, cursuri in seme|dictsort %}
+      <div class="tax-sem"><span class="tax-sem-name">{{ sem }}</span>
+        <span class="tax-courses">{{ cursuri|join(" · ") }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+{% endfor %}
+
+<style>
+.tax-issues { border-radius: 8px; padding: 12px 16px; margin: 14px 0 24px; font-size: 13.5px; }
+.tax-issues.ok { background: #e9f7ee; color: #1f7a3f; }
+.tax-issues.bad { background: #fdeceb; color: #a33328; }
+.tax-issues ul { margin: 8px 0 0; }
+.tax-dom { border: 1px solid #e6e8ee; border-radius: 10px; padding: 12px 16px; margin: 10px 0; }
+.tax-dom-name { font-weight: 700; margin-bottom: 8px; }
+.tax-spec { margin: 4px 0 4px 6px; }
+.tax-spec-name { display: inline-block; font-size: 12px; font-weight: 600; color: #6a2fa8; background: #f3ebfb; padding: 1px 8px; border-radius: 20px; margin: 4px 0; }
+.tax-an { margin: 4px 0 4px 16px; }
+.tax-an-name { font-weight: 600; color: #3a3f4b; }
+.tax-sem { margin: 3px 0 3px 16px; font-size: 13px; display: flex; gap: 10px; }
+.tax-sem-name { color: #7a8090; flex: 0 0 58px; }
+.tax-courses { color: #1f2430; }
+</style>
+{% endblock %}

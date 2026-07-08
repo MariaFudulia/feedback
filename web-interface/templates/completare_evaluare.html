@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %} — Completare și evaluare{% endblock %}
 {% block content %}
-<h1>Completare și evaluare pe an / semestru</h1>
+{% from "_chips.html" import demo_badge %}
+<div class="section-head"><h1>Completare și evaluare pe an / semestru</h1>{{ demo_badge() }}</div>
 
 <h2>Cursuri cu feedback</h2>
 <table>
