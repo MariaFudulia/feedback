@@ -24,6 +24,7 @@ generators below.
 """
 
 import hashlib
+import json
 import os
 import pickle
 import re
@@ -253,31 +254,209 @@ def _synthetic():
 
 # ---- content adapter: the seam where real scores plug in ------------------
 
+# A feedback submission ("attempt") is 25 responses read BY POSITION -- the
+# processing pipeline maps them by index, never by question text, because the
+# titular and asistent blocks reuse identical wording
+# [process-feedback/processor.py:208-234]. Slot layout:
+_RESPONSE_SLOTS = [
+    "course",
+    "prof",
+    "assist",  # 0-2: discipline + titular name + asistent name
+    "eval_overall",
+    "expected_grade",
+    "load",
+    "equipment",
+    "part",  # 3-7 course-level
+    "prof_know",
+    "prof_teach",
+    "prof_interact",
+    "prof_behave",
+    "lecture_doc",  # 8-12 titular
+    "assist_know",
+    "assist_teach",
+    "assist_interact",
+    "assist_behave",
+    "lab_doc",  # 13-17 asistent
+    "assign_time",
+    "assign_diff",
+    "assign_useful",  # 18-20 course-level
+    "positive",
+    "negative",
+    "difficulty",
+    "other",  # 21-24 free text
+]
+# Likert slots are stored as a raw Moodle option index (1 = top option); the
+# pipeline reverses to a 5-is-best scale via `6 - x` [processor.py:355-376].
+_LIKERT_SLOTS = {
+    "eval_overall",
+    "load",
+    "equipment",
+    "prof_know",
+    "prof_teach",
+    "prof_interact",
+    "prof_behave",
+    "lecture_doc",
+    "assist_know",
+    "assist_teach",
+    "assist_interact",
+    "assist_behave",
+    "lab_doc",
+    "assign_diff",
+    "assign_useful",
+}
+# Bridge the real 18-question form onto our 6 QUESTION_KEYS. eval_gen / indepl_ob
+# are course-level (no per-teacher split), so every cadru of a course shares them.
+_KEY_SLOTS_TITULAR = {
+    "eval_gen": "eval_overall",
+    "preg": "prof_know",
+    "expl_clare": "prof_teach",
+    "interes": "prof_interact",
+    "comport": "prof_behave",
+    "indepl_ob": "assign_useful",
+}
+_KEY_SLOTS_ASISTENT = {
+    "eval_gen": "eval_overall",
+    "preg": "assist_know",
+    "expl_clare": "assist_teach",  # VERIFY: slot 14 = "activitatea individuală", loose fit for clarity
+    "interes": "assist_interact",
+    "comport": "assist_behave",
+    "indepl_ob": "assign_useful",  # VERIFY: no literal "objectives" question; assign_useful is the closest
+}
 
-def _load_content(data_dir):
-    """Real per-course feedback content, or None while the content export is
-    absent (today's state -- the zip we have is structure-only).
+_NUMERIC_SLOTS = {"expected_grade", "part", "assign_time"}  # kept as-is (not reversed)
 
-    Contract, once implemented -> {course_id: {
-        "responses": int,   # unique student submissions
-        "students":  int,   # enrolled (from users/<course_id>_users.json)
-        "cadre":     [ {nume, tip, num_feedback, **{q: float for q in QUESTION_KEYS}}, ... ],
-    }}
+# _load_content runs at import; a single malformed/unreadable file must never crash
+# startup and defeat the synthetic fallback -- it is skipped and counted instead.
+_PARSE_ERRORS = (ValueError, OSError, KeyError, TypeError, AttributeError)
 
-    Swap steps when feedback_contents/ + users/ arrive:
-      1. for each course_id, read feedback_contents/<fid>.json for every fid in that
-         offering's `feedback_ids`; each response carries `.name` (question) + `.printval`.
-      2. read users/<course_id>_users.json -> roles (editingteacher = titular, else asistent).
-      3. aggregate into the shape above and return it (drop the `return None`).
-    A logical `curs` is summed across its series' course_ids by `_content_for`, so this
-    function stays keyed per course_id. Returning None keeps the synthetic scores and the
-    'date demonstrative' badge until step 3 lands.
-    """
+
+def _likert(raw):
+    """Moodle raw option index (1 = top option) -> 5-is-best score, or None if not an int."""
+    try:
+        return 6 - int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _int_or_none(raw):
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_feedback_file(path):
+    """Decode one feedback_contents/<id>.json into a list of attempts, each a dict keyed
+    by _RESPONSE_SLOTS: Likert slots -> reversed score (6 - rawval), numeric slots -> int,
+    name/text slots -> printval. Attempts without exactly 25 responses are skipped -- the
+    pipeline's own validity rule [process-feedback/processor.py:615]."""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    attempts = []
+    for att in data.get("anonattempts", []):
+        responses = att.get("responses", [])
+        if len(responses) != 25:
+            continue
+        row = {}
+        for i, slot in enumerate(_RESPONSE_SLOTS):
+            r = responses[i]
+            if slot in _LIKERT_SLOTS:
+                row[slot] = _likert(r.get("rawval"))
+            elif slot in _NUMERIC_SLOTS:
+                row[slot] = _int_or_none(r.get("rawval"))
+            else:  # names + free text
+                row[slot] = r.get("printval")
+        attempts.append(row)
+    return attempts
+
+
+def _parse_users_file(path):
+    """Read users/<course_id>.json -> (num_students, {fullname: role}) where role is
+    'titular' (Moodle `editingteacher`) or 'asistent' (Moodle `asistent`). Students are
+    counted separately (the completion-% denominator) [process-feedback/processor.py:668,684,692]."""
+    with open(path, encoding="utf-8") as f:
+        users = json.load(f)
+    role_of, students = {}, 0
+    for u in users:
+        shortnames = {r.get("shortname") for r in u.get("roles", [])}
+        if "editingteacher" in shortnames:
+            role_of[u.get("fullname")] = "titular"
+        elif "asistent" in shortnames:
+            role_of[u.get("fullname")] = "asistent"
+        if "student" in shortnames:
+            students += 1
+    return students, role_of
+
+
+def _cadru(nume, tip_default, rows, key_slots, role_of):
+    """One cadru row: the mean of each mapped slot over `rows`, plus num_feedback.
+    `tip` prefers the users-file role, falling back to which name-slot grouped it."""
+    scores = {}
+    for key, slot in key_slots.items():
+        vals = [r[slot] for r in rows if r.get(slot) is not None]
+        scores[key] = round(sum(vals) / len(vals), 2) if vals else 0.0
+    return {"nume": nume, "tip": role_of.get(nume, tip_default), "num_feedback": len(rows), **scores}
+
+
+def _aggregate_course(attempts, students, role_of):
+    """Decoded attempts -> {responses, students, cadre}. Cadre are grouped by the titular
+    (slot `prof`) and asistent (slot `assist`) names; each gets the mean of its role-specific
+    slots plus the course-level eval_gen / indepl_ob (shared by all cadre of the course)."""
+    by_titular, by_asistent = {}, {}
+    for a in attempts:
+        if a.get("prof"):
+            by_titular.setdefault(a["prof"], []).append(a)
+        if a.get("assist"):
+            by_asistent.setdefault(a["assist"], []).append(a)
+    cadre = [_cadru(n, "titular", rows, _KEY_SLOTS_TITULAR, role_of) for n, rows in by_titular.items()]
+    cadre += [_cadru(n, "asistent", rows, _KEY_SLOTS_ASISTENT, role_of) for n, rows in by_asistent.items()]
+    return {"responses": len(attempts), "students": students, "cadre": cadre}
+
+
+def _load_content(data_dir, offerings):
+    """Real per-course feedback content, or None while the export is absent -- the single
+    adapter that turns the demonstrative scores real. Reads feedback_contents/<fid>.json
+    (responses, via `_parse_feedback_file`) and users/<course_id>.json (roles/enrolment, via
+    `_parse_users_file`) for every offering with a course_id, and aggregates to:
+
+        {course_id: {"responses": int, "students": int,
+                     "cadre": [{nume, tip, num_feedback, **QUESTION_KEYS}, ...]}}
+
+    Returns `(content, skipped)` where `content` is the dict above or None while the two
+    export dirs aren't both present (keeping the synthetic scores and the 'date demonstrative'
+    badge on), and `skipped` counts files that couldn't be parsed. Once `content` is non-None,
+    `content_is_synthetic()` flips and `course_detail`/`course_students`/`course_responses`/
+    `faculty_average` read it (a logical `curs` is summed across its series' course_ids by
+    `_content_for`)."""
     contents_dir = os.path.join(data_dir, "feedback_contents")
     users_dir = os.path.join(data_dir, "users")
     if not (os.path.isdir(contents_dir) and os.path.isdir(users_dir)):
-        return None
-    return None  # TODO: parse per the docstring; until then, synthetic fallback
+        return None, 0
+    out, skipped = {}, 0
+    for o in offerings:
+        cid = o.get("course_id")
+        if cid is None:
+            continue
+        attempts = []
+        for fid in o.get("feedback_ids", []):  # merge valid attempts across the course's forms
+            fpath = os.path.join(contents_dir, f"{fid}.json")
+            if not os.path.exists(fpath):
+                continue
+            try:
+                attempts.extend(_parse_feedback_file(fpath))
+            except _PARSE_ERRORS:  # one bad file is a skip, not a startup crash
+                skipped += 1
+        if not attempts:
+            continue
+        students, role_of = 0, {}
+        upath = os.path.join(users_dir, f"{cid}.json")
+        if os.path.exists(upath):
+            try:
+                students, role_of = _parse_users_file(upath)
+            except _PARSE_ERRORS:
+                skipped += 1
+        out[cid] = _aggregate_course(attempts, students, role_of)
+    return (out or None), skipped
 
 
 def _content_for(curs):
@@ -308,7 +487,8 @@ def _init():
         _UNRESOLVED, \
         _EXCLUDED, \
         _SOURCE, \
-        _CONTENT
+        _CONTENT, \
+        _CONTENT_SKIPPED
     data_dir = config.FEEDBACK_DATA_DIR
     if _pickles_present(data_dir):
         _OFFERINGS, _DOMENIU_LABEL, _SPEC_LABEL, _YEARS, stats = _load_real(
@@ -320,7 +500,8 @@ def _init():
         _SOURCE = "synthetic"
     _UNRESOLVED = stats["unresolved"]
     _EXCLUDED = stats["excluded_research"]
-    _CONTENT = _load_content(data_dir)  # None until feedback_contents/ + users/ arrive
+    # None until feedback_contents/ + users/ arrive; skip-count surfaced in consistency_issues
+    _CONTENT, _CONTENT_SKIPPED = _load_content(data_dir, _OFFERINGS)
     _BY_CURS = {}
     for r in _OFFERINGS:
         _BY_CURS.setdefault(r["curs"], r)
@@ -594,6 +775,8 @@ def consistency_issues():
     no_sem = sorted({r["curs"] for r in _OFFERINGS if r["sem"] is None})
     if no_sem:
         issues.append(f"{len(no_sem)} courses have no semester in the category tree")
+    if _CONTENT_SKIPPED:
+        issues.append(f"{_CONTENT_SKIPPED} feedback/users content files could not be parsed and were skipped")
     return issues
 
 

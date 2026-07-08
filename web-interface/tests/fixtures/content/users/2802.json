@@ -1,0 +1,42 @@
+[
+ {
+  "fullname": "Ion Popescu",
+  "roles": [
+   {
+    "shortname": "editingteacher"
+   }
+  ]
+ },
+ {
+  "fullname": "Maria Ionescu",
+  "roles": [
+   {
+    "shortname": "asistent"
+   }
+  ]
+ },
+ {
+  "fullname": "Student One",
+  "roles": [
+   {
+    "shortname": "student"
+   }
+  ]
+ },
+ {
+  "fullname": "Student Two",
+  "roles": [
+   {
+    "shortname": "student"
+   }
+  ]
+ },
+ {
+  "fullname": "Student Three",
+  "roles": [
+   {
+    "shortname": "student"
+   }
+  ]
+ }
+]
