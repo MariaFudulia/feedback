@@ -1,0 +1,12 @@
+{# Single source of truth for the real-vs-mock data badges. Import and call:
+   {% from "_chips.html" import demo_badge, real_badge %}
+   ... {{ demo_badge() }} / {{ real_badge() }}
+   Pass a tooltip arg to override the default hover text for a specific page. #}
+
+{% macro demo_badge(tooltip="Numere din deck-ul de referință (CTI). Devin reale la importul feedback_contents/ + users/.") -%}
+<span class="demo-chip" title="{{ tooltip }}">⚠ date demonstrative</span>
+{%- endmacro %}
+
+{% macro real_badge(tooltip="Numărat direct din arborele real de categorii Moodle. Fără note, doar structură.") -%}
+<span class="real-chip" title="{{ tooltip }}">✓ date reale</span>
+{%- endmacro %}

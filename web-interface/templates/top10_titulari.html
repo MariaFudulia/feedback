@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %} — Top-10 titulari{% endblock %}
 {% block content %}
-<h1>Top 10 titulari</h1>
+{% from "_chips.html" import demo_badge %}
+<div class="section-head"><h1>Top 10 titulari</h1>{{ demo_badge() }}</div>
 <p class="caption">Prag de selecție (fix): titular inclus doar dacă are, în medie, ≥7% procentaj feedback la cursurile unde e titular și ≥15 feedback-uri.</p>
 
 <form method="get">

@@ -6,8 +6,40 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<header>
+<div class="layout">
+<aside class="sidebar">
   <div class="brand">Feedback POLITEHNICA</div>
+  <div class="brand-sub">conectat ca <strong>admin</strong> · acces la toate datele</div>
+
+  <form class="filters" method="post" action="{{ url_for('set_filters') }}">
+    <input type="hidden" name="next" value="{{ request.path }}">
+
+    <div class="field">
+      <span class="field-label">An universitar</span>
+      <select name="an_universitar" onchange="this.form.submit()">
+        {% for an in academic_years %}
+        <option value="{{ an }}" {{ "selected" if filters.an_universitar == an else "" }}>{{ an }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% for row in cascade_rows %}
+    <div class="field">
+      <span class="field-label">{{ row.label }}</span>
+      <select name="{{ row.dim }}" onchange="this.form.submit()">
+        <option value="" {{ "selected" if not row.value else "" }}>{{ row.toate }}</option>
+        {% for opt in row.options %}
+        <option value="{{ opt.value }}" {{ "selected" if row.value == opt.value else "" }}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endfor %}
+  </form>
+
+  {% block sidebar_context %}{% endblock %}
+
+  <a class="reset-btn" href="{{ url_for('reset_filters', next=request.path) }}">↻ Resetează filtrele</a>
+
   <nav>
     <a href="{{ url_for('sumar') }}">Sumar</a>
     <a href="{{ url_for('completare_evaluare') }}">Completare &amp; evaluare</a>
@@ -16,10 +48,12 @@
     <a href="{{ url_for('top10_titulari') }}">Top-10 titulari</a>
     <a href="{{ url_for('top10_asistenti') }}">Top-10 asistenți</a>
     <a href="{{ url_for('evaluare_pe_zone') }}">Evaluare pe zone</a>
+    <a href="{{ url_for('curs_detaliu') }}">Detaliu curs</a>
   </nav>
-</header>
+</aside>
 <main>
   {% block content %}{% endblock %}
 </main>
+</div>
 </body>
 </html>

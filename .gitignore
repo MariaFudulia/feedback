@@ -22,10 +22,13 @@ TAGS
 peda-session-*.txt
 core
 
+.idea/
 web-interface/.venv/
 web-interface/db/fixture.db
 web-interface/db/*.json
 web-interface/handoff/
+web-interface/data/
+*.p
 web-interface/.pytest_cache/
 web-interface/.ruff_cache/
 web-interface/**/__pycache__/
