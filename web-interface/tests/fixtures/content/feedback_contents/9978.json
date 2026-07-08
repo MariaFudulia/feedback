@@ -1,0 +1,262 @@
+{
+ "anonattempts": [
+  {
+   "responses": [
+    {
+     "name": "course",
+     "printval": "03-ACS-L-CTI-A2-S1: Programare orientată pe obiecte (Seria CA - 2024)",
+     "rawval": "0"
+    },
+    {
+     "name": "prof",
+     "printval": "Ion Popescu",
+     "rawval": "0"
+    },
+    {
+     "name": "assist",
+     "printval": "Maria Ionescu",
+     "rawval": "0"
+    },
+    {
+     "name": "eval_overall",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "expected_grade",
+     "printval": "8",
+     "rawval": "8"
+    },
+    {
+     "name": "load",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "equipment",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "part",
+     "printval": "3",
+     "rawval": "3"
+    },
+    {
+     "name": "prof_know",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "prof_teach",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "prof_interact",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "prof_behave",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "lecture_doc",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_know",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_teach",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_interact",
+     "printval": "3 - etichetă",
+     "rawval": "3"
+    },
+    {
+     "name": "assist_behave",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "lab_doc",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assign_time",
+     "printval": "3",
+     "rawval": "3"
+    },
+    {
+     "name": "assign_diff",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assign_useful",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "positive",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "negative",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "difficulty",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "other",
+     "printval": "text liber",
+     "rawval": ""
+    }
+   ]
+  },
+  {
+   "responses": [
+    {
+     "name": "course",
+     "printval": "03-ACS-L-CTI-A2-S1: Programare orientată pe obiecte (Seria CA - 2024)",
+     "rawval": "0"
+    },
+    {
+     "name": "prof",
+     "printval": "Ion Popescu",
+     "rawval": "0"
+    },
+    {
+     "name": "assist",
+     "printval": "Maria Ionescu",
+     "rawval": "0"
+    },
+    {
+     "name": "eval_overall",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "expected_grade",
+     "printval": "8",
+     "rawval": "8"
+    },
+    {
+     "name": "load",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "equipment",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "part",
+     "printval": "3",
+     "rawval": "3"
+    },
+    {
+     "name": "prof_know",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "prof_teach",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "prof_interact",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "prof_behave",
+     "printval": "5 - etichetă",
+     "rawval": "1"
+    },
+    {
+     "name": "lecture_doc",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_know",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_teach",
+     "printval": "3 - etichetă",
+     "rawval": "3"
+    },
+    {
+     "name": "assist_interact",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assist_behave",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "lab_doc",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assign_time",
+     "printval": "3",
+     "rawval": "3"
+    },
+    {
+     "name": "assign_diff",
+     "printval": "4 - etichetă",
+     "rawval": "2"
+    },
+    {
+     "name": "assign_useful",
+     "printval": "3 - etichetă",
+     "rawval": "3"
+    },
+    {
+     "name": "positive",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "negative",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "difficulty",
+     "printval": "text liber",
+     "rawval": ""
+    },
+    {
+     "name": "other",
+     "printval": "text liber",
+     "rawval": ""
+    }
+   ]
+  }
+ ]
+}

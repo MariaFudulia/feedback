@@ -253,6 +253,75 @@ def _synthetic():
 
 # ---- content adapter: the seam where real scores plug in ------------------
 
+# A feedback submission ("attempt") is 25 responses read BY POSITION -- the
+# processing pipeline maps them by index, never by question text, because the
+# titular and asistent blocks reuse identical wording
+# [process-feedback/processor.py:208-234]. Slot layout:
+_RESPONSE_SLOTS = [
+    "course",
+    "prof",
+    "assist",  # 0-2: discipline + titular name + asistent name
+    "eval_overall",
+    "expected_grade",
+    "load",
+    "equipment",
+    "part",  # 3-7 course-level
+    "prof_know",
+    "prof_teach",
+    "prof_interact",
+    "prof_behave",
+    "lecture_doc",  # 8-12 titular
+    "assist_know",
+    "assist_teach",
+    "assist_interact",
+    "assist_behave",
+    "lab_doc",  # 13-17 asistent
+    "assign_time",
+    "assign_diff",
+    "assign_useful",  # 18-20 course-level
+    "positive",
+    "negative",
+    "difficulty",
+    "other",  # 21-24 free text
+]
+# Likert slots are stored as a raw Moodle option index (1 = top option); the
+# pipeline reverses to a 5-is-best scale via `6 - x` [processor.py:355-376].
+_LIKERT_SLOTS = {
+    "eval_overall",
+    "load",
+    "equipment",
+    "prof_know",
+    "prof_teach",
+    "prof_interact",
+    "prof_behave",
+    "lecture_doc",
+    "assist_know",
+    "assist_teach",
+    "assist_interact",
+    "assist_behave",
+    "lab_doc",
+    "assign_diff",
+    "assign_useful",
+}
+# Bridge the real 18-question form onto our 6 QUESTION_KEYS. eval_gen / indepl_ob
+# are course-level (no per-teacher split), so every cadru of a course shares them.
+_KEY_SLOTS_TITULAR = {
+    "eval_gen": "eval_overall",
+    "preg": "prof_know",
+    "expl_clare": "prof_teach",
+    "interes": "prof_interact",
+    "comport": "prof_behave",
+    "indepl_ob": "assign_useful",
+}
+_KEY_SLOTS_ASISTENT = {
+    "eval_gen": "eval_overall",
+    "preg": "assist_know",
+    "expl_clare": "assist_teach",  # VERIFY: slot 14 = "activitatea individuală", loose fit for clarity
+    "interes": "assist_interact",
+    "comport": "assist_behave",
+    "indepl_ob": "assign_useful",  # VERIFY: no literal "objectives" question; assign_useful is the closest
+}
+
 
 def _load_content(data_dir):
     """Real per-course feedback content, or None while the content export is
