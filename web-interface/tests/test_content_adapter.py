@@ -29,3 +29,21 @@ def test_fixtures_are_well_formed():
     assert all({"name", "printval", "rawval"} <= set(r) for a in fb["anonattempts"] for r in a["responses"])
     users = json.load(open(os.path.join(_FIX, "users", "2802.json"), encoding="utf-8"))
     assert isinstance(users, list) and len(users) == 5
+
+
+def test_parse_feedback_file_decodes_positions_and_reverses_likert():
+    attempts = taxonomy._parse_feedback_file(os.path.join(_FIX, "feedback_contents", "9978.json"))
+    assert len(attempts) == 2
+    a0 = attempts[0]
+    # name slots come from printval, unchanged
+    assert a0["prof"] == "Ion Popescu"
+    assert a0["assist"] == "Maria Ionescu"
+    # Likert: rawval "1" -> 6-1 = 5 (best); "2" -> 4; "3" -> 3
+    assert a0["eval_overall"] == 5  # rawval "1"
+    assert a0["prof_know"] == 5  # rawval "1"
+    assert a0["prof_teach"] == 4  # rawval "2"
+    assert a0["assist_interact"] == 3  # rawval "3"
+    # numeric slot kept as-is (not reversed)
+    assert a0["expected_grade"] == 8
+    # second attempt differs
+    assert attempts[1]["eval_overall"] == 4  # rawval "2"

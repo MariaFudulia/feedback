@@ -24,6 +24,7 @@ generators below.
 """
 
 import hashlib
+import json
 import os
 import pickle
 import re
@@ -321,6 +322,48 @@ _KEY_SLOTS_ASISTENT = {
     "comport": "assist_behave",
     "indepl_ob": "assign_useful",  # VERIFY: no literal "objectives" question; assign_useful is the closest
 }
+
+_NUMERIC_SLOTS = {"expected_grade", "part", "assign_time"}  # kept as-is (not reversed)
+
+
+def _likert(raw):
+    """Moodle raw option index (1 = top option) -> 5-is-best score, or None if not an int."""
+    try:
+        return 6 - int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _int_or_none(raw):
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_feedback_file(path):
+    """Decode one feedback_contents/<id>.json into a list of attempts, each a dict keyed
+    by _RESPONSE_SLOTS: Likert slots -> reversed score (6 - rawval), numeric slots -> int,
+    name/text slots -> printval. Attempts without exactly 25 responses are skipped -- the
+    pipeline's own validity rule [process-feedback/processor.py:615]."""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    attempts = []
+    for att in data.get("anonattempts", []):
+        responses = att.get("responses", [])
+        if len(responses) != 25:
+            continue
+        row = {}
+        for i, slot in enumerate(_RESPONSE_SLOTS):
+            r = responses[i]
+            if slot in _LIKERT_SLOTS:
+                row[slot] = _likert(r.get("rawval"))
+            elif slot in _NUMERIC_SLOTS:
+                row[slot] = _int_or_none(r.get("rawval"))
+            else:  # names + free text
+                row[slot] = r.get("printval")
+        attempts.append(row)
+    return attempts
 
 
 def _load_content(data_dir):
