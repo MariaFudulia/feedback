@@ -325,6 +325,10 @@ _KEY_SLOTS_ASISTENT = {
 
 _NUMERIC_SLOTS = {"expected_grade", "part", "assign_time"}  # kept as-is (not reversed)
 
+# _load_content runs at import; a single malformed/unreadable file must never crash
+# startup and defeat the synthetic fallback -- it is skipped and counted instead.
+_PARSE_ERRORS = (ValueError, OSError, KeyError, TypeError, AttributeError)
+
 
 def _likert(raw):
     """Moodle raw option index (1 = top option) -> 5-is-best score, or None if not an int."""
@@ -418,15 +422,17 @@ def _load_content(data_dir, offerings):
         {course_id: {"responses": int, "students": int,
                      "cadre": [{nume, tip, num_feedback, **QUESTION_KEYS}, ...]}}
 
-    Returns None when the two export dirs aren't both present, which keeps the synthetic
-    scores and the 'date demonstrative' badge on. Once it returns data, `content_is_synthetic()`
-    flips and `course_detail`/`course_students`/`course_responses`/`faculty_average` read it
-    (a logical `curs` is summed across its series' course_ids by `_content_for`)."""
+    Returns `(content, skipped)` where `content` is the dict above or None while the two
+    export dirs aren't both present (keeping the synthetic scores and the 'date demonstrative'
+    badge on), and `skipped` counts files that couldn't be parsed. Once `content` is non-None,
+    `content_is_synthetic()` flips and `course_detail`/`course_students`/`course_responses`/
+    `faculty_average` read it (a logical `curs` is summed across its series' course_ids by
+    `_content_for`)."""
     contents_dir = os.path.join(data_dir, "feedback_contents")
     users_dir = os.path.join(data_dir, "users")
     if not (os.path.isdir(contents_dir) and os.path.isdir(users_dir)):
-        return None
-    out = {}
+        return None, 0
+    out, skipped = {}, 0
     for o in offerings:
         cid = o.get("course_id")
         if cid is None:
@@ -434,14 +440,23 @@ def _load_content(data_dir, offerings):
         attempts = []
         for fid in o.get("feedback_ids", []):  # merge valid attempts across the course's forms
             fpath = os.path.join(contents_dir, f"{fid}.json")
-            if os.path.exists(fpath):
+            if not os.path.exists(fpath):
+                continue
+            try:
                 attempts.extend(_parse_feedback_file(fpath))
+            except _PARSE_ERRORS:  # one bad file is a skip, not a startup crash
+                skipped += 1
         if not attempts:
             continue
+        students, role_of = 0, {}
         upath = os.path.join(users_dir, f"{cid}.json")
-        students, role_of = _parse_users_file(upath) if os.path.exists(upath) else (0, {})
+        if os.path.exists(upath):
+            try:
+                students, role_of = _parse_users_file(upath)
+            except _PARSE_ERRORS:
+                skipped += 1
         out[cid] = _aggregate_course(attempts, students, role_of)
-    return out or None
+    return (out or None), skipped
 
 
 def _content_for(curs):
@@ -472,7 +487,8 @@ def _init():
         _UNRESOLVED, \
         _EXCLUDED, \
         _SOURCE, \
-        _CONTENT
+        _CONTENT, \
+        _CONTENT_SKIPPED
     data_dir = config.FEEDBACK_DATA_DIR
     if _pickles_present(data_dir):
         _OFFERINGS, _DOMENIU_LABEL, _SPEC_LABEL, _YEARS, stats = _load_real(
@@ -484,7 +500,8 @@ def _init():
         _SOURCE = "synthetic"
     _UNRESOLVED = stats["unresolved"]
     _EXCLUDED = stats["excluded_research"]
-    _CONTENT = _load_content(data_dir, _OFFERINGS)  # None until feedback_contents/ + users/ arrive
+    # None until feedback_contents/ + users/ arrive; skip-count surfaced in consistency_issues
+    _CONTENT, _CONTENT_SKIPPED = _load_content(data_dir, _OFFERINGS)
     _BY_CURS = {}
     for r in _OFFERINGS:
         _BY_CURS.setdefault(r["curs"], r)
@@ -758,6 +775,8 @@ def consistency_issues():
     no_sem = sorted({r["curs"] for r in _OFFERINGS if r["sem"] is None})
     if no_sem:
         issues.append(f"{len(no_sem)} courses have no semester in the category tree")
+    if _CONTENT_SKIPPED:
+        issues.append(f"{_CONTENT_SKIPPED} feedback/users content files could not be parsed and were skipped")
     return issues
 
 

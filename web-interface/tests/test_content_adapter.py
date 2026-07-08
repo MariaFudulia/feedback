@@ -57,14 +57,29 @@ def test_parse_users_file_classifies_roles():
 
 
 def test_load_content_none_without_export():
-    # no feedback_contents/ + users/ dirs -> None (keeps synthetic scores + the badge)
-    assert taxonomy._load_content("/tmp/feedback-no-such-dir", []) is None
+    # no feedback_contents/ + users/ dirs -> (None, 0): keeps synthetic scores + the badge
+    content, skipped = taxonomy._load_content("/tmp/feedback-no-such-dir", [])
+    assert content is None and skipped == 0
+
+
+def test_load_content_skips_malformed_files_without_crashing(tmp_path):
+    # a corrupt file must be skipped + counted, never crash the load (which runs at import)
+    fc = tmp_path / "feedback_contents"
+    fc.mkdir()
+    us = tmp_path / "users"
+    us.mkdir()
+    (fc / "9978.json").write_text("{ truncated, not valid json", encoding="utf-8")
+    (us / "2802.json").write_text("[]", encoding="utf-8")
+    offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "c"}]
+    content, skipped = taxonomy._load_content(str(tmp_path), offerings)
+    assert skipped == 1
+    assert content is None  # the only course had no parseable attempts
 
 
 def test_load_content_aggregates_per_course():
     offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "test-curs"}]
-    content = taxonomy._load_content(_FIX, offerings)
-    assert content is not None
+    content, skipped = taxonomy._load_content(_FIX, offerings)
+    assert content is not None and skipped == 0
     c = content[2802]
     assert c["responses"] == 2  # two attempts
     assert c["students"] == 3
@@ -85,7 +100,7 @@ def test_load_content_aggregates_per_course():
 def test_seam_flips_and_public_functions_read_real_content():
     # end-to-end: fixture content, installed, flows through the public API and flips the badge
     offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "seam-curs", "serie": None}]
-    content = taxonomy._load_content(_FIX, offerings)
+    content, _ = taxonomy._load_content(_FIX, offerings)
     saved = (taxonomy._OFFERINGS, taxonomy._BY_CURS, taxonomy._CONTENT)
     taxonomy._OFFERINGS = offerings
     taxonomy._BY_CURS = {"seam-curs": offerings[0]}
