@@ -366,6 +366,24 @@ def _parse_feedback_file(path):
     return attempts
 
 
+def _parse_users_file(path):
+    """Read users/<course_id>.json -> (num_students, {fullname: role}) where role is
+    'titular' (Moodle `editingteacher`) or 'asistent' (Moodle `asistent`). Students are
+    counted separately (the completion-% denominator) [process-feedback/processor.py:668,684,692]."""
+    with open(path, encoding="utf-8") as f:
+        users = json.load(f)
+    role_of, students = {}, 0
+    for u in users:
+        shortnames = {r.get("shortname") for r in u.get("roles", [])}
+        if "editingteacher" in shortnames:
+            role_of[u.get("fullname")] = "titular"
+        elif "asistent" in shortnames:
+            role_of[u.get("fullname")] = "asistent"
+        if "student" in shortnames:
+            students += 1
+    return students, role_of
+
+
 def _load_content(data_dir):
     """Real per-course feedback content, or None while the content export is
     absent (today's state -- the zip we have is structure-only).

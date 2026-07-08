@@ -47,3 +47,10 @@ def test_parse_feedback_file_decodes_positions_and_reverses_likert():
     assert a0["expected_grade"] == 8
     # second attempt differs
     assert attempts[1]["eval_overall"] == 4  # rawval "2"
+
+
+def test_parse_users_file_classifies_roles():
+    students, role_of = taxonomy._parse_users_file(os.path.join(_FIX, "users", "2802.json"))
+    assert students == 3
+    assert role_of["Ion Popescu"] == "titular"  # editingteacher
+    assert role_of["Maria Ionescu"] == "asistent"
