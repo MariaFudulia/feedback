@@ -739,6 +739,71 @@ def all_offerings():
     return list(_OFFERINGS)
 
 
+def offering_metrics(an_universitar=None):
+    """Per-offering fact rows -- the substrate the deck-view rollups (aggregates.py) group
+    over. One row per offering (course_id): the structural dims + content metrics, real from
+    `_CONTENT[course_id]` when the export is loaded, else deterministic-synthetic.
+
+    The synthetic per-offering split is sum-preserving per logical curs: a curs's synthetic
+    total (`_course_students`/`_course_responses`) is divided across its series-offerings by a
+    stable weight, so grouping the rows back by `curs` reproduces the per-curs functions -- no
+    contradiction between a Top-10 row and the course-detail page. Real content is already
+    per-course_id, so both paths agree.
+
+    row: {course_id, curs, denumire, ciclu, domeniu, specializare, an, sem, serie,
+          responses, students, evaluare_curs, cadre:[{nume,tip,num_feedback,**QUESTION_KEYS}]}
+    """
+    year = an_universitar or (_YEARS[-1] if _YEARS else "2024-2025")
+    sibs_of = {}  # curs -> [offering, ...] (its series-offerings; course_id may be None in synthetic)
+    for o in _OFFERINGS:
+        sibs_of.setdefault(o["curs"], []).append(o)
+    rows = []
+    for curs, sibs in sibs_of.items():
+        # split each per-curs synthetic total across its offerings, seeded by position so it
+        # works even when course_id is None (synthetic); real content is per-course_id already.
+        weights = [_hashf(f"{curs}|{i}|w", 0.6, 1.4) for i in range(len(sibs))]
+        wsum = sum(weights)
+        tot_stu, tot_resp = _course_students(year, curs), _course_responses(year, curs)
+        for i, o in enumerate(sibs):
+            cid = o["course_id"]
+            if _CONTENT is not None and cid in _CONTENT:
+                c = _CONTENT[cid]
+                responses, students, cadre = c["responses"], c["students"], c["cadre"]
+            else:
+                frac = weights[i] / wsum
+                students = max(1, round(tot_stu * frac))
+                responses = max(1, round(tot_resp * frac))
+                cadre = [
+                    {
+                        "nume": nm,
+                        "tip": tip,
+                        "num_feedback": max(1, round(_cadru_feedback(year, curs, nm) * frac)),
+                        **_cadru_scores(year, curs, nm),
+                    }
+                    for nm, tip in _cadre_for(curs)
+                ]
+            evaluare_curs = round(sum(cd["eval_gen"] for cd in cadre) / len(cadre), 2) if cadre else 0.0
+            rows.append(
+                {
+                    "course_id": cid,
+                    "curs": curs,
+                    "cod": o["cod"],
+                    "denumire": o["denumire"],
+                    "ciclu": o["ciclu"],
+                    "domeniu": o["domeniu"],
+                    "specializare": o["specializare"],
+                    "an": o["an"],
+                    "sem": o["sem"],
+                    "serie": o["serie"],
+                    "responses": responses,
+                    "students": students,
+                    "evaluare_curs": evaluare_curs,
+                    "cadre": cadre,
+                }
+            )
+    return rows
+
+
 def tree():
     """Full valid space as a nested dict for the debug view:
     ciclu -> domeniu -> specializare ('—' if none) -> an -> sem -> [course names]."""

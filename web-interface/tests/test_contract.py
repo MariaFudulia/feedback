@@ -54,9 +54,11 @@ def test_get_period_breakdown():
             )
 
 
-def test_get_period_breakdown_semestru_s2_is_empty_gap():
+def test_get_period_breakdown_semestru_s2_is_computed():
+    # S2 is now recomputed from the real category tree (no longer the S1-only deck's empty gap)
     df = queries.get_period_breakdown(semestru="S2")
-    assert df.empty, "S2 is a documented data gap -- should be empty, not an error"
+    _assert_columns(df, {"bucket", "proc_completare", "evaluare"})
+    assert all(b.endswith("-S2") for b in df["bucket"])
 
 
 def test_get_year_breakdown():

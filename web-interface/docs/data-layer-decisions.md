@@ -348,13 +348,19 @@ lacks `feedback_contents/` (the responses) and `users/` (roles/enrolment). Until
 those numbers are generated **deterministically** from the real course id
 [`web-interface/taxonomy.py`, the `_hashf` generators] — stable and plausible, but placeholders.
 
-Two distinct sources of placeholder data exist, and they are different things:
+The placeholder data now has three sources, and they are different things:
 
-1. **Deck-sourced aggregates.** The report pages (summary, top-10, zones) render numbers
-   hand-transcribed from the coordinator's reference **deck** [`web-interface/mocks.py` module
-   docstring; deck de referință] — deck-accurate where a slide was legible.
-2. **Deterministic synthetic scores.** The per-course detail page's scores/cadre are generated
-   from the course id, as above.
+1. **Computed from the content substrate.** The Top-10 tables, score-zones, and the per-period /
+   per-year breakdowns are **recomputed** from the taxonomy structure + the content adapter
+   [`web-interface/aggregates.py`, grouping `taxonomy.offering_metrics()`] — real structure now,
+   real scores on export (badged demonstrative until then), and consistent with the per-course
+   detail because both read one substrate. This replaced the hand-transcribed deck numbers.
+2. **Deck-sourced (two deliberate exceptions).** The **Sumar** year-over-year and the
+   course-**coverage** slide stay hand-transcribed from the deck [`web-interface/mocks.py`]:
+   the first is a 9-year history not reconstructable from our single year of structure; the
+   second counts courses with *no* feedback, which the feedback-scoped taxonomy excludes.
+3. **Deterministic synthetic scores.** The per-course scores/cadre — feeding both the detail page
+   and the computed aggregates above — come from the `_hashf` generators until the export lands.
 
 ### 6.3 The seam where real scores plug in
 
