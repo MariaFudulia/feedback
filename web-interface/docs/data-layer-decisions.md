@@ -110,7 +110,7 @@ role split never forces a rewrite of `queries.py` [general spec §3].
 ### 2.3 Jinja + plain forms now, HTMX reserved for later
 
 The current UI is **server-rendered Jinja templates with plain HTML forms** — filters submit
-with a full page reload (`onchange="this.form.submit()"`) [`web-interface/templates/base.html:19,29`].
+as plain forms (`onchange="this.form.requestSubmit()"`) [`web-interface/templates/base.html`].
 This is deliberate: no hand-written JavaScript, nothing to debug on the client, and it is
 entirely sufficient for an admin tool today.
 
@@ -129,9 +129,11 @@ now. The reasoning:
   `hx-post` to `/set-filters` and swap only the filter panel and the results region back in —
   the exact same server code and templates, just returning a fragment instead of a full page.
 
-> **Note:** HTMX is intentionally *not* wired yet — `base.html` has no `hx-*` attributes.
-> Adopting it is a scoped, later change, chosen precisely so that when interactivity matters we
-> do not have to re-architect toward a JS front-end.
+> **Note:** The first HTMX step is now wired: a vendored `htmx.min.js` (no CDN) and
+> `hx-boost` on `<body>` [`base.html`] — every existing form/link round-trip goes over AJAX
+> and swaps in place, with zero server changes. Fragment-level swaps (`hx-post` +
+> `hx-target` on the cascade) remain the scoped later change described above, adoptable
+> without re-architecting.
 
 ---
 
