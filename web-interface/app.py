@@ -37,6 +37,14 @@ TOATE_LABEL = {
 }
 
 
+def _safe_next(target):
+    """Only follow an in-app `next` (relative path) -- an absolute URL in the
+    form/query would make /set-filters an open redirect."""
+    if target and target.startswith("/") and not target.startswith("//"):
+        return target
+    return None
+
+
 def current_filters():
     f = {k: session.get(k, "") for k in FILTER_KEYS}
     if not f["an_universitar"]:
@@ -119,14 +127,14 @@ def set_filters():
             eff[dim] = v
         else:
             session[dim] = ""
-    return redirect(request.form.get("next") or request.referrer or url_for("sumar"))
+    return redirect(_safe_next(request.form.get("next")) or url_for("sumar"))
 
 
 @app.route("/reset-filters")
 def reset_filters():
     for k in FILTER_KEYS:
         session.pop(k, None)
-    dest = request.args.get("next") or url_for("sumar")
+    dest = _safe_next(request.args.get("next")) or url_for("sumar")
     return redirect(dest.split("?")[0])
 
 
