@@ -55,3 +55,46 @@ def test_curs_id_separates_by_slot():
     a = taxonomy._curs_id("L", "CTI", None, 1, 1, "Programare")
     b = taxonomy._curs_id("L", "CTI", None, 2, 1, "Programare")
     assert a != b
+
+
+def test_classify_walks_the_category_tree():
+    by_cat = {
+        7: {"id": 7, "name": "03. Automatică şi Calculatoare", "parent": None},
+        10: {"id": 10, "name": "Licență", "parent": 7},
+        11: {"id": 11, "name": "Domeniul Calculatoare (CTI)", "parent": 10},
+        12: {"id": 12, "name": "Specializarea Calculatoare (CALC)", "parent": 11},
+        13: {"id": 13, "name": "Anul 2", "parent": 12},
+        14: {"id": 14, "name": "Semestrul 1", "parent": 13},
+    }
+    dom, spec = {}, {}
+    d = taxonomy._classify(14, by_cat, dom, spec)
+    assert d["ciclu"] == "L"
+    assert d["domeniu"] == "CTI"
+    assert d["specializare"] == "CALC"
+    assert d["an"] == 2
+    assert d["sem"] == 1
+    assert dom["CTI"] == "Calculatoare (CTI)"  # label harvested, "Domeniul " stripped
+    assert spec["CALC"] == "Calculatoare (CALC)"
+
+
+def test_classify_without_specializare_or_semester():
+    by_cat = {
+        7: {"id": 7, "name": "03. AC", "parent": None},
+        10: {"id": 10, "name": "Master", "parent": 7},
+        11: {"id": 11, "name": "Domeniul Ingineria sistemelor (IS)", "parent": 10},
+        12: {"id": 12, "name": "Anul 1", "parent": 11},
+    }
+    d = taxonomy._classify(12, by_cat, {}, {})
+    assert d["ciclu"] == "M" and d["domeniu"] == "IS" and d["an"] == 1
+    assert "specializare" not in d  # no Specializarea node in the path
+    assert "sem" not in d  # no Semestrul node
+
+
+def test_research_denylist_matches_master_research_only():
+    deny = taxonomy._RE_RESEARCH_DENY
+    assert deny.search("03-ACS-M-CTI-A2-S1-CSP-X")  # CSP
+    assert deny.search("03-ACS-M-IS-A1-S2-Cercetare-Y")  # Cercetare*
+    assert deny.search("03-ACS-M-CTI-A2-S2-ELD-Z")  # ELD
+    # a licență course and a normal master course are NOT excluded
+    assert not deny.search("03-ACS-L-CTI-A1-S1-POO-CA")
+    assert not deny.search("03-ACS-M-CTI-A1-S1-BPDA-SCPD")
