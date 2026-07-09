@@ -9,11 +9,11 @@ years, a domeniu with no specializare level hides that filter, a course only
 exposes its own series.
 """
 
+import plotly.express as px
 from flask import Flask, redirect, render_template, request, session, url_for
 
 import config
 import queries
-import plotly.express as px
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
@@ -166,18 +166,20 @@ def sumar():
 
         df_sorted = df_chart.sort_values("an_universitar")
         fig = px.bar(
-            df_sorted, 
-            x="an_universitar", 
-            y="num_feedback", 
+            df_sorted,
+            x="an_universitar",
+            y="num_feedback",
             color="nivel",
             barmode="group",
             title="Evoluția volumului de feedback primit",
-            labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"}
+            labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"},
         )
 
-        plot_div = fig.to_html(full_html=False, include_plotlyjs='cdn')
+        plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn")
 
-    return render_template("sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div)
+    return render_template(
+        "sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div
+    )
 
 
 @app.route("/completare-evaluare")
@@ -191,33 +193,30 @@ def completare_evaluare():
 
     if not coverage.empty:
         fig_cov = px.pie(
-            coverage, 
-            names="categorie", 
-            values="num_cursuri", 
-            title="Acoperire cursuri pe categorii"
+            coverage, names="categorie", values="num_cursuri", title="Acoperire cursuri pe categorii"
         )
-        plot_coverage_div = fig_cov.to_html(full_html=False, include_plotlyjs='cdn')
+        plot_coverage_div = fig_cov.to_html(full_html=False, include_plotlyjs="cdn")
 
     if not period.empty:
         df_period = period.sort_values("bucket")
-        
+
         fig_proc = px.bar(
-            df_period, 
-            x="bucket", 
-            y="proc_completare", 
+            df_period,
+            x="bucket",
+            y="proc_completare",
             title="Procentaj completare pe bucket",
-            labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"}
+            labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"},
         )
-        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs='cdn')
-        
+        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn")
+
         fig_eval = px.bar(
-            df_period, 
-            x="bucket", 
-            y="evaluare", 
+            df_period,
+            x="bucket",
+            y="evaluare",
             title="Evaluare medie pe bucket",
-            labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"}
+            labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"},
         )
-        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs='cdn')
+        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn")
 
     return render_template(
         "completare_evaluare.html",
@@ -225,7 +224,7 @@ def completare_evaluare():
         period=period.to_dict("records"),
         plot_coverage_div=plot_coverage_div,
         plot_proc_div=plot_proc_div,
-        plot_eval_div=plot_eval_div
+        plot_eval_div=plot_eval_div,
     )
 
 
