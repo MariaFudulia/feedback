@@ -173,7 +173,10 @@ def sumar():
             barmode="group",
             title="Evoluția volumului de feedback primit",
             labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"},
+            color_discrete_sequence=["#EE3B3B", "#F47C7C"],
         )
+
+        fig.update_layout(plot_bgcolor="white", paper_bgcolor="white", yaxis=dict(gridcolor="#F0F0F0"))
 
         plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn")
 
@@ -207,6 +210,9 @@ def completare_evaluare():
             title="Procentaj completare pe bucket",
             labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"},
         )
+        fig_proc.update_traces(marker_color="#EE3B3B")
+
+        fig_proc.update_layout(plot_bgcolor="white", paper_bgcolor="white", yaxis=dict(gridcolor="#F0F0F0"))
         plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn")
 
         fig_eval = px.bar(
@@ -216,6 +222,9 @@ def completare_evaluare():
             title="Evaluare medie pe bucket",
             labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"},
         )
+
+        fig_eval.update_traces(marker_color="#EE3B3B")
+        fig_eval.update_layout(plot_bgcolor="white", paper_bgcolor="white", yaxis=dict(gridcolor="#F0F0F0"))
         plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn")
 
     return render_template(
