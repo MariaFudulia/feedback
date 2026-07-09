@@ -1,0 +1,57 @@
+"""Unit tests for taxonomy's pure parsing/classification helpers.
+
+These lock the small functions the whole taxonomy rests on, independently of the
+real data (which test_real_data covers only when present).
+"""
+
+import taxonomy
+
+
+def test_parse_fullname_series_and_year():
+    d, s = taxonomy._parse_fullname("03-ACS-L-A2-S1: Programare orientată pe obiecte (Seria AA - 2024)")
+    assert d == "Programare orientată pe obiecte"
+    assert s == "AA"
+
+
+def test_parse_fullname_no_series():
+    d, s = taxonomy._parse_fullname("03-ACS-L-A1-S1: Analiză matematică")
+    assert d == "Analiză matematică"
+    assert s is None
+
+
+def test_parse_fullname_series_without_year():
+    d, s = taxonomy._parse_fullname("03-ACS-M-A1: Rețele (Seria CA)")
+    assert d == "Rețele"
+    assert s == "CA"
+
+
+def test_parse_fullname_bare_year_suffix_is_stripped():
+    d, s = taxonomy._parse_fullname("03-ACS-L-A1: Fizică (2024)")
+    assert d == "Fizică"
+    assert s is None
+
+
+def test_parse_fullname_without_colon():
+    d, s = taxonomy._parse_fullname("Just A Name")
+    assert d == "Just A Name"
+    assert s is None
+
+
+def test_curs_id_is_deterministic():
+    args = ("L", "CTI", None, 2, 1, "Baze de date")
+    assert taxonomy._curs_id(*args) == taxonomy._curs_id(*args)
+
+
+def test_curs_id_distinguishes_names_sharing_a_long_prefix():
+    # the truncation bug fixed in _curs_id: names that share a 48-char slug prefix
+    # must not collide (the md5 tag disambiguates)
+    n2 = "Programarea calculatoarelor și limbaje de programare 2"
+    n3 = "Programarea calculatoarelor și limbaje de programare 3"
+    assert taxonomy._curs_id("L", "CTI", None, 1, 1, n2) != taxonomy._curs_id("L", "CTI", None, 1, 1, n3)
+
+
+def test_curs_id_separates_by_slot():
+    # same name in different slots (an/sem) -> different logical courses
+    a = taxonomy._curs_id("L", "CTI", None, 1, 1, "Programare")
+    b = taxonomy._curs_id("L", "CTI", None, 2, 1, "Programare")
+    assert a != b
