@@ -256,6 +256,9 @@ tr.row-selected td { background: #fbf3f2; }
 main table:not(.grid) { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 8px 0; }
 main table:not(.grid) th, main table:not(.grid) td { text-align: left; padding: 7px 12px; border-bottom: 1px solid #e6e8ee; }
 main table:not(.grid) th { background: #f6f7f9; font-weight: 600; color: #5a6070; font-size: 12.5px; }
+main table:not(.grid) th.th-sort { padding: 0; }
+main table:not(.grid) th.th-sort a { display: block; padding: 7px 12px; color: #5a6070; text-decoration: none; white-space: nowrap; }
+main table:not(.grid) th.th-sort a:hover { color: #1f2430; }
 .caption { color: #7a8090; font-size: 13px; }
 .charts-row { display: flex; gap: 24px; margin-top: 24px; }
 .charts-row > div { flex: 1 1 0; min-width: 0; }

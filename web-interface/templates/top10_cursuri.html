@@ -5,24 +5,24 @@
 <div class="section-head"><h1>Top 10 cursuri</h1>{{ demo_badge() }}</div>
 <p class="caption">Prag de selecție (fix): curs inclus doar dacă are ≥7% procentaj feedback și ≥3 feedback-uri.</p>
 
-<p class="caption">Ciclul se filtrează din filtrul global (sus) -- nu mai are dropdown local.</p>
-<form method="get">
-  <label>Sortează după:
-    <select name="order_by" onchange="this.form.submit()">
-      <option value="evaluare_curs" {{ "selected" if order_by == "evaluare_curs" else "" }}>Evaluare</option>
-      <option value="proc_feedback" {{ "selected" if order_by == "proc_feedback" else "" }}>Procentaj feedback</option>
-    </select>
-  </label>
-</form>
+<p class="caption">Ciclul se filtrează din filtrul global (sus). <span class="hint-chip">sortabil · click pe antet</span></p>
 
+{% from "_sort.html" import sort_th %}
 <table>
-  <thead><tr><th>Curs</th><th>Prof</th><th>N</th><th>% feedback</th><th>Nr. utilizatori</th><th>Evaluare</th></tr></thead>
+  <thead><tr>
+    <th>Curs</th><th>Prof</th><th>N</th>
+    {{ sort_th("top10_cursuri", "proc_feedback", "% feedback", order_by) }}
+    <th>Nr. utilizatori</th>
+    {{ sort_th("top10_cursuri", "evaluare_curs", "Evaluare", order_by) }}
+  </tr></thead>
   <tbody>
     {% for row in rows %}
     <tr>
       <td>{{ row.curs }}</td><td>{{ row.prof }}</td><td>{{ row.num_feedback }}</td>
       <td>{{ "%.1f"|format(row.proc_feedback) }}%</td><td>{{ row.num_utilizatori }}</td><td>{{ "%.2f"|format(row.evaluare_curs) }}</td>
     </tr>
+    {% else %}
+    <tr><td colspan="6" class="caption">Niciun curs nu trece pragul de selecție pentru filtrele curente.</td></tr>
     {% endfor %}
   </tbody>
 </table>

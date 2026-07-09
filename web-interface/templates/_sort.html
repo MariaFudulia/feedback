@@ -1,0 +1,5 @@
+{# Sortable column header for the ranking tables -- same interaction as the
+   curs-detaliu grid: click the header, the active column carries the arrow. #}
+{% macro sort_th(endpoint, key, label, order_by) -%}
+<th class="th-sort"><a href="{{ url_for(endpoint, order_by=key) }}">{{ label }}{% if order_by == key %} <span class="sort-arrow">▼</span>{% endif %}</a></th>
+{%- endmacro %}
