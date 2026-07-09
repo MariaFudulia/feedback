@@ -12,6 +12,20 @@
   <div class="brand">Feedback POLITEHNICA</div>
   <div class="brand-sub">conectat ca <strong>admin</strong> · acces la toate datele</div>
 
+  {# On phones the filter panel collapses behind this label (CSS-only checkbox
+     toggle -- no JS); the label doubles as a one-line summary of the active scope.
+     On desktop the checkbox+label are hidden and the panel is always open. #}
+  {% set active_scope = [] %}
+  {% for row in cascade_rows %}{% if row.value %}{% for opt in row.options %}
+    {% if opt.value == row.value %}{% set _ = active_scope.append(opt.label) %}{% endif %}
+  {% endfor %}{% endif %}{% endfor %}
+  <input type="checkbox" id="filters-toggle" class="filters-toggle">
+  <label class="filters-summary" for="filters-toggle">
+    Filtre
+    <span class="scope-line">{{ active_scope|join(" · ") if active_scope else "toate datele" }}</span>
+  </label>
+
+  <div class="filter-body">
   <form class="filters" method="post" action="{{ url_for('set_filters') }}">
     <input type="hidden" name="next" value="{{ request.path }}">
 
@@ -40,6 +54,7 @@
   {% block sidebar_context %}{% endblock %}
 
   <a class="reset-btn" href="{{ url_for('reset_filters', next=request.path) }}">↻ Resetează filtrele</a>
+  </div>
 
   <nav>
     <a href="{{ url_for('sumar') }}">Sumar</a>
