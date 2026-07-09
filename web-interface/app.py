@@ -184,9 +184,9 @@ def sumar():
 
 @app.route("/completare-evaluare")
 def completare_evaluare():
-    f = current_filters()
+    ciclu, _track, semestru, _an = _coarse_scope()
     coverage = queries.get_course_coverage()
-    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["sem"] or None)
+    period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
     plot_coverage_div = None
     plot_proc_div = None
     plot_eval_div = None
