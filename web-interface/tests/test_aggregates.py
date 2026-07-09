@@ -7,6 +7,7 @@ tests/fixtures/content/ by installing it directly (same approach as test_content
 import os
 from collections import defaultdict
 
+import aggregates
 import taxonomy
 
 _FIX = os.path.join(os.path.dirname(__file__), "fixtures", "content")
@@ -74,3 +75,27 @@ def test_offering_metrics_reads_real_content_via_fixture():
         assert rows[0]["serie"] == "CA"
     finally:
         taxonomy._OFFERINGS, taxonomy._CONTENT = saved
+
+
+def test_top_courses_shape_threshold_sort_cap():
+    df = aggregates.get_top_courses(limit=10)
+    assert list(df.columns) == [
+        "curs",
+        "prof",
+        "num_feedback",
+        "proc_feedback",
+        "num_utilizatori",
+        "evaluare_curs",
+    ]
+    assert len(df) <= 10
+    assert (df["proc_feedback"] >= 7).all()  # deck threshold
+    assert (df["num_feedback"] >= 3).all()
+    assert list(df["evaluare_curs"]) == sorted(df["evaluare_curs"], reverse=True)  # default sort
+
+
+def test_top_courses_order_by_and_ciclu_filter():
+    df = aggregates.get_top_courses(order_by="proc_feedback")
+    assert list(df["proc_feedback"]) == sorted(df["proc_feedback"], reverse=True)
+    # ciclu filter yields a valid (possibly smaller) board, still capped + thresholded
+    dfm = aggregates.get_top_courses(ciclu="M")
+    assert len(dfm) <= 10 and (dfm["num_feedback"] >= 3).all()
