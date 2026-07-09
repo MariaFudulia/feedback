@@ -175,7 +175,7 @@ def sumar():
             labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"}
         )
 
-        plot_div = fig.to_html(full_html=False, include_plotly_js='cdn')
+        plot_div = fig.to_html(full_html=False, include_plotlyjs='cdn')
 
     return render_template("sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div)
 
@@ -184,12 +184,48 @@ def sumar():
 def completare_evaluare():
     f = current_filters()
     coverage = queries.get_course_coverage()
-    # Adaugă filtrul de semestru conform actualizării de contract
-    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["semestru"] or None)
+    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["sem"] or None)
+    plot_coverage_div = None
+    plot_proc_div = None
+    plot_eval_div = None
+
+    if not coverage.empty:
+        fig_cov = px.pie(
+            coverage, 
+            names="categorie", 
+            values="num_cursuri", 
+            title="Acoperire cursuri pe categorii"
+        )
+        plot_coverage_div = fig_cov.to_html(full_html=False, include_plotlyjs='cdn')
+
+    if not period.empty:
+        df_period = period.sort_values("bucket")
+        
+        fig_proc = px.bar(
+            df_period, 
+            x="bucket", 
+            y="proc_completare", 
+            title="Procentaj completare pe bucket",
+            labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"}
+        )
+        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs='cdn')
+        
+        fig_eval = px.bar(
+            df_period, 
+            x="bucket", 
+            y="evaluare", 
+            title="Evaluare medie pe bucket",
+            labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"}
+        )
+        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs='cdn')
+
     return render_template(
         "completare_evaluare.html",
         coverage=coverage.to_dict("records"),
         period=period.to_dict("records"),
+        plot_coverage_div=plot_coverage_div,
+        plot_proc_div=plot_proc_div,
+        plot_eval_div=plot_eval_div
     )
 
 
