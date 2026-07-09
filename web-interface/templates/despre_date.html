@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %} — Despre date{% endblock %}
+{% block content %}
+{% from "_chips.html" import demo_badge, real_badge %}
+<h1>Despre date</h1>
+<p class="caption">Ce e măsurat, ce e demonstrativ, și de unde vine fiecare număr din interfață.</p>
+
+<div class="section-head"><h2>Cele două badge-uri</h2></div>
+<table>
+  <thead><tr><th>Badge</th><th>Înseamnă</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>{{ real_badge() }}</td>
+      <td>Numărat direct din <strong>arborele real de categorii Moodle</strong> (exportul
+          <code>retrieve-feedback</code>): structura ofertei, cascada de filtre, lista de
+          cursuri și serii. Fără note — doar structură.</td>
+    </tr>
+    <tr>
+      <td>{{ demo_badge() }}</td>
+      <td>Numere <strong>demonstrative</strong>: fie transcrise din deck-ul de referință al
+          coordonatorului (Sumar, acoperire), fie generate determinist pe structura reală
+          (note, cadre didactice, procente). Devin reale automat la importul
+          <code>feedback_contents/</code> + <code>users/</code> — fără modificări de cod.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-head"><h2>Sursa datelor în această instanță</h2></div>
+<p>
+  Instanța curentă rulează pe <strong>{{ "datele reale de structură (export Moodle)" if source == "real" else "datasetul sintetic (fallback)" }}</strong>.
+  {% if source != "real" %}Exportul real nu părăsește mașinile echipei — demo-ul public folosește un
+  dataset sintetic cu exact aceeași formă (cicluri, domenii, specializări, ani, semestre, serii),
+  deci comportamentul interfeței este identic.{% endif %}
+  Spațiul complet de combinații valide se poate inspecta pe pagina
+  <a href="{{ url_for('taxonomie') }}">Taxonomie</a>.
+</p>
+
+<div class="section-head"><h2>Pragurile de selecție (fixe, din deck)</h2></div>
+<table>
+  <thead><tr><th>Entitate</th><th>Inclusă în clasamente doar dacă</th></tr></thead>
+  <tbody>
+    <tr><td>Curs</td><td>≥ 7% procentaj feedback <em>și</em> ≥ 3 feedback-uri</td></tr>
+    <tr><td>Titular</td><td>≥ 7% procentaj feedback (mediu pe cursurile unde e titular) <em>și</em> ≥ 15 feedback-uri</td></tr>
+    <tr><td>Asistent</td><td>≥ 10 feedback-uri</td></tr>
+  </tbody>
+</table>
+<p class="caption">Pragurile oglindesc scripturile <code>analysis/select_*</code> din pipeline și nu
+sunt configurabile din interfață — aceeași regulă, o singură sursă de adevăr.</p>
+{% endblock %}

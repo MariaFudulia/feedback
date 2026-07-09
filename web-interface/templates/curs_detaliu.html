@@ -83,7 +83,7 @@
   <thead>
     <tr>
       {% for key, label in cols %}
-      <th>
+      <th {% if order_by == key %}aria-sort="descending"{% endif %}>
         <a href="{{ url_for('curs_detaliu', cadru=selected_nume,
                              doar_titulari='1' if doar_titulari else None, order_by=key) }}">
           {{ label }} <span class="sort-arrow{{ '' if order_by == key else ' idle' }}">▼</span>
