@@ -219,11 +219,80 @@ main table:not(.grid) { border-collapse: collapse; width: 100%; font-size: 13.5p
 main table:not(.grid) th, main table:not(.grid) td { text-align: left; padding: 7px 12px; border-bottom: 1px solid #e6e8ee; }
 main table:not(.grid) th { background: #f6f7f9; font-weight: 600; color: #5a6070; font-size: 12.5px; }
 .caption { color: #7a8090; font-size: 13px; }
+.charts-row { display: flex; gap: 24px; margin-top: 24px; }
+.charts-row > div { flex: 1 1 0; min-width: 0; }
 main form:not(.filters) { display: flex; gap: 16px; margin: 12px 0; }
 main form:not(.filters) select { padding: 5px 9px; border: 1px solid #d7dbe3; border-radius: 6px; }
 
+/* Filter-panel collapse: a CSS-only checkbox toggle. On desktop the toggle is
+   invisible and .filter-body is always shown; the phone breakpoint below hides
+   the body until the label is tapped, so content is never pushed below a wall
+   of selects. */
+.filters-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.filters-summary { display: none; }
+
 @media (max-width: 900px) {
   .layout { flex-direction: column; }
-  .sidebar { width: auto; flex: none; border-right: none; border-bottom: 1px solid #e6e8ee; }
+  .sidebar {
+    width: auto;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    border-right: none;
+    border-bottom: 1px solid #e6e8ee;
+    padding: 14px 16px;
+  }
+  /* order: brand, nav (horizontal scroll bar), collapsed filters, content */
+  .brand, .brand-sub { order: -2; }
+  .sidebar nav {
+    order: -1;
+    flex-direction: row;
+    gap: 4px;
+    overflow-x: auto;
+    margin: 10px -16px 0;
+    padding: 0 16px 10px;
+    border-top: none;
+    border-bottom: 1px solid #e6e8ee;
+  }
+  .sidebar nav a { flex: 0 0 auto; white-space: nowrap; }
+
+  .filters-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 9px 12px;
+    border: 1px solid #d7dbe3;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filters-summary .scope-line {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #7a8090;
+    font-weight: 400;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+  }
+  .filters-summary::after { content: "▾"; color: #7a8090; }
+  .filters-toggle:checked ~ .filters-summary::after { content: "▴"; }
+  .filter-body { display: none; }
+  .filters-toggle:checked ~ .filter-body { display: block; margin-top: 12px; }
+
+  main { padding: 18px 16px 32px; }
   .metrics { grid-template-columns: repeat(2, 1fr); }
+  /* wide content scrolls in place -- never the whole page */
+  main table { display: block; overflow-x: auto; }
+  .chart-card { overflow-x: auto; }
+  .charts-row { flex-direction: column; }
+}
+
+@media (max-width: 520px) {
+  .metrics { grid-template-columns: 1fr; }
 }

@@ -185,7 +185,7 @@ def sumar():
             labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"},
         )
 
-        plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn")
+        plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
 
     return render_template(
         "sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div
@@ -205,7 +205,9 @@ def completare_evaluare():
         fig_cov = px.pie(
             coverage, names="categorie", values="num_cursuri", title="Acoperire cursuri pe categorii"
         )
-        plot_coverage_div = fig_cov.to_html(full_html=False, include_plotlyjs="cdn")
+        plot_coverage_div = fig_cov.to_html(
+            full_html=False, include_plotlyjs="cdn", config={"responsive": True}
+        )
 
     if not period.empty:
         df_period = period.sort_values("bucket")
@@ -217,7 +219,7 @@ def completare_evaluare():
             title="Procentaj completare pe bucket",
             labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"},
         )
-        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn")
+        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
 
         fig_eval = px.bar(
             df_period,
@@ -226,7 +228,7 @@ def completare_evaluare():
             title="Evaluare medie pe bucket",
             labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"},
         )
-        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn")
+        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
 
     return render_template(
         "completare_evaluare.html",
