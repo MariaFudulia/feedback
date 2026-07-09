@@ -1,4 +1,4 @@
-""""Shell + global filter cascade.
+""" "Shell + global filter cascade.
 Forces the synthetic taxonomy so no private data is needed (same as test_smoke.py)."""
 
 import os
@@ -37,7 +37,7 @@ def test_specializare_shows_only_after_a_domeniu_that_has_one(client):
     _set(client, ciclu="L")  # no domeniu chosen yet
     page = client.get("/").get_data(as_text=True)
     assert 'name="specializare"' not in page
-    
+
     # TODO 1: Setăm domeniul la "IS", reîncărcăm și verificăm apariția filtrului
     _set(client, ciclu="L", domeniu="IS")
     page_with_domeniu = client.get("/").get_data(as_text=True)
@@ -47,7 +47,7 @@ def test_specializare_shows_only_after_a_domeniu_that_has_one(client):
 def test_reset_clears_all_filters(client):
     _set(client, ciclu="L", domeniu="CTI", an="2")
     client.get("/reset-filters?next=/")
-    
+
     # TODO 2: Verificăm top-down că toate cheile din FILTER_KEYS sunt goale
     with client.session_transaction() as sess:
         for key in app_module.FILTER_KEYS:
