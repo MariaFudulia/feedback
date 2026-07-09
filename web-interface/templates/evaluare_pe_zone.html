@@ -6,7 +6,7 @@
 
 <form method="get">
   <label>Entitate:
-    <select name="entitate" onchange="this.form.submit()">
+    <select name="entitate" onchange="this.form.requestSubmit()">
       <option value="curs" {{ "selected" if entitate == "curs" else "" }}>Cursuri</option>
       <option value="titular" {{ "selected" if entitate == "titular" else "" }}>Titulari</option>
       <option value="asistent" {{ "selected" if entitate == "asistent" else "" }}>Asistenți</option>

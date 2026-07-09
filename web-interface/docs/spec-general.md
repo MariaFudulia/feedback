@@ -104,8 +104,8 @@ page showing placeholder data carries one. Enforced by convention across all rep
 | Choice | Why (constraint, not taste) |
 |---|---|
 | **Flask + Jinja** | Real per-route auth. Admin-only now, but the long-term plan is public/student access to a *subset* of data without an account; Flask serves public routes and `@login_required` admin routes over the *same* data layer [`docs/index.html`; git `2024e3e`]. Streamlit (the first prototype) has no such notion. |
-| **Plain HTML forms now** | Filters submit with a full reload (`onchange="this.form.submit()"`) — zero hand-written JS, nothing to debug on the client [`base.html`]. Sufficient for an admin tool. |
-| **htmx later** | Approved path for fragment-level interactivity *when needed* — same server templates, no JS front-end. Not yet wired; rationale in companion §2.3. |
+| **Plain HTML forms** | Filters submit as normal forms (`onchange="this.form.requestSubmit()"`) — zero hand-written JS, nothing to debug on the client [`base.html`]. Sufficient for an admin tool. |
+| **htmx (boost)** | Wired: a vendored `htmx.min.js` + `hx-boost` on `<body>` sends those same form/link round-trips over AJAX and swaps the page in place — no reload flash, same server templates, still no JS front-end [`base.html`]. Fragment-level swaps (`hx-target`) remain the approved next step *when needed*; rationale in companion §2.3. |
 | **pandas** | Data layer only (`queries.py`/`mocks.py`) — the report functions return DataFrames. |
 | **ruff + pytest** | Lint/format + tests, on every commit (pre-commit) and PR (CI) — §9. |
 

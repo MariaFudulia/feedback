@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Feedback POLITEHNICA{% block title %}{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='vendor/htmx.min.js') }}" defer></script>
 </head>
-<body>
+{# hx-boost: links and forms go over AJAX and swap the body in place -- no
+   full-reload flash, same server templates. The approved htmx path from the
+   spec (docs/spec-general.md §3); still zero hand-written JS. #}
+<body hx-boost="true">
 <div class="layout">
 <aside class="sidebar">
   <div class="brand">Feedback POLITEHNICA</div>
@@ -31,7 +35,7 @@
 
     <div class="field">
       <span class="field-label">An universitar</span>
-      <select name="an_universitar" onchange="this.form.submit()">
+      <select name="an_universitar" onchange="this.form.requestSubmit()">
         {% for an in academic_years %}
         <option value="{{ an }}" {{ "selected" if filters.an_universitar == an else "" }}>{{ an }}</option>
         {% endfor %}
@@ -41,7 +45,7 @@
     {% for row in cascade_rows %}
     <div class="field">
       <span class="field-label">{{ row.label }}</span>
-      <select name="{{ row.dim }}" onchange="this.form.submit()">
+      <select name="{{ row.dim }}" onchange="this.form.requestSubmit()">
         <option value="" {{ "selected" if not row.value else "" }}>{{ row.toate }}</option>
         {% for opt in row.options %}
         <option value="{{ opt.value }}" {{ "selected" if row.value == opt.value else "" }}>{{ opt.label }}</option>
