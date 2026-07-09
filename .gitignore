@@ -32,3 +32,4 @@ web-interface/data/
 web-interface/.pytest_cache/
 web-interface/.ruff_cache/
 web-interface/**/__pycache__/
+.DS_Store
