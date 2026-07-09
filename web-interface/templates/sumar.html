@@ -56,5 +56,11 @@
     {% endfor %}
   </tbody>
 </table>
+
+<div class="chart-container" style="margin-top: 24px;">
+  {% if plot_div %}
+    {{ plot_div | safe }}
+  {% endif %}
+</div>
 {% endif %}
 {% endblock %}

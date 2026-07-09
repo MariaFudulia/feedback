@@ -9,6 +9,7 @@ years, a domeniu with no specializare level hides that filter, a course only
 exposes its own series.
 """
 
+import plotly.express as px
 from flask import Flask, redirect, render_template, request, session, url_for
 
 import config
@@ -151,23 +152,79 @@ def sumar():
     oferta = queries.get_offer_structure()  # real, no scores
     summary = queries.get_summary(nivel=nivel, track=track)  # deck mock, demonstrative
     if summary.empty:
-        return render_template("sumar.html", oferta=oferta, total=None, rows=[])
+        return render_template("sumar.html", oferta=oferta, total=None, rows=[], plot_div=None)
     latest_an = summary["an_universitar"].iloc[-1]
     latest = summary[summary["an_universitar"] == latest_an]
     total_rows = latest[latest["nivel"] == "total"]
     total_row = total_rows.iloc[0] if not total_rows.empty else latest.iloc[0]
-    return render_template("sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"))
+
+    plot_div = None
+    if not summary.empty:
+        df_chart = summary
+        if track:
+            df_chart = summary[summary["nivel"] == nivel]
+
+        df_sorted = df_chart.sort_values("an_universitar")
+        fig = px.bar(
+            df_sorted,
+            x="an_universitar",
+            y="num_feedback",
+            color="nivel",
+            barmode="group",
+            title="Evoluția volumului de feedback primit",
+            labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"},
+        )
+
+        plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn")
+
+    return render_template(
+        "sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div
+    )
 
 
 @app.route("/completare-evaluare")
 def completare_evaluare():
-    ciclu, _track, semestru, _an = _coarse_scope()
+    f = current_filters()
     coverage = queries.get_course_coverage()
-    period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
+    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["sem"] or None)
+    plot_coverage_div = None
+    plot_proc_div = None
+    plot_eval_div = None
+
+    if not coverage.empty:
+        fig_cov = px.pie(
+            coverage, names="categorie", values="num_cursuri", title="Acoperire cursuri pe categorii"
+        )
+        plot_coverage_div = fig_cov.to_html(full_html=False, include_plotlyjs="cdn")
+
+    if not period.empty:
+        df_period = period.sort_values("bucket")
+
+        fig_proc = px.bar(
+            df_period,
+            x="bucket",
+            y="proc_completare",
+            title="Procentaj completare pe bucket",
+            labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"},
+        )
+        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn")
+
+        fig_eval = px.bar(
+            df_period,
+            x="bucket",
+            y="evaluare",
+            title="Evaluare medie pe bucket",
+            labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"},
+        )
+        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn")
+
     return render_template(
         "completare_evaluare.html",
         coverage=coverage.to_dict("records"),
         period=period.to_dict("records"),
+        plot_coverage_div=plot_coverage_div,
+        plot_proc_div=plot_proc_div,
+        plot_eval_div=plot_eval_div,
     )
 
 
