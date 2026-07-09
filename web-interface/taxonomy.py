@@ -133,16 +133,20 @@ def _load_real(data_dir, faculty_id):
     courses = pickle.load(open(os.path.join(data_dir, "courses.p"), "rb"))
     feedbacks = pickle.load(open(os.path.join(data_dir, "feedbacks.p"), "rb"))
 
-    by_cat = {c["id"]: c for c in cats}
+    by_cat = {c["id"]: c for c in cats if "id" in c}
     fb_by_course = {}  # course_id -> [feedback_id] (join key to feedback_contents/<id>.json)
     for f in feedbacks:
-        fb_by_course.setdefault(f["course"], []).append(f["id"])
+        if "course" in f and "id" in f:
+            fb_by_course.setdefault(f["course"], []).append(f["id"])
     fb_ids = set(fb_by_course)
     fac_prefix = f"/{faculty_id}/"
     dom_labels, spec_labels = {}, {}
 
-    offerings, unresolved, excluded, years = [], 0, 0, set()
+    offerings, unresolved, excluded, malformed, years = [], 0, 0, 0, set()
     for c in courses:
+        if not ({"id", "shortname", "fullname"} <= c.keys()):  # a bad record must not crash import
+            malformed += 1
+            continue
         if c["id"] not in fb_ids:
             continue
         cat = by_cat.get(c.get("categoryid"))
@@ -180,7 +184,7 @@ def _load_real(data_dir, faculty_id):
             }
         )
     year_labels = sorted(f"{y}-{y + 1}" for y in years) or ["2024-2025"]
-    stats = {"unresolved": unresolved, "excluded_research": excluded}
+    stats = {"unresolved": unresolved, "excluded_research": excluded, "malformed": malformed}
     return offerings, dom_labels, spec_labels, year_labels, stats
 
 
@@ -488,7 +492,8 @@ def _init():
         _EXCLUDED, \
         _SOURCE, \
         _CONTENT, \
-        _CONTENT_SKIPPED
+        _CONTENT_SKIPPED, \
+        _MALFORMED
     data_dir = config.FEEDBACK_DATA_DIR
     if _pickles_present(data_dir):
         _OFFERINGS, _DOMENIU_LABEL, _SPEC_LABEL, _YEARS, stats = _load_real(
@@ -500,6 +505,7 @@ def _init():
         _SOURCE = "synthetic"
     _UNRESOLVED = stats["unresolved"]
     _EXCLUDED = stats["excluded_research"]
+    _MALFORMED = stats.get("malformed", 0)
     # None until feedback_contents/ + users/ arrive; skip-count surfaced in consistency_issues
     _CONTENT, _CONTENT_SKIPPED = _load_content(data_dir, _OFFERINGS)
     _BY_CURS = {}
@@ -842,6 +848,8 @@ def consistency_issues():
         issues.append(f"{len(no_sem)} courses have no semester in the category tree")
     if _CONTENT_SKIPPED:
         issues.append(f"{_CONTENT_SKIPPED} feedback/users content files could not be parsed and were skipped")
+    if _MALFORMED:
+        issues.append(f"{_MALFORMED} course records were missing required fields and were skipped")
     return issues
 
 
