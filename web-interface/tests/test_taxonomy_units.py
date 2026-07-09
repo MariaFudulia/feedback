@@ -98,3 +98,30 @@ def test_research_denylist_matches_master_research_only():
     # a licență course and a normal master course are NOT excluded
     assert not deny.search("03-ACS-L-CTI-A1-S1-POO-CA")
     assert not deny.search("03-ACS-M-CTI-A1-S1-BPDA-SCPD")
+
+
+def test_research_denylist_in_sync_with_pipeline():
+    """The deny regex duplicates the pipeline's master-research exclusion (the one
+    documented coupling point). Parse the pipeline's own match lines so a change on
+    either side fails here instead of drifting silently."""
+    import re
+    from pathlib import Path
+
+    pipeline_src = (
+        Path(__file__).resolve().parents[2] / "analysis" / "select_feedback_course_mapping.py"
+    ).read_text(encoding="utf-8")
+    pipeline_codes = re.findall(r're\.match\("M-\.\*-([A-Za-z]+)-"', pipeline_src)
+    assert pipeline_codes, "pipeline denylist not found -- did the mapping script change shape?"
+
+    # our alternatives, extracted from the live pattern with regex syntax stripped
+    # ("Cercet[^-]*" -> literal prefix "Cercet")
+    group = re.search(r"\((.*?)\)\(", taxonomy._RE_RESEARCH_DENY.pattern).group(1)
+    our_prefixes = [re.sub(r"\[.*?\]\*?", "", alt) for alt in group.split("|")]
+
+    # every code the pipeline drops, our loader drops too
+    for code in pipeline_codes:
+        assert taxonomy._RE_RESEARCH_DENY.search(f"03-ACS-M-A1-S1-{code}-G"), code
+    # and we deny nothing the pipeline doesn't: each alternative maps onto a pipeline code
+    for prefix in our_prefixes:
+        assert any(code.startswith(prefix) for code in pipeline_codes), prefix
+    assert len(our_prefixes) == len(set(pipeline_codes))
