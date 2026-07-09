@@ -30,13 +30,13 @@
   </tbody>
 </table>
 
-<div class="charts-row" style="display: flex; gap: 24px; margin-top: 24px;">
-  <div style="flex: 1;">
+<div class="charts-row">
+  <div>
     {% if plot_proc_div %}
       {{ plot_proc_div | safe }}
     {% endif %}
   </div>
-  <div style="flex: 1;">
+  <div>
     {% if plot_eval_div %}
       {{ plot_eval_div | safe }}
     {% endif %}
