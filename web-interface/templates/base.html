@@ -36,7 +36,10 @@
 
     <div class="field">
       <span class="field-label">An universitar</span>
-      <select name="an_universitar" onchange="this.form.requestSubmit()">
+      {# a one-year dataset gets a disabled control -- a live dropdown with one
+         option implies history the data doesn't have #}
+      <select name="an_universitar" onchange="this.form.requestSubmit()"
+              {% if academic_years|length < 2 %}disabled title="Un singur an universitar în datele încărcate — filtrul se activează când există istoric."{% endif %}>
         {% for an in academic_years %}
         <option value="{{ an }}" {{ "selected" if filters.an_universitar == an else "" }}>{{ an }}</option>
         {% endfor %}
@@ -74,6 +77,7 @@
     <a href="{{ url_for('top10_asistenti') }}">Top-10 asistenți</a>
     <a href="{{ url_for('evaluare_pe_zone') }}">Evaluare pe zone</a>
     <a href="{{ url_for('curs_detaliu') }}">Detaliu curs</a>
+    <a href="{{ url_for('despre_date') }}">Despre date</a>
   </nav>
 </aside>
 <main>

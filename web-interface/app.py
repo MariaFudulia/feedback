@@ -430,6 +430,13 @@ def curs_detaliu():
     )
 
 
+@app.route("/despre-date")
+def despre_date():
+    """What is measured vs. demonstrative, and where every number comes from --
+    written for a first-time viewer of the (synthetic) public demo."""
+    return render_template("despre_date.html", source=queries.get_data_source())
+
+
 @app.route("/taxonomie")
 def taxonomie():
     """Debug view: the entire valid combination space as a tree, plus any

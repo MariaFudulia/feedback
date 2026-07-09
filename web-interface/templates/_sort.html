@@ -3,5 +3,5 @@
    The arrow is ALWAYS rendered (hidden when inactive) so activating a column
    never changes its width and shifts the table. #}
 {% macro sort_th(endpoint, key, label, order_by) -%}
-<th class="th-sort"><a href="{{ url_for(endpoint, order_by=key) }}">{{ label }} <span class="sort-arrow{{ '' if order_by == key else ' idle' }}">▼</span></a></th>
+<th class="th-sort" {% if order_by == key %}aria-sort="descending"{% endif %}><a href="{{ url_for(endpoint, order_by=key) }}">{{ label }} <span class="sort-arrow{{ '' if order_by == key else ' idle' }}">▼</span></a></th>
 {%- endmacro %}
