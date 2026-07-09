@@ -2,6 +2,7 @@
 {% block title %} — Sumar{% endblock %}
 {% block content %}
 {% from "_chips.html" import demo_badge, real_badge %}
+{% from "_charts.html" import columns %}
 <h1>Sumar</h1>
 
 <div class="section-head">
@@ -57,10 +58,11 @@
   </tbody>
 </table>
 
-<div class="chart-container" style="margin-top: 24px;">
-  {% if plot_div %}
-    {{ plot_div | safe }}
-  {% endif %}
+{% if chart and chart.groups %}
+<div class="section-head"><h2>Evoluția volumului de feedback</h2></div>
+<div class="chart-card">
+  {{ columns(chart.groups, chart.series, chart.vmax, chart.note) }}
 </div>
+{% endif %}
 {% endif %}
 {% endblock %}

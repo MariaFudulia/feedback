@@ -1,0 +1,52 @@
+{# Native chart macros -- the app's one chart language (same look as the
+   curs-detaliu comparison chart): CSS columns on a hairline baseline, legend
+   row with a scale note, native title-attr tooltips, text in text tokens.
+   No client JS, no external chart library. Exact values always live in the
+   table each chart sits next to.
+
+   columns(groups, series, vmax, scale_note):
+     groups: [{label, values: {series_key: number}}]  (one group per x slot)
+     series: [{key, label, color, unit}]  -- color in {red, blue, green, gray}
+     Fixed entity->color mapping is the caller's job (color follows the
+     entity, never its position, so filtering never repaints survivors).
+   share_bar(rows, label_key, value_key, pct_key):
+     part-to-whole strip, emphasis form: first row wears the accent, the
+     rest de-emphasis grays. #}
+
+{% macro columns(groups, series, vmax, scale_note="") -%}
+<div class="chart-legend">
+  {% if series|length > 1 %}
+  {% for s in series %}<span><i class="sw sw-{{ s.color }}"></i> {{ s.label }}</span>{% endfor %}
+  {% endif %}
+  {% if scale_note %}<span class="scale">{{ scale_note }}</span>{% endif %}
+</div>
+<div class="colchart">
+  {% for g in groups %}
+  <div class="col">
+    <div class="col-bars">
+      {% for s in series %}{% if s.key in g["values"] %}
+      <div class="col-bar bar-{{ s.color }}"
+           style="height: {{ (g['values'][s.key] / vmax * 100)|round(1) }}%"
+           title="{{ g.label }}{{ ' · ' + s.label if series|length > 1 else '' }}: {{ g['values'][s.key] }}{{ s.unit or '' }}"></div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="col-label">{{ g.label }}</div>
+  </div>
+  {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro share_bar(rows, label_key, value_key, pct_key) -%}
+{% set seg_colors = ["red", "gray", "graylight"] %}
+<div class="sharebar">
+  {% for r in rows %}
+  <div class="share-seg bar-{{ seg_colors[loop.index0 % 3] }}" style="flex: 0 0 {{ r[pct_key] }}%"
+       title="{{ r[label_key] }}: {{ r[value_key] }} cursuri ({{ r[pct_key] }}%)"></div>
+  {% endfor %}
+</div>
+<div class="chart-legend sharebar-legend">
+  {% for r in rows %}
+  <span><i class="sw sw-{{ seg_colors[loop.index0 % 3] }}"></i> {{ r[label_key] }} · {{ r[value_key] }} ({{ r[pct_key] }}%)</span>
+  {% endfor %}
+</div>
+{%- endmacro %}
