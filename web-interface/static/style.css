@@ -217,13 +217,15 @@ tr.row-selected td { background: #fbf3f2; }
 /* Native charts (shared macros in _charts.html) */
 .colchart {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 12px;
-  height: 190px;
   padding: 0 6px;
-  border-bottom: 1px solid #e6e8ee;
+  position: relative;
   min-width: min-content; /* many x slots -> the chart-card scrolls, columns never crush */
 }
+/* the baseline sits at the bottom of the fixed-height bar area (NOT under the
+   labels): every bar shares it no matter how many lines its label wraps to */
+.colchart::after { content: ""; position: absolute; left: 0; right: 0; top: 160px; border-top: 1px solid #e6e8ee; }
 .colchart .col {
   flex: 1 1 0;
   min-width: 26px;
@@ -232,7 +234,7 @@ tr.row-selected td { background: #fbf3f2; }
   align-items: center;
   gap: 8px;
 }
-.col-bars { flex: 1 1 auto; display: flex; align-items: flex-end; justify-content: center; gap: 2px; width: 100%; }
+.col-bars { height: 160px; display: flex; align-items: flex-end; justify-content: center; gap: 2px; width: 100%; }
 .col-bar { width: 100%; max-width: 24px; border-radius: 4px 4px 0 0; }
 .col-label { font-size: 11px; line-height: 1.3; color: #7a8090; text-align: center; overflow-wrap: anywhere; }
 
