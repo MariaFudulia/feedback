@@ -59,6 +59,10 @@
   {% block sidebar_context %}{% endblock %}
 
   <a class="reset-btn" href="{{ url_for('reset_filters', next=request.path) }}">↻ Resetează filtrele</a>
+  {% if share_qs %}
+  <a class="share-link" href="{{ request.path }}?{{ share_qs }}"
+     title="Adresa acestui link reproduce filtrele curente — copiaz-o și trimite-o">🔗 Link cu filtrele curente</a>
+  {% endif %}
   </div>
 
   <nav>

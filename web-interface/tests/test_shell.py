@@ -95,3 +95,42 @@ def test_coarse_scope_semester_gets_deck_prefix(client):
     assert ciclu == "L"
     assert semestru == "S1"
     assert an == 2  # int, not the session's string
+
+
+# ---- shareable scope URLs ----------------------------------------------------
+# A GET carrying structural params applies them like a sidebar submission, so a
+# pasted link reproduces the exact view. Same revalidation -> still contradiction-proof.
+
+
+def test_url_scope_applies_to_session(client):
+    client.get("/top10-cursuri?ciclu=L&domeniu=CTI&an=2")
+    with client.session_transaction() as sess:
+        assert sess.get("ciclu") == "L"
+        assert sess.get("domeniu") == "CTI"
+        assert sess.get("an") == "2"
+
+
+def test_url_scope_is_revalidated_not_trusted(client):
+    # Master has no year 3: the illegal an must be dropped, not stored
+    client.get("/?ciclu=M&an=3")
+    with client.session_transaction() as sess:
+        assert sess.get("ciclu") == "M"
+        assert sess.get("an") == ""
+
+
+def test_url_scope_is_the_whole_scope(client):
+    # a link's params REPLACE the scope; a dim absent from the link means 'Toate'
+    _set(client, ciclu="L", domeniu="CTI", an="2")
+    client.get("/?ciclu=M")
+    with client.session_transaction() as sess:
+        assert sess.get("ciclu") == "M"
+        assert sess.get("domeniu") == ""
+        assert sess.get("an") == ""
+
+
+def test_share_link_offered_only_when_scoped(client):
+    client.get("/reset-filters?next=/")
+    assert "share-link" not in client.get("/").get_data(as_text=True)
+    _set(client, ciclu="L")
+    page = client.get("/").get_data(as_text=True)
+    assert "share-link" in page and "ciclu=L" in page

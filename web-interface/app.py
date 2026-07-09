@@ -10,6 +10,7 @@ exposes its own series.
 """
 
 import math
+from urllib.parse import urlencode
 
 from flask import Flask, abort, redirect, render_template, request, session, url_for
 
@@ -120,30 +121,51 @@ def build_cascade(filters):
 def inject_sidebar():
     filters = current_filters()
     rows, _eff = build_cascade(filters)
+    # shareable link for the current scope (only offered once something is filtered)
+    share_qs = urlencode({k: v for k, v in filters.items() if v}) if any(filters[d] for d in STRUCT) else ""
     return {
         "filters": filters,
         "cascade_rows": rows,
         "academic_years": queries.get_academic_years(),
+        "share_qs": share_qs,
     }
 
 
-@app.route("/set-filters", methods=["POST"])
-def set_filters():
-    session["an_universitar"] = request.form.get("an_universitar", "")
-    # Revalidate the structural cascade top-down against the real combination
-    # space: keep every submitted value that is still legal given the accepted
-    # upstream, drop (to "Toate") anything that became contradictory. Because
-    # each dim's legality is computed against the *accepted* prefix (eff), a
-    # change high in the cascade cleanly cascades the clearing downstream.
+def _apply_scope(values):
+    """Write a submitted scope into the session, revalidating the structural
+    cascade top-down against the real combination space: keep every value that
+    is still legal given the accepted upstream, drop (to "Toate") anything
+    contradictory. Because each dim's legality is computed against the
+    *accepted* prefix (eff), a change high in the cascade cleanly cascades the
+    clearing downstream. `values` is any mapping with .get (form or args)."""
+    session["an_universitar"] = values.get("an_universitar", "")
     eff = {}
     for dim in STRUCT:
         legal = {o["value"] for o in queries.get_filter_options(eff)[dim]}
-        v = request.form.get(dim, "")
+        v = values.get(dim, "")
         if v and v in legal:
             session[dim] = v
             eff[dim] = v
         else:
             session[dim] = ""
+    return eff
+
+
+@app.before_request
+def scope_from_url():
+    """Shareable scope: a GET carrying structural filter params applies them
+    exactly like a sidebar submission (same top-down revalidation), so a URL
+    like /top10-cursuri?ciclu=L&domeniu=CTI&an=2 reproduces that view for
+    whoever opens it. Params define the WHOLE scope (absent dim = 'Toate')."""
+    if request.method != "GET" or request.endpoint in (None, "static"):
+        return
+    if any(k in request.args for k in FILTER_KEYS):
+        _apply_scope(request.args)
+
+
+@app.route("/set-filters", methods=["POST"])
+def set_filters():
+    _apply_scope(request.form)
     return redirect(_safe_next(request.form.get("next")) or url_for("sumar"))
 
 
