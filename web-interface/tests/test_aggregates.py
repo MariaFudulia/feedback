@@ -131,3 +131,20 @@ def test_score_distribution_bands_and_sum():
         assert list(df["banda"]) == ["4-5", "3-4", "2-3", "1-2"]
         assert df["num"].sum() >= 1
         assert abs(df["pct"].sum() - 100.0) <= 0.5  # percentages sum to ~100
+
+
+def test_period_breakdown_buckets_and_ciclu_filter():
+    df = aggregates.get_period_breakdown()
+    assert list(df.columns) == ["bucket", "proc_completare", "evaluare"]
+    assert "all" in set(df["bucket"])
+    assert df["evaluare"].between(0, 5).all()
+    dfl = aggregates.get_period_breakdown(ciclu="L")
+    assert all(b == "all" or b.startswith("L") for b in dfl["bucket"])
+
+
+def test_year_breakdown_series_labels():
+    df = aggregates.get_year_breakdown(1, ciclu="L")
+    assert list(df.columns) == ["serie", "proc_completare", "evaluare"]
+    assert len(df) >= 1  # An 1 has series in both real and synthetic
+    assert all("-A1-" in s for s in df["serie"])
+    assert df["evaluare"].between(0, 5).all()

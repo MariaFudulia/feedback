@@ -49,6 +49,7 @@ def _courses(year=None):
                 "prof": titular,
                 "ciclu": ms[0]["ciclu"],
                 "domeniu": ms[0]["domeniu"],
+                "an": ms[0]["an"],
                 "sem": ms[0]["sem"],
                 "num_feedback": responses,
                 "num_utilizatori": students,
@@ -157,3 +158,71 @@ def get_score_distribution(entitate):
         counts[_band(s)] += 1
     rows = [{"banda": b, "num": counts[b], "pct": round(100 * counts[b] / total, 1)} for b in _BANDS]
     return pd.DataFrame(rows, columns=["banda", "num", "pct"])
+
+
+def _rollup(courses):
+    """{proc_completare, evaluare} over a set of per-curs rows."""
+    resp = sum(c["num_feedback"] for c in courses)
+    stud = sum(c["num_utilizatori"] for c in courses)
+    return (
+        round(100 * resp / stud, 2) if stud else 0.0,
+        _mean([c["evaluare_curs"] for c in courses]),
+    )
+
+
+def get_period_breakdown(ciclu=None, semestru=None):
+    """columns: bucket, proc_completare, evaluare -- structural rollup of the current year
+    (all / L / L-A1 / L-A1-S1 / ...). ciclu/semestru filter the bucket labels (as the deck did)."""
+    courses = _courses()
+    specs = [("all", lambda c: True)]
+    for cic in sorted({c["ciclu"] for c in courses}):
+        specs.append((cic, lambda c, cic=cic: c["ciclu"] == cic))
+        for an in sorted({c["an"] for c in courses if c["ciclu"] == cic}):
+            specs.append((f"{cic}-A{an}", lambda c, cic=cic, an=an: c["ciclu"] == cic and c["an"] == an))
+            for sem in sorted(
+                {c["sem"] for c in courses if c["ciclu"] == cic and c["an"] == an and c["sem"]}
+            ):
+                specs.append(
+                    (
+                        f"{cic}-A{an}-S{sem}",
+                        lambda c, cic=cic, an=an, sem=sem: (
+                            c["ciclu"] == cic and c["an"] == an and c["sem"] == sem
+                        ),
+                    )
+                )
+    rows = []
+    for label, pred in specs:
+        sel = [c for c in courses if pred(c)]
+        if not sel:
+            continue
+        proc, evaluare = _rollup(sel)
+        rows.append({"bucket": label, "proc_completare": proc, "evaluare": evaluare})
+    df = pd.DataFrame(rows, columns=["bucket", "proc_completare", "evaluare"])
+    if ciclu in ("L", "M"):
+        df = df[df["bucket"].str.startswith(("all", ciclu))]
+    if semestru == "S1":
+        df = df[df["bucket"].str.endswith("-S1")]
+    elif semestru == "S2":
+        df = df[df["bucket"].str.endswith("-S2")]
+    return df.reset_index(drop=True)
+
+
+def get_year_breakdown(an, ciclu="L"):
+    """columns: serie, proc_completare, evaluare -- per-serie within an an de studiu.
+    Empty for years with no data (honest gap; the deck stopped at An 3)."""
+    groups = {}
+    for m in taxonomy.offering_metrics():
+        if m["ciclu"] == ciclu and m["an"] == an and m["serie"]:
+            groups.setdefault((m["sem"], m["serie"]), []).append(m)
+    rows = []
+    for (sem, serie), ms in sorted(groups.items()):
+        resp = sum(m["responses"] for m in ms)
+        stud = sum(m["students"] for m in ms)
+        rows.append(
+            {
+                "serie": f"{ciclu}-A{an}-S{sem}-{serie}",
+                "proc_completare": round(100 * resp / stud, 2) if stud else 0.0,
+                "evaluare": _mean([m["evaluare_curs"] for m in ms]),
+            }
+        )
+    return pd.DataFrame(rows, columns=["serie", "proc_completare", "evaluare"])
