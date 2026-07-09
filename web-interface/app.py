@@ -231,7 +231,7 @@ def completare_evaluare():
 @app.route("/pe-ani-de-studiu")
 def pe_ani_de_studiu():
     _ciclu, _track, _sem, an = _coarse_scope()
-    an = an if an in (1, 2, 3) else 1  # deck data only has 1-3
+    an = an or 1  # no year filtered yet -> default to An 1
     df = queries.get_year_breakdown(an)
     return render_template("pe_ani_de_studiu.html", an=an, rows=df.to_dict("records"))
 

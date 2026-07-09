@@ -10,6 +10,8 @@
   <tbody>
     {% for row in rows %}
     <tr><td>{{ row.serie }}</td><td>{{ "%.1f"|format(row.proc_completare) }}%</td><td>{{ "%.2f"|format(row.evaluare) }}</td></tr>
+    {% else %}
+    <tr><td colspan="3" class="caption">Nu există date pe serii pentru anul {{ an }}.</td></tr>
     {% endfor %}
   </tbody>
 </table>
