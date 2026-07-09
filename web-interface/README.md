@@ -58,3 +58,17 @@ deci rămâne de adăugat acolo dacă trecem pe bază de date.
 
 PR #20 (Vlad, Flask „Hello World") — acum că mergem tot pe Flask, merită văzut cu Vlad dacă
 branch-ul ăla se coordonează cu munca de aici, sau rămâne separat.
+
+## Demo public (Render)
+
+Repo-ul conține un blueprint Render (`render.yaml`, în rădăcina repo-ului) care
+publică interfața ca demo, **exclusiv pe datele sintetice**: exportul real
+(`data/*.p`) este gitignored, deci nu ajunge nici în repo, nici pe host —
+`taxonomy.py` cade automat pe datasetul sintetic, iar `/taxonomie` afișează
+sursa datelor.
+
+Pași (o singură dată): cont pe render.com → *New → Blueprint* → conectezi
+fork-ul `MariaFudulia/feedback`, branch `develop` → Render citește
+`render.yaml` și publică serviciul. Redeploy automat la fiecare push pe
+`develop`. Planul free adoarme după inactivitate; primul request după pauză
+durează ~30s.

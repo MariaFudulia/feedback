@@ -1,0 +1,21 @@
+# Render blueprint for the public demo of the feedback web interface.
+#
+# The demo runs on the SYNTHETIC dataset by design: the real Moodle export
+# (web-interface/data/*.p) is gitignored and never reaches the repo or the
+# host, so the deployed app contains no institutional or personal data. The
+# taxonomy layer falls back to the synthetic structure automatically when the
+# pickles are absent (web-interface/taxonomy.py), and the /taxonomie page
+# banners the data source so nobody can mistake the demo for real data.
+services:
+  - type: web
+    name: feedback-upb-demo
+    runtime: python
+    plan: free
+    rootDir: web-interface
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 2 --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: FEEDBACK_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.7
