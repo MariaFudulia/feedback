@@ -1,0 +1,76 @@
+"""Aggregation engine (aggregates.py) + its taxonomy substrate (offering_metrics).
+
+Synthetic path runs on the fallback dataset (conftest forces it); the real path reuses
+tests/fixtures/content/ by installing it directly (same approach as test_content_adapter).
+"""
+
+import os
+from collections import defaultdict
+
+import taxonomy
+
+_FIX = os.path.join(os.path.dirname(__file__), "fixtures", "content")
+
+
+def test_offering_metrics_shape():
+    rows = taxonomy.offering_metrics()
+    assert len(rows) == len(taxonomy.all_offerings())
+    r = rows[0]
+    assert {
+        "course_id",
+        "curs",
+        "denumire",
+        "ciclu",
+        "domeniu",
+        "an",
+        "sem",
+        "serie",
+        "responses",
+        "students",
+        "evaluare_curs",
+        "cadre",
+    } <= set(r)
+    assert 1.0 <= r["evaluare_curs"] <= 5.0
+    assert r["responses"] >= 1 and r["students"] >= 1
+
+
+def test_offering_metrics_synthetic_split_is_sum_preserving_per_curs():
+    # grouping offerings back by curs must reproduce the per-curs functions (no page-to-page
+    # contradiction). Synthetic rounding allows a small tolerance bounded by #offerings.
+    rows = taxonomy.offering_metrics()
+    stu, resp, n_off = defaultdict(int), defaultdict(int), defaultdict(int)
+    for row in rows:
+        stu[row["curs"]] += row["students"]
+        resp[row["curs"]] += row["responses"]
+        n_off[row["curs"]] += 1
+    for curs in list(stu)[:20]:  # sample
+        assert abs(stu[curs] - taxonomy.course_students(curs)) <= n_off[curs]
+        assert abs(resp[curs] - taxonomy.course_responses(curs)) <= n_off[curs]
+
+
+def test_offering_metrics_reads_real_content_via_fixture():
+    offerings = [
+        {
+            "course_id": 2802,
+            "feedback_ids": [9978],
+            "curs": "c",
+            "denumire": "C",
+            "ciclu": "L",
+            "domeniu": "CTI",
+            "specializare": None,
+            "an": 2,
+            "sem": 1,
+            "serie": "CA",
+        }
+    ]
+    content, _ = taxonomy._load_content(_FIX, offerings)
+    saved = (taxonomy._OFFERINGS, taxonomy._CONTENT)
+    taxonomy._OFFERINGS, taxonomy._CONTENT = offerings, content
+    try:
+        rows = taxonomy.offering_metrics()
+        assert len(rows) == 1
+        assert rows[0]["responses"] == 2 and rows[0]["students"] == 3
+        assert rows[0]["evaluare_curs"] == 4.5  # course-level eval_gen from the fixture
+        assert rows[0]["serie"] == "CA"
+    finally:
+        taxonomy._OFFERINGS, taxonomy._CONTENT = saved
