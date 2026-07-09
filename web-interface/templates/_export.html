@@ -1,0 +1,7 @@
+{# Visible CSV download for the table it sits next to -- exports exactly what
+   is displayed (current scope + sort). hx-boost off: it's an attachment, the
+   browser must handle it, not htmx. `kind` selects the table on two-table
+   pages (sumar/completare); plain pages use the default "csv". #}
+{% macro csv_btn(kind="csv") -%}
+<a class="export-btn" hx-boost="false" href="{{ export_url(kind) }}">⬇ CSV</a>
+{%- endmacro %}

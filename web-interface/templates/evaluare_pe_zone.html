@@ -2,7 +2,9 @@
 {% block title %} — Evaluare pe zone{% endblock %}
 {% block content %}
 {% from "_chips.html" import demo_badge %}
-<div class="section-head"><h1>Evaluare pe zone (benzi de scor)</h1>{{ demo_badge() }}</div>
+{% from "_export.html" import csv_btn with context %}
+
+<div class="section-head"><h1>Evaluare pe zone (benzi de scor)</h1>{{ demo_badge() }} {{ csv_btn() }}</div>
 
 <form method="get">
   <label>Entitate:

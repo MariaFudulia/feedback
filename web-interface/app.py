@@ -12,7 +12,8 @@ exposes its own series.
 import math
 from urllib.parse import urlencode
 
-from flask import Flask, abort, redirect, render_template, request, session, url_for
+import pandas as pd
+from flask import Flask, Response, abort, redirect, render_template, request, session, url_for
 
 import config
 import queries
@@ -128,6 +129,7 @@ def inject_sidebar():
         "cascade_rows": rows,
         "academic_years": queries.get_academic_years(),
         "share_qs": share_qs,
+        "export_url": _export_url,
     }
 
 
@@ -198,6 +200,8 @@ def sumar():
     nivel = {"L": "licenta", "M": "masterat"}.get(ciclu)
     oferta = queries.get_offer_structure()  # real, no scores
     summary = queries.get_summary(nivel=nivel, track=track)  # deck mock, demonstrative
+    if request.args.get("export") == "csv":
+        return _csv(summary, "sumar-evolutie")
     if summary.empty:
         return render_template("sumar.html", oferta=oferta, total=None, rows=[], chart=None)
     latest_an = summary["an_universitar"].iloc[-1]
@@ -231,6 +235,11 @@ def completare_evaluare():
     ciclu, _track, semestru, _an = _coarse_scope()
     coverage = queries.get_course_coverage()
     period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
+    export = request.args.get("export")
+    if export == "coverage":
+        return _csv(coverage, "cursuri-cu-feedback")
+    if export == "buckets":
+        return _csv(period, "completare-evaluare-buckets")
     period_records = period.to_dict("records")
     chart_proc = chart_eval = None
     if period_records:
@@ -262,7 +271,23 @@ def pe_ani_de_studiu():
     _ciclu, _track, _sem, an = _coarse_scope()
     an = an or 1  # no year filtered yet -> default to An 1
     df = queries.get_year_breakdown(an)
+    if request.args.get("export") == "csv":
+        return _csv(df, f"pe-ani-de-studiu-an{an}")
     return render_template("pe_ani_de_studiu.html", an=an, rows=df.to_dict("records"))
+
+
+def _export_url(kind="csv"):
+    """Current page's URL with export=<kind> added (keeps sort/scope params)."""
+    return url_for(request.endpoint, **{**request.args.to_dict(), "export": kind})
+
+
+def _csv(df, name):
+    """The displayed table (post-filter, post-sort) as a CSV download."""
+    return Response(
+        df.to_csv(index=False),
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{name}.csv"'},
+    )
 
 
 def _order_by(default, allowed):
@@ -278,6 +303,8 @@ def top10_cursuri():
     order_by = _order_by("evaluare_curs", ("evaluare_curs", "proc_feedback"))
     ciclu, track, semestru, _an = _coarse_scope()
     df = queries.get_top_courses(order_by=order_by, ciclu=ciclu, track=track, semestru=semestru)
+    if request.args.get("export") == "csv":
+        return _csv(df, "top10-cursuri")
     return render_template("top10_cursuri.html", order_by=order_by, rows=df.to_dict("records"))
 
 
@@ -285,6 +312,8 @@ def top10_cursuri():
 def top10_titulari():
     order_by = _order_by("evaluare_prof", ("evaluare_prof", "evaluare_curs", "proc_feedback"))
     df = queries.get_top_titulari(order_by=order_by)
+    if request.args.get("export") == "csv":
+        return _csv(df, "top10-titulari")
     return render_template("top10_titulari.html", order_by=order_by, rows=df.to_dict("records"))
 
 
@@ -292,6 +321,8 @@ def top10_titulari():
 def top10_asistenti():
     order_by = _order_by("evaluare_prof", ("evaluare_prof", "evaluare_curs"))
     df = queries.get_top_asistenti(order_by=order_by)
+    if request.args.get("export") == "csv":
+        return _csv(df, "top10-asistenti")
     return render_template("top10_asistenti.html", order_by=order_by, rows=df.to_dict("records"))
 
 
@@ -301,6 +332,8 @@ def evaluare_pe_zone():
     if entitate not in ("curs", "titular", "asistent"):
         abort(400, "entitate necunoscută (curs / titular / asistent)")
     df = queries.get_score_distribution(entitate)
+    if request.args.get("export") == "csv":
+        return _csv(df, f"evaluare-pe-zone-{entitate}")
     return render_template("evaluare_pe_zone.html", entitate=entitate, rows=df.to_dict("records"))
 
 
@@ -337,6 +370,8 @@ def curs_detaliu():
     )
     reverse = order_by != "nume"
     cadre = sorted(cadre, key=lambda c: c[order_by], reverse=reverse)
+    if request.args.get("export") == "csv":
+        return _csv(pd.DataFrame(cadre), f"detaliu-{curs or 'curs'}")
 
     faculty_avg = queries.get_faculty_average(an_universitar)
     # top-line "Răspunsuri" = unique student submissions (<= enrolled); the

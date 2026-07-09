@@ -185,6 +185,11 @@ h1 { font-size: 25px; margin: 0 0 6px; letter-spacing: -.4px; }
 .section-head { display: flex; align-items: baseline; gap: 12px; margin: 26px 0 10px; }
 .section-head h2 { font-size: 17px; margin: 0; letter-spacing: -.2px; }
 .hint-chip { font-size: 12px; color: #8a90a0; background: #f0f1f4; padding: 2px 9px; border-radius: 20px; }
+.export-btn {
+  font-size: 12px; font-weight: 600; color: #5a6070; background: #f0f1f4;
+  padding: 2px 10px; border-radius: 20px; text-decoration: none; white-space: nowrap;
+}
+.export-btn:hover { background: #e3e5ea; color: #1f2430; }
 
 /* Table */
 table.grid { border-collapse: collapse; width: 100%; font-size: 13.5px; border: 1px solid #e6e8ee; border-radius: 11px; overflow: hidden; }
