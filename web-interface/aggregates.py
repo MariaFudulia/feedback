@@ -14,6 +14,17 @@ import taxonomy
 
 # a cadru's overall teaching score = mean of these 4 keys (per the pipeline's prof_* mapping)
 _TEACH_KEYS = ["preg", "expl_clare", "interes", "comport"]
+_BANDS = ["4-5", "3-4", "2-3", "1-2"]  # score bands, high to low (1-5 Likert)
+
+
+def _band(score):
+    if score >= 4:
+        return "4-5"
+    if score >= 3:
+        return "3-4"
+    if score >= 2:
+        return "2-3"
+    return "1-2"
 
 
 def _mean(xs):
@@ -131,3 +142,18 @@ def get_top_asistenti(order_by="evaluare_prof", limit=10):
     if order_by in cols:
         df = df.sort_values(order_by, ascending=False)
     return df.head(limit).reset_index(drop=True)
+
+
+def get_score_distribution(entitate):
+    """columns: banda, num, pct  (entitate in {'curs', 'titular', 'asistent'})
+    Histograms the per-entity evaluation into the deck's 4-5/3-4/2-3/1-2 bands."""
+    if entitate == "curs":
+        scores = [r["evaluare_curs"] for r in _courses()]
+    else:
+        scores = [r["evaluare_prof"] for r in _people(entitate)]
+    total = len(scores) or 1
+    counts = dict.fromkeys(_BANDS, 0)
+    for s in scores:
+        counts[_band(s)] += 1
+    rows = [{"banda": b, "num": counts[b], "pct": round(100 * counts[b] / total, 1)} for b in _BANDS]
+    return pd.DataFrame(rows, columns=["banda", "num", "pct"])

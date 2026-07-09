@@ -122,3 +122,12 @@ def test_top_asistenti_shape_threshold():
     assert list(df.columns) == ["persoana", "num_feedback", "evaluare_curs", "evaluare_prof"]
     assert len(df) <= 10
     assert (df["num_feedback"] >= 10).all()
+
+
+def test_score_distribution_bands_and_sum():
+    for entitate in ("curs", "titular", "asistent"):
+        df = aggregates.get_score_distribution(entitate)
+        assert list(df.columns) == ["banda", "num", "pct"]
+        assert list(df["banda"]) == ["4-5", "3-4", "2-3", "1-2"]
+        assert df["num"].sum() >= 1
+        assert abs(df["pct"].sum() - 100.0) <= 0.5  # percentages sum to ~100
