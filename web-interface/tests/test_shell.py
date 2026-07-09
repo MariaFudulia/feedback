@@ -53,3 +53,45 @@ def test_reset_clears_all_filters(client):
         for key in app_module.FILTER_KEYS:
             # Cheia nu trebuie să existe în sesiune sau valoarea ei trebuie să fie un string gol
             assert not sess.get(key)
+
+
+# ---- the domeniu->track bridge (_coarse_scope) ------------------------------
+# The report pages read scope through this translation onto the deck aggregates'
+# coarser params. It duplicates knowledge (CTI/IS map, "S"+sem) by design, so it
+# gets its own tests -- a silent mismatch here shows up as silently unfiltered
+# pages, not as an error (that is exactly how the completare-evaluare sem bug hid).
+
+
+def _scope_after(client, **filters):
+    """Set filters through the real form, then read _coarse_scope under a request."""
+    _set(client, **filters)
+    with client.session_transaction() as sess:
+        stored = {k: sess.get(k, "") for k in app_module.FILTER_KEYS}
+    with app_module.app.test_request_context("/"):
+        from flask import session
+
+        session.update(stored)
+        return app_module._coarse_scope()
+
+
+def test_coarse_scope_empty_filters_map_to_all_none(client):
+    assert _scope_after(client) == (None, None, None, None)
+
+
+def test_coarse_scope_maps_known_domenii_to_track(client):
+    assert _scope_after(client, ciclu="L", domeniu="CTI")[1] == "CTI"
+    client.get("/reset-filters?next=/")
+    assert _scope_after(client, ciclu="L", domeniu="IS")[1] == "IS"
+
+
+def test_coarse_scope_unknown_domeniu_widens_to_no_track(client):
+    # IM exists in the taxonomy but has no deck track -- must become None, not crash
+    assert _scope_after(client, ciclu="M", domeniu="IM")[1] is None
+
+
+def test_coarse_scope_semester_gets_deck_prefix(client):
+    # the aggregates expect "S1"/"S2"; the cascade stores "1"/"2"
+    ciclu, _track, semestru, an = _scope_after(client, ciclu="L", domeniu="CTI", an="2", sem="1")
+    assert ciclu == "L"
+    assert semestru == "S1"
+    assert an == 2  # int, not the session's string

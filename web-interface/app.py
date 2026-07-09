@@ -10,7 +10,7 @@ exposes its own series.
 """
 
 import plotly.express as px
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, abort, redirect, render_template, request, session, url_for
 
 import config
 import queries
@@ -35,6 +35,14 @@ TOATE_LABEL = {
     "curs": "Toate cursurile",
     "specializare": "Toate specializările",
 }
+
+
+def _safe_next(target):
+    """Only follow an in-app `next` (relative path) -- an absolute URL in the
+    form/query would make /set-filters an open redirect."""
+    if target and target.startswith("/") and not target.startswith("//"):
+        return target
+    return None
 
 
 def current_filters():
@@ -119,14 +127,14 @@ def set_filters():
             eff[dim] = v
         else:
             session[dim] = ""
-    return redirect(request.form.get("next") or request.referrer or url_for("sumar"))
+    return redirect(_safe_next(request.form.get("next")) or url_for("sumar"))
 
 
 @app.route("/reset-filters")
 def reset_filters():
     for k in FILTER_KEYS:
         session.pop(k, None)
-    dest = request.args.get("next") or url_for("sumar")
+    dest = _safe_next(request.args.get("next")) or url_for("sumar")
     return redirect(dest.split("?")[0])
 
 
@@ -161,7 +169,9 @@ def sumar():
     plot_div = None
     if not summary.empty:
         df_chart = summary
-        if track:
+        # narrow the chart to the chosen ciclu; guard on nivel -- domeniu (track)
+        # can stay selected after ciclu is cleared, and nivel==None matches nothing
+        if track and nivel:
             df_chart = summary[summary["nivel"] == nivel]
 
         df_sorted = df_chart.sort_values("an_universitar")
@@ -184,9 +194,9 @@ def sumar():
 
 @app.route("/completare-evaluare")
 def completare_evaluare():
-    f = current_filters()
+    ciclu, _track, semestru, _an = _coarse_scope()
     coverage = queries.get_course_coverage()
-    period = queries.get_period_breakdown(ciclu=f["ciclu"] or None, semestru=f["sem"] or None)
+    period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
     plot_coverage_div = None
     plot_proc_div = None
     plot_eval_div = None
@@ -231,7 +241,7 @@ def completare_evaluare():
 @app.route("/pe-ani-de-studiu")
 def pe_ani_de_studiu():
     _ciclu, _track, _sem, an = _coarse_scope()
-    an = an if an in (1, 2, 3) else 1  # deck data only has 1-3
+    an = an or 1  # no year filtered yet -> default to An 1
     df = queries.get_year_breakdown(an)
     return render_template("pe_ani_de_studiu.html", an=an, rows=df.to_dict("records"))
 
@@ -261,6 +271,8 @@ def top10_asistenti():
 @app.route("/evaluare-pe-zone")
 def evaluare_pe_zone():
     entitate = request.args.get("entitate", default="curs")
+    if entitate not in ("curs", "titular", "asistent"):
+        abort(400, "entitate necunoscută (curs / titular / asistent)")
     df = queries.get_score_distribution(entitate)
     return render_template("evaluare_pe_zone.html", entitate=entitate, rows=df.to_dict("records"))
 
@@ -292,6 +304,20 @@ def curs_detaliu():
         cadre = [c for c in cadre if c["tip"] == "titular"]
 
     order_by = request.args.get("order_by", default="eval_gen")
+    # the sortable columns of the cadre table (mirrors `cols` in curs_detaliu.html)
+    sortable = (
+        "nume",
+        "tip",
+        "num_feedback",
+        "eval_gen",
+        "preg",
+        "expl_clare",
+        "interes",
+        "comport",
+        "indepl_ob",
+    )
+    if order_by not in sortable:
+        abort(400, "order_by necunoscut")
     reverse = order_by != "nume"
     cadre = sorted(cadre, key=lambda c: c[order_by], reverse=reverse)
 
