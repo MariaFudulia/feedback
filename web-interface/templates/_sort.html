@@ -1,5 +1,7 @@
 {# Sortable column header for the ranking tables -- same interaction as the
-   curs-detaliu grid: click the header, the active column carries the arrow. #}
+   curs-detaliu grid: click the header, the active column carries the arrow.
+   The arrow is ALWAYS rendered (hidden when inactive) so activating a column
+   never changes its width and shifts the table. #}
 {% macro sort_th(endpoint, key, label, order_by) -%}
-<th class="th-sort"><a href="{{ url_for(endpoint, order_by=key) }}">{{ label }}{% if order_by == key %} <span class="sort-arrow">▼</span>{% endif %}</a></th>
+<th class="th-sort"><a href="{{ url_for(endpoint, order_by=key) }}">{{ label }} <span class="sort-arrow{{ '' if order_by == key else ' idle' }}">▼</span></a></th>
 {%- endmacro %}

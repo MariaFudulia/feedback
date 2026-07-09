@@ -83,7 +83,7 @@
       <th>
         <a href="{{ url_for('curs_detaliu', cadru=selected_nume,
                              doar_titulari='1' if doar_titulari else None, order_by=key) }}">
-          {{ label }}{% if order_by == key %} <span class="sort-arrow">▼</span>{% endif %}
+          {{ label }} <span class="sort-arrow{{ '' if order_by == key else ' idle' }}">▼</span>
         </a>
       </th>
       {% endfor %}
