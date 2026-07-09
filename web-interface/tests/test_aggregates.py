@@ -55,6 +55,7 @@ def test_offering_metrics_reads_real_content_via_fixture():
             "course_id": 2802,
             "feedback_ids": [9978],
             "curs": "c",
+            "cod": "03-ACS-L-CTI-A2-S1-TEST-CA",
             "denumire": "C",
             "ciclu": "L",
             "domeniu": "CTI",

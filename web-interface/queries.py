@@ -13,6 +13,7 @@ configurable in the UI):
     asistent  >= 10  feedback-uri
 """
 
+import aggregates
 import mocks
 import taxonomy
 
@@ -23,38 +24,46 @@ def get_summary(nivel=None, track=None):
     track in {None, "CTI", "IS"} -- None/"CTI" are the deck's real numbers; "IS"
     is a synthetic scaled placeholder (see mocks._IS_SCALE) until real per-track
     data lands.
+    Stays on the deck mock: a 9-year year-over-year history, not recomputable from
+    the single year of structure the taxonomy holds (the other deck views moved to
+    aggregates.py).
     """
     return mocks.get_summary(nivel=nivel, track=track)
 
 
 def get_course_coverage():
-    """columns: categorie, num_cursuri, pct"""
+    """columns: categorie, num_cursuri, pct
+    Stays on the deck mock: it counts courses with NO feedback, which the
+    feedback-scoped taxonomy structurally excludes -- not recomputable here.
+    """
     return mocks.get_course_coverage()
 
 
 def get_period_breakdown(ciclu=None, semestru=None):
     """columns: bucket, proc_completare, evaluare
-    ciclu in {None, "L", "M"}. semestru in {None, "S1", "S2"} -- KNOWN GAP:
-    semestru="S2" returns an empty DataFrame, no S2 data exists yet (honest gap,
-    same pattern as get_year_breakdown's an=4).
+    ciclu in {None, "L", "M"}. semestru in {None, "S1", "S2"} -- computed from the
+    real category tree, so S2 now returns data where S2 courses exist (it was an
+    empty gap only while this came from the S1-only deck).
     """
-    return mocks.get_period_breakdown(ciclu=ciclu, semestru=semestru)
+    return aggregates.get_period_breakdown(ciclu=ciclu, semestru=semestru)
 
 
 def get_year_breakdown(an, ciclu="L"):
     """columns: serie, proc_completare, evaluare
-    an in {1, 2, 3, 4} (an de studiu).
+    an in {1, 2, 3, 4} (an de studiu); years with no data return an empty frame.
     """
-    return mocks.get_year_breakdown(an, ciclu=ciclu)
+    return aggregates.get_year_breakdown(an, ciclu=ciclu)
 
 
 def get_top_courses(order_by="evaluare_curs", ciclu=None, track=None, semestru=None, limit=10):
     """columns: curs, prof, num_feedback, proc_feedback, num_utilizatori, evaluare_curs
     order_by in {"evaluare_curs", "proc_feedback"}. ciclu in {None, "L", "M"}.
-    track in {None, "CTI", "IS"}; semestru in {None, "S1", "S2"} -- derived from
-    the course shortname, same convention as analysis/ and the CSV pipeline.
+    track in {None, "CTI", "IS"}; semestru in {None, "S1", "S2"} -- read from the
+    taxonomy dims (domeniu / sem), no shortname parsing.
     """
-    return mocks.get_top_courses(order_by=order_by, ciclu=ciclu, track=track, semestru=semestru, limit=limit)
+    return aggregates.get_top_courses(
+        order_by=order_by, ciclu=ciclu, track=track, semestru=semestru, limit=limit
+    )
 
 
 def get_top_titulari(order_by="evaluare_prof", limit=10):
@@ -62,21 +71,21 @@ def get_top_titulari(order_by="evaluare_prof", limit=10):
     evaluare_curs, evaluare_prof
     order_by in {"evaluare_prof", "evaluare_curs", "proc_feedback"}.
     """
-    return mocks.get_top_titulari(order_by=order_by, limit=limit)
+    return aggregates.get_top_titulari(order_by=order_by, limit=limit)
 
 
 def get_top_asistenti(order_by="evaluare_prof", limit=10):
     """columns: persoana, num_feedback, evaluare_curs, evaluare_prof
     order_by in {"evaluare_prof", "evaluare_curs"}.
     """
-    return mocks.get_top_asistenti(order_by=order_by, limit=limit)
+    return aggregates.get_top_asistenti(order_by=order_by, limit=limit)
 
 
 def get_score_distribution(entitate):
     """columns: banda, num, pct
     entitate in {"curs", "titular", "asistent"}.
     """
-    return mocks.get_score_distribution(entitate)
+    return aggregates.get_score_distribution(entitate)
 
 
 # ---------------------------------------------------------------------------

@@ -787,6 +787,7 @@ def offering_metrics(an_universitar=None):
                 {
                     "course_id": cid,
                     "curs": curs,
+                    "cod": o["cod"],
                     "denumire": o["denumire"],
                     "ciclu": o["ciclu"],
                     "domeniu": o["domeniu"],

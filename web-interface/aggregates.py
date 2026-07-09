@@ -44,7 +44,7 @@ def _courses(year=None):
         titular = next((c["nume"] for m in ms for c in m["cadre"] if c["tip"] == "titular"), "-")
         out.append(
             {
-                "curs": ms[0]["denumire"],
+                "curs": ms[0]["cod"],  # shortname code, as the deck/template expects
                 "cod": curs,
                 "prof": titular,
                 "ciclu": ms[0]["ciclu"],
