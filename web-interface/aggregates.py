@@ -65,3 +65,69 @@ def get_top_courses(order_by="evaluare_curs", ciclu=None, track=None, semestru=N
     if order_by in cols:
         df = df.sort_values(order_by, ascending=False)
     return df.head(limit).reset_index(drop=True)
+
+
+def _people(tip, year=None):
+    """Aggregate cadre of a `tip` (titular/asistent) across every offering, per person.
+    evaluare_prof is the num_feedback-weighted mean of each appearance's teaching-key mean;
+    proc_feedback is the person's overall responses/students across their offerings."""
+    acc = {}
+    for m in taxonomy.offering_metrics(year):
+        for c in m["cadre"]:
+            if c["tip"] != tip:
+                continue
+            a = acc.setdefault(
+                c["nume"], {"cursuri": set(), "nf": 0, "stud": 0, "resp": 0, "prof_w": 0.0, "curs_w": 0.0}
+            )
+            nf = c["num_feedback"]
+            a["cursuri"].add(m["curs"])
+            a["nf"] += nf
+            a["stud"] += m["students"]
+            a["resp"] += m["responses"]
+            a["prof_w"] += nf * _mean([c[k] for k in _TEACH_KEYS])
+            a["curs_w"] += nf * m["evaluare_curs"]
+    out = []
+    for nume, a in acc.items():
+        nf = a["nf"] or 1
+        out.append(
+            {
+                "persoana": nume,
+                "num_cursuri": len(a["cursuri"]),
+                "num_feedback": a["nf"],
+                "num_utilizatori": a["stud"],
+                "proc_feedback": round(100 * a["resp"] / a["stud"], 2) if a["stud"] else 0.0,
+                "evaluare_curs": round(a["curs_w"] / nf, 2),
+                "evaluare_prof": round(a["prof_w"] / nf, 2),
+            }
+        )
+    return out
+
+
+def get_top_titulari(order_by="evaluare_prof", limit=10):
+    """columns: persoana, num_cursuri, num_feedback, proc_feedback, num_utilizatori,
+    evaluare_curs, evaluare_prof. Deck threshold: proc_feedback >= 7% AND num_feedback >= 15."""
+    cols = [
+        "persoana",
+        "num_cursuri",
+        "num_feedback",
+        "proc_feedback",
+        "num_utilizatori",
+        "evaluare_curs",
+        "evaluare_prof",
+    ]
+    rows = [r for r in _people("titular") if r["proc_feedback"] >= 7 and r["num_feedback"] >= 15]
+    df = pd.DataFrame(rows, columns=cols)
+    if order_by in cols:
+        df = df.sort_values(order_by, ascending=False)
+    return df.head(limit).reset_index(drop=True)
+
+
+def get_top_asistenti(order_by="evaluare_prof", limit=10):
+    """columns: persoana, num_feedback, evaluare_curs, evaluare_prof.
+    Deck threshold: num_feedback >= 10."""
+    cols = ["persoana", "num_feedback", "evaluare_curs", "evaluare_prof"]
+    rows = [r for r in _people("asistent") if r["num_feedback"] >= 10]
+    df = pd.DataFrame(rows, columns=cols)
+    if order_by in cols:
+        df = df.sort_values(order_by, ascending=False)
+    return df.head(limit).reset_index(drop=True)

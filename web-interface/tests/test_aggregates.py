@@ -99,3 +99,26 @@ def test_top_courses_order_by_and_ciclu_filter():
     # ciclu filter yields a valid (possibly smaller) board, still capped + thresholded
     dfm = aggregates.get_top_courses(ciclu="M")
     assert len(dfm) <= 10 and (dfm["num_feedback"] >= 3).all()
+
+
+def test_top_titulari_shape_threshold_sort():
+    df = aggregates.get_top_titulari()
+    assert list(df.columns) == [
+        "persoana",
+        "num_cursuri",
+        "num_feedback",
+        "proc_feedback",
+        "num_utilizatori",
+        "evaluare_curs",
+        "evaluare_prof",
+    ]
+    assert len(df) <= 10
+    assert (df["num_feedback"] >= 15).all() and (df["proc_feedback"] >= 7).all()
+    assert list(df["evaluare_prof"]) == sorted(df["evaluare_prof"], reverse=True)
+
+
+def test_top_asistenti_shape_threshold():
+    df = aggregates.get_top_asistenti()
+    assert list(df.columns) == ["persoana", "num_feedback", "evaluare_curs", "evaluare_prof"]
+    assert len(df) <= 10
+    assert (df["num_feedback"] >= 10).all()
