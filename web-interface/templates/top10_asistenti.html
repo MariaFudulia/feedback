@@ -18,7 +18,7 @@
   <thead><tr><th>Persoană</th><th>N</th><th>Evaluare curs</th><th>Evaluare prof</th></tr></thead>
   <tbody>
     {% for row in rows %}
-    <tr><td>{{ row.persoana }}</td><td>{{ row.num_feedback }}</td><td>{{ row.evaluare_curs }}</td><td>{{ row.evaluare_prof }}</td></tr>
+    <tr><td>{{ row.persoana }}</td><td>{{ row.num_feedback }}</td><td>{{ "%.2f"|format(row.evaluare_curs) }}</td><td>{{ "%.2f"|format(row.evaluare_prof) }}</td></tr>
     {% endfor %}
   </tbody>
 </table>

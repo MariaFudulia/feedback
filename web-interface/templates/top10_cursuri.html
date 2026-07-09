@@ -21,7 +21,7 @@
     {% for row in rows %}
     <tr>
       <td>{{ row.curs }}</td><td>{{ row.prof }}</td><td>{{ row.num_feedback }}</td>
-      <td>{{ row.proc_feedback }}%</td><td>{{ row.num_utilizatori }}</td><td>{{ row.evaluare_curs }}</td>
+      <td>{{ "%.1f"|format(row.proc_feedback) }}%</td><td>{{ row.num_utilizatori }}</td><td>{{ "%.2f"|format(row.evaluare_curs) }}</td>
     </tr>
     {% endfor %}
   </tbody>
