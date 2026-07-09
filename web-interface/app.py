@@ -161,7 +161,9 @@ def sumar():
     plot_div = None
     if not summary.empty:
         df_chart = summary
-        if track:
+        # narrow the chart to the chosen ciclu; guard on nivel -- domeniu (track)
+        # can stay selected after ciclu is cleared, and nivel==None matches nothing
+        if track and nivel:
             df_chart = summary[summary["nivel"] == nivel]
 
         df_sorted = df_chart.sort_values("an_universitar")
