@@ -14,6 +14,12 @@
   </tbody>
 </table>
 
+<div class="chart-container" style="margin-top: 16px; margin-bottom: 32px;">
+  {% if plot_coverage_div %}
+    {{ plot_coverage_div | safe }}
+  {% endif %}
+</div>
+
 <h2>Procentaj completare și evaluare pe bucket</h2>
 <table>
   <thead><tr><th>Bucket</th><th>Procentaj completare</th><th>Evaluare</th></tr></thead>
@@ -23,4 +29,17 @@
     {% endfor %}
   </tbody>
 </table>
+
+<div class="charts-row" style="display: flex; gap: 24px; margin-top: 24px;">
+  <div style="flex: 1;">
+    {% if plot_proc_div %}
+      {{ plot_proc_div | safe }}
+    {% endif %}
+  </div>
+  <div style="flex: 1;">
+    {% if plot_eval_div %}
+      {{ plot_eval_div | safe }}
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
