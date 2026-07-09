@@ -10,7 +10,7 @@ exposes its own series.
 """
 
 import plotly.express as px
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, abort, redirect, render_template, request, session, url_for
 
 import config
 import queries
@@ -261,6 +261,8 @@ def top10_asistenti():
 @app.route("/evaluare-pe-zone")
 def evaluare_pe_zone():
     entitate = request.args.get("entitate", default="curs")
+    if entitate not in ("curs", "titular", "asistent"):
+        abort(400, "entitate necunoscută (curs / titular / asistent)")
     df = queries.get_score_distribution(entitate)
     return render_template("evaluare_pe_zone.html", entitate=entitate, rows=df.to_dict("records"))
 
@@ -292,6 +294,20 @@ def curs_detaliu():
         cadre = [c for c in cadre if c["tip"] == "titular"]
 
     order_by = request.args.get("order_by", default="eval_gen")
+    # the sortable columns of the cadre table (mirrors `cols` in curs_detaliu.html)
+    sortable = (
+        "nume",
+        "tip",
+        "num_feedback",
+        "eval_gen",
+        "preg",
+        "expl_clare",
+        "interes",
+        "comport",
+        "indepl_ob",
+    )
+    if order_by not in sortable:
+        abort(400, "order_by necunoscut")
     reverse = order_by != "nume"
     cadre = sorted(cadre, key=lambda c: c[order_by], reverse=reverse)
 
