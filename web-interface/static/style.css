@@ -286,8 +286,9 @@ main form:not(.filters) select { padding: 5px 9px; border: 1px solid #d7dbe3; bo
     border-bottom: 1px solid #e6e8ee;
     padding: 14px 16px;
   }
-  /* order: brand, nav (horizontal scroll bar), collapsed filters, content */
-  .brand, .brand-sub { order: -2; }
+  /* phone: brand block dropped (two lines of chrome before any content);
+     nav becomes the top scroll bar, filters stay collapsed behind the toggle */
+  .brand, .brand-sub { display: none; }
   .sidebar nav {
     order: -1;
     flex-direction: row;
