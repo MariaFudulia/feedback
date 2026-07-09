@@ -243,9 +243,17 @@ def pe_ani_de_studiu():
     return render_template("pe_ani_de_studiu.html", an=an, rows=df.to_dict("records"))
 
 
+def _order_by(default, allowed):
+    """order_by from the query string, constrained to the page's sortable keys."""
+    v = request.args.get("order_by", default=default)
+    if v not in allowed:
+        abort(400, "order_by necunoscut")
+    return v
+
+
 @app.route("/top10-cursuri")
 def top10_cursuri():
-    order_by = request.args.get("order_by", default="evaluare_curs")
+    order_by = _order_by("evaluare_curs", ("evaluare_curs", "proc_feedback"))
     ciclu, track, semestru, _an = _coarse_scope()
     df = queries.get_top_courses(order_by=order_by, ciclu=ciclu, track=track, semestru=semestru)
     return render_template("top10_cursuri.html", order_by=order_by, rows=df.to_dict("records"))
@@ -253,14 +261,14 @@ def top10_cursuri():
 
 @app.route("/top10-titulari")
 def top10_titulari():
-    order_by = request.args.get("order_by", default="evaluare_prof")
+    order_by = _order_by("evaluare_prof", ("evaluare_prof", "evaluare_curs", "proc_feedback"))
     df = queries.get_top_titulari(order_by=order_by)
     return render_template("top10_titulari.html", order_by=order_by, rows=df.to_dict("records"))
 
 
 @app.route("/top10-asistenti")
 def top10_asistenti():
-    order_by = request.args.get("order_by", default="evaluare_prof")
+    order_by = _order_by("evaluare_prof", ("evaluare_prof", "evaluare_curs"))
     df = queries.get_top_asistenti(order_by=order_by)
     return render_template("top10_asistenti.html", order_by=order_by, rows=df.to_dict("records"))
 
@@ -300,21 +308,11 @@ def curs_detaliu():
     if doar_titulari:
         cadre = [c for c in cadre if c["tip"] == "titular"]
 
-    order_by = request.args.get("order_by", default="eval_gen")
     # the sortable columns of the cadre table (mirrors `cols` in curs_detaliu.html)
-    sortable = (
-        "nume",
-        "tip",
-        "num_feedback",
+    order_by = _order_by(
         "eval_gen",
-        "preg",
-        "expl_clare",
-        "interes",
-        "comport",
-        "indepl_ob",
+        ("nume", "tip", "num_feedback", "eval_gen", "preg", "expl_clare", "interes", "comport", "indepl_ob"),
     )
-    if order_by not in sortable:
-        abort(400, "order_by necunoscut")
     reverse = order_by != "nume"
     cadre = sorted(cadre, key=lambda c: c[order_by], reverse=reverse)
 

@@ -5,20 +5,20 @@
 <div class="section-head"><h1>Top 10 asistenți</h1>{{ demo_badge() }}</div>
 <p class="caption">Prag de selecție (fix): asistent inclus doar dacă are ≥10 feedback-uri.</p>
 
-<form method="get">
-  <label>Sortează după:
-    <select name="order_by" onchange="this.form.submit()">
-      <option value="evaluare_prof" {{ "selected" if order_by == "evaluare_prof" else "" }}>Evaluare profesor</option>
-      <option value="evaluare_curs" {{ "selected" if order_by == "evaluare_curs" else "" }}>Evaluare curs</option>
-    </select>
-  </label>
-</form>
+<p class="caption"><span class="hint-chip">sortabil · click pe antet</span></p>
 
+{% from "_sort.html" import sort_th %}
 <table>
-  <thead><tr><th>Persoană</th><th>N</th><th>Evaluare curs</th><th>Evaluare prof</th></tr></thead>
+  <thead><tr>
+    <th>Persoană</th><th>N</th>
+    {{ sort_th("top10_asistenti", "evaluare_curs", "Evaluare curs", order_by) }}
+    {{ sort_th("top10_asistenti", "evaluare_prof", "Evaluare prof", order_by) }}
+  </tr></thead>
   <tbody>
     {% for row in rows %}
     <tr><td>{{ row.persoana }}</td><td>{{ row.num_feedback }}</td><td>{{ "%.2f"|format(row.evaluare_curs) }}</td><td>{{ "%.2f"|format(row.evaluare_prof) }}</td></tr>
+    {% else %}
+    <tr><td colspan="4" class="caption">Niciun asistent nu trece pragul de selecție pentru filtrele curente.</td></tr>
     {% endfor %}
   </tbody>
 </table>
