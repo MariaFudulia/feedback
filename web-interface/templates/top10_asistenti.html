@@ -2,10 +2,11 @@
 {% block title %} — Top-10 asistenți{% endblock %}
 {% block content %}
 {% from "_chips.html" import demo_badge %}
+{% from "_export.html" import csv_btn with context %}
 <div class="section-head"><h1>Top 10 asistenți</h1>{{ demo_badge() }}</div>
 <p class="caption">Prag de selecție (fix): asistent inclus doar dacă are ≥10 feedback-uri.</p>
 
-<p class="caption"><span class="hint-chip">sortabil · click pe antet</span></p>
+<p class="caption"><span class="hint-chip">sortabil · click pe antet</span> {{ csv_btn() }}</p>
 
 {% from "_sort.html" import sort_th %}
 <table>

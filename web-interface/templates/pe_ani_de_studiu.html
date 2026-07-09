@@ -2,7 +2,9 @@
 {% block title %} — Pe ani de studiu{% endblock %}
 {% block content %}
 {% from "_chips.html" import demo_badge %}
-<div class="section-head"><h1>Completare și evaluare pe serie, per an de studiu</h1>{{ demo_badge() }}</div>
+{% from "_export.html" import csv_btn with context %}
+
+<div class="section-head"><h1>Completare și evaluare pe serie, per an de studiu</h1>{{ demo_badge() }} {{ csv_btn() }}</div>
 <p class="caption">An de studiu selectat: <strong>{{ an }}</strong> (din filtrul global, sus).</p>
 
 <table>

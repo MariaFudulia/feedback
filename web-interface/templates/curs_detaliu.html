@@ -30,6 +30,8 @@
 
 {% block content %}
 {% from "_chips.html" import demo_badge %}
+{% from "_export.html" import csv_btn with context %}
+
 {% if not cadre %}
 <h1>Detaliu curs</h1>
 <p class="caption">Alege un curs din filtrele din stânga (Ciclu → An → … → Curs) ca să vezi detaliul.</p>
@@ -71,6 +73,7 @@
 <div class="section-head">
   <h2>Cadre didactice</h2>
   <span class="hint-chip">sortabil · click pe antet</span>
+  {{ csv_btn() }}
 </div>
 
 {% set cols = [("nume", "Nume"), ("tip", "Tip"), ("num_feedback", "N"), ("eval_gen", "Eval gen"),

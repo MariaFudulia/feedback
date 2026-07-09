@@ -3,9 +3,11 @@
 {% block content %}
 {% from "_chips.html" import demo_badge %}
 {% from "_charts.html" import columns, share_bar %}
+{% from "_export.html" import csv_btn with context %}
+
 <div class="section-head"><h1>Completare și evaluare pe an / semestru</h1>{{ demo_badge() }}</div>
 
-<h2>Cursuri cu feedback</h2>
+<div class="section-head"><h2>Cursuri cu feedback</h2>{{ csv_btn("coverage") }}</div>
 <table>
   <thead><tr><th>Categorie</th><th>Nr. cursuri</th><th>%</th></tr></thead>
   <tbody>
@@ -21,7 +23,7 @@
 </div>
 {% endif %}
 
-<h2>Procentaj completare și evaluare pe bucket</h2>
+<div class="section-head"><h2>Procentaj completare și evaluare pe bucket</h2>{{ csv_btn("buckets") }}</div>
 <table>
   <thead><tr><th>Bucket</th><th>Procentaj completare</th><th>Evaluare</th></tr></thead>
   <tbody>

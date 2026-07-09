@@ -3,6 +3,8 @@
 {% block content %}
 {% from "_chips.html" import demo_badge, real_badge %}
 {% from "_charts.html" import columns %}
+{% from "_export.html" import csv_btn with context %}
+
 <h1>Sumar</h1>
 
 <div class="section-head">
@@ -27,6 +29,7 @@
 
 <div class="section-head" style="margin-top:32px">
   <h2>Evoluție pe ani universitari</h2>
+  {{ csv_btn() }}
   {{ demo_badge("Numere din deck-ul de referință (CTI). Feedback-uri, grad de completare și evaluare devin reale la importul feedback_contents/ + users/.") }}
 </div>
 
