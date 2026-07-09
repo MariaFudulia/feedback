@@ -9,7 +9,8 @@ years, a domeniu with no specializare level hides that filter, a course only
 exposes its own series.
 """
 
-import plotly.express as px
+import math
+
 from flask import Flask, abort, redirect, render_template, request, session, url_for
 
 import config
@@ -35,6 +36,22 @@ TOATE_LABEL = {
     "curs": "Toate cursurile",
     "specializare": "Toate specializările",
 }
+
+# fixed nivel -> chart color, so filtering never repaints the surviving series
+NIVEL_SERIES = [
+    {"key": "total", "label": "Total", "color": "red", "unit": ""},
+    {"key": "licenta", "label": "Licență", "color": "blue", "unit": ""},
+    {"key": "masterat", "label": "Master", "color": "green", "unit": ""},
+]
+
+
+def _nice_max(v):
+    """0-anchored top of a chart scale: the value rounded up at its leading digit
+    (4.43 -> 5, 27.7 -> 30, 8119 -> 9000)."""
+    if v <= 0:
+        return 1
+    mag = 10 ** (len(str(int(v))) - 1)
+    return math.ceil(v / mag) * mag
 
 
 def _safe_next(target):
@@ -160,35 +177,30 @@ def sumar():
     oferta = queries.get_offer_structure()  # real, no scores
     summary = queries.get_summary(nivel=nivel, track=track)  # deck mock, demonstrative
     if summary.empty:
-        return render_template("sumar.html", oferta=oferta, total=None, rows=[], plot_div=None)
+        return render_template("sumar.html", oferta=oferta, total=None, rows=[], chart=None)
     latest_an = summary["an_universitar"].iloc[-1]
     latest = summary[summary["an_universitar"] == latest_an]
     total_rows = latest[latest["nivel"] == "total"]
     total_row = total_rows.iloc[0] if not total_rows.empty else latest.iloc[0]
 
-    plot_div = None
-    if not summary.empty:
-        df_chart = summary
-        # narrow the chart to the chosen ciclu; guard on nivel -- domeniu (track)
-        # can stay selected after ciclu is cleared, and nivel==None matches nothing
-        if track and nivel:
-            df_chart = summary[summary["nivel"] == nivel]
-
-        df_sorted = df_chart.sort_values("an_universitar")
-        fig = px.bar(
-            df_sorted,
-            x="an_universitar",
-            y="num_feedback",
-            color="nivel",
-            barmode="group",
-            title="Evoluția volumului de feedback primit",
-            labels={"an_universitar": "An Universitar", "num_feedback": "Număr Feedback-uri"},
-        )
-
-        plot_div = fig.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
+    df_chart = summary
+    # narrow the chart to the chosen ciclu; guard on nivel -- domeniu (track)
+    # can stay selected after ciclu is cleared, and nivel==None matches nothing
+    if track and nivel:
+        df_chart = summary[summary["nivel"] == nivel]
+    groups = {}
+    for r in df_chart.sort_values("an_universitar").to_dict("records"):
+        groups.setdefault(r["an_universitar"], {})[r["nivel"]] = r["num_feedback"]
+    vmax = _nice_max(df_chart["num_feedback"].max())
+    chart = {
+        "groups": [{"label": an, "values": v} for an, v in groups.items()],
+        "series": [s for s in NIVEL_SERIES if any(s["key"] in v for v in groups.values())],
+        "vmax": vmax,
+        "note": f"scală 0–{vmax}",
+    }
 
     return render_template(
-        "sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), plot_div=plot_div
+        "sumar.html", oferta=oferta, total=total_row, rows=summary.to_dict("records"), chart=chart
     )
 
 
@@ -197,46 +209,29 @@ def completare_evaluare():
     ciclu, _track, semestru, _an = _coarse_scope()
     coverage = queries.get_course_coverage()
     period = queries.get_period_breakdown(ciclu=ciclu, semestru=semestru)
-    plot_coverage_div = None
-    plot_proc_div = None
-    plot_eval_div = None
-
-    if not coverage.empty:
-        fig_cov = px.pie(
-            coverage, names="categorie", values="num_cursuri", title="Acoperire cursuri pe categorii"
-        )
-        plot_coverage_div = fig_cov.to_html(
-            full_html=False, include_plotlyjs="cdn", config={"responsive": True}
-        )
-
-    if not period.empty:
-        df_period = period.sort_values("bucket")
-
-        fig_proc = px.bar(
-            df_period,
-            x="bucket",
-            y="proc_completare",
-            title="Procentaj completare pe bucket",
-            labels={"bucket": "Bucket", "proc_completare": "Grad Completare (%)"},
-        )
-        plot_proc_div = fig_proc.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
-
-        fig_eval = px.bar(
-            df_period,
-            x="bucket",
-            y="evaluare",
-            title="Evaluare medie pe bucket",
-            labels={"bucket": "Bucket", "evaluare": "Notă Evaluare"},
-        )
-        plot_eval_div = fig_eval.to_html(full_html=False, include_plotlyjs="cdn", config={"responsive": True})
+    period_records = period.to_dict("records")
+    chart_proc = chart_eval = None
+    if period_records:
+        vmax = _nice_max(max(r["proc_completare"] for r in period_records))
+        chart_proc = {
+            "groups": [{"label": r["bucket"], "values": {"v": r["proc_completare"]}} for r in period_records],
+            "series": [{"key": "v", "label": "Grad completare", "color": "red", "unit": "%"}],
+            "vmax": vmax,
+            "note": f"scală 0–{vmax}%",
+        }
+        chart_eval = {
+            "groups": [{"label": r["bucket"], "values": {"v": r["evaluare"]}} for r in period_records],
+            "series": [{"key": "v", "label": "Evaluare", "color": "red", "unit": ""}],
+            "vmax": 5,
+            "note": "scală 0–5",
+        }
 
     return render_template(
         "completare_evaluare.html",
         coverage=coverage.to_dict("records"),
-        period=period.to_dict("records"),
-        plot_coverage_div=plot_coverage_div,
-        plot_proc_div=plot_proc_div,
-        plot_eval_div=plot_eval_div,
+        period=period_records,
+        chart_proc=chart_proc,
+        chart_eval=chart_eval,
     )
 
 

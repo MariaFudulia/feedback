@@ -2,6 +2,7 @@
 {% block title %} — Completare și evaluare{% endblock %}
 {% block content %}
 {% from "_chips.html" import demo_badge %}
+{% from "_charts.html" import columns, share_bar %}
 <div class="section-head"><h1>Completare și evaluare pe an / semestru</h1>{{ demo_badge() }}</div>
 
 <h2>Cursuri cu feedback</h2>
@@ -14,11 +15,11 @@
   </tbody>
 </table>
 
-<div class="chart-container" style="margin-top: 16px; margin-bottom: 32px;">
-  {% if plot_coverage_div %}
-    {{ plot_coverage_div | safe }}
-  {% endif %}
+{% if coverage %}
+<div class="chart-card" style="margin: 16px 0 32px">
+  {{ share_bar(coverage, "categorie", "num_cursuri", "pct") }}
 </div>
+{% endif %}
 
 <h2>Procentaj completare și evaluare pe bucket</h2>
 <table>
@@ -30,16 +31,16 @@
   </tbody>
 </table>
 
+{% if chart_proc %}
 <div class="charts-row">
-  <div>
-    {% if plot_proc_div %}
-      {{ plot_proc_div | safe }}
-    {% endif %}
+  <div class="chart-card">
+    <div class="chart-title">Grad completare pe bucket</div>
+    {{ columns(chart_proc.groups, chart_proc.series, chart_proc.vmax, chart_proc.note) }}
   </div>
-  <div>
-    {% if plot_eval_div %}
-      {{ plot_eval_div | safe }}
-    {% endif %}
+  <div class="chart-card">
+    <div class="chart-title">Evaluare medie pe bucket</div>
+    {{ columns(chart_eval.groups, chart_eval.series, chart_eval.vmax, chart_eval.note) }}
   </div>
 </div>
+{% endif %}
 {% endblock %}
