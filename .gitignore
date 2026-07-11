@@ -33,3 +33,8 @@ web-interface/.pytest_cache/
 web-interface/.ruff_cache/
 web-interface/**/__pycache__/
 .DS_Store
+feedback_contents/
+generator.log
+pickles/
+# generator output (OUTPUT_DIR): ~60 MB for ACS alone -- regenerate it, don't commit it
+out/
