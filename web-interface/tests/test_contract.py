@@ -263,3 +263,83 @@ def test_content_seam_routes_to_real_content_when_present():
         taxonomy._CONTENT = None
         taxonomy._CONTENT_GENERATED = saved_generated
     assert taxonomy.content_is_synthetic() is True
+
+
+# ---- the free-text answers ------------------------------------------------
+
+_COMMENT_KEYS = {"intrebare", "comentariu", "sentiment"}
+_GATE_KEYS = {"gated", "responses", "min", "has_content"}
+_COUNT_KEYS = {"total", "pozitiv", "neutru", "negativ", "incert"}
+
+
+def test_comments_questions_are_the_four_moodle_open_questions():
+    q = queries.get_comments_questions()
+    assert list(q) == ["positive", "negative", "difficulty", "other"]
+    assert all(isinstance(v, str) and v for v in q.values())
+
+
+def test_comments_gate_shape():
+    curs = taxonomy.all_offerings()[0]["curs"]
+    assert set(queries.get_comments_gate(curs)) == _GATE_KEYS
+    assert queries.get_comments_gate(curs)["min"] == taxonomy.COMMENTS_MIN_RESPONSES
+
+
+def test_course_comments_shape_and_sentiment_key_is_always_present():
+    curs = taxonomy.all_offerings()[0]["curs"]
+    rows = queries.get_course_comments(curs)
+    for r in rows:
+        assert set(r) == _COMMENT_KEYS
+        # present even when None -- the shape is a contract, whether a model happens to be on
+        # disk is a value
+        assert "sentiment" in r
+
+
+def test_course_comments_carry_no_author_or_attempt_identifier():
+    curs = taxonomy.all_offerings()[0]["curs"]
+    for r in queries.get_course_comments(curs):
+        assert not (set(r) - _COMMENT_KEYS), "a comment must never carry an id back to its author"
+
+
+def test_the_response_gate_is_part_of_the_contract(monkeypatch):
+    # Below the gate, the data layer returns nothing at all -- not "nothing in the view".
+    curs = taxonomy.all_offerings()[0]["curs"]
+    monkeypatch.setattr(taxonomy, "course_responses", lambda c, a="2025-2026": 2)
+    assert queries.get_course_comments(curs) == []
+    assert queries.get_comments_gate(curs)["gated"] is True
+
+    monkeypatch.setattr(taxonomy, "course_responses", lambda c, a="2025-2026": 50)
+    assert queries.get_comments_gate(curs)["gated"] is False
+
+
+def test_comment_counts_shape():
+    curs = taxonomy.all_offerings()[0]["curs"]
+    counts = queries.get_comment_counts(curs)
+    assert set(counts) == {"positive", "negative", "difficulty", "other"}
+    for row in counts.values():
+        assert set(row) == _COUNT_KEYS
+
+
+def test_sentiment_model_info_shape():
+    info = queries.get_sentiment_model_info()
+    assert "available" in info
+    if info["available"]:
+        assert set(info["per_field"]) <= {"positive", "negative", "other"}
+        assert "difficulty" not in info["per_field"]  # never labelled, never scored
+
+
+def test_content_for_tolerates_a_payload_without_comments():
+    # test_content_seam_routes_to_real_content_when_present hand-builds a 3-key payload. If
+    # _content_for ever indexes p["comments"] directly, that test explodes -- and so would any
+    # cached content written before this feature existed.
+    curs = taxonomy.all_offerings()[0]["curs"]
+    saved = taxonomy._CONTENT
+    taxonomy._CONTENT = {None: {"responses": 42, "students": 100, "cadre": []}}
+    try:
+        assert taxonomy._content_for(curs)["comments"] == {
+            "positive": [],
+            "negative": [],
+            "difficulty": [],
+            "other": [],
+        }
+    finally:
+        taxonomy._CONTENT = saved

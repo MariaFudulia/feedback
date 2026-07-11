@@ -38,3 +38,10 @@ generator.log
 pickles/
 # generator output (OUTPUT_DIR): ~60 MB for ACS alone -- regenerate it, don't commit it
 out/
+
+# ...but the web interface's TEST fixtures live in a directory of that name, and the bare
+# `feedback_contents/` above matches it at any depth -- so a new fixture would be silently
+# skipped by `git add`, pass locally and die in CI. Un-exclude the directory itself first:
+# git cannot re-include a file whose parent directory is excluded.
+!web-interface/tests/fixtures/content/feedback_contents/
+!web-interface/tests/fixtures/content/feedback_contents/*

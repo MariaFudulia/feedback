@@ -10,3 +10,12 @@
 {% macro real_badge(tooltip="Numărat direct din arborele real de categorii Moodle. Fără note, doar structură.") -%}
 <span class="real-chip" title="{{ tooltip }}">✓ date reale</span>
 {%- endmacro %}
+
+{# A DIFFERENT axis from the two above. Those answer "sunt reale cifrele?"; this one answers
+   "eticheta e raportată sau ghicită?". It renders UNCONDITIONALLY on /comentarii, never gated
+   on content_is_synthetic() -- when exportul real ajunge, badge-ul demonstrativ se stinge, iar
+   etichetele de sentiment ar rămâne fără niciun avertisment exact în momentul în care
+   avertismentul contează cel mai mult. Textul comentariilor e mereu cel original. #}
+{% macro model_badge(tooltip="") -%}
+<span class="model-chip" title="{{ tooltip or 'Etichetele de sentiment sunt ESTIMATE de un model naive-Bayes antrenat pe corpusul SINTETIC al generatorului. Nu a fost validat pe text scris de studenți reali și va greși mai des pe acesta. Textul comentariului este întotdeauna cel original.' }}">⚗ sentiment estimat</span>
+{%- endmacro %}

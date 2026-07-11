@@ -14,6 +14,7 @@ configurable in the UI):
 """
 
 import aggregates
+import comments
 import mocks
 import taxonomy
 
@@ -157,6 +158,60 @@ def get_faculty_average(an_universitar="2025-2026"):
     per-question score across every cadru of every course that year. Reference
     for 'cadru selectat vs. media facultății'."""
     return taxonomy.faculty_average(an_universitar)
+
+
+# ---- the free-text answers (slots 21-24) ----------------------------------
+# The comments never carry an attempt id, an index, or anything else that could tie one back
+# to its author or to that author's other three answers -- taxonomy destroys that link when it
+# builds them. Do not add one back here or in the view.
+
+
+def get_comments_questions():
+    """{slot: question} for the four open questions, in Moodle's own wording. Order is the
+    order they are asked in: positive, negative, difficulty, other."""
+    return dict(comments.INTREBARI)
+
+
+def get_comments_gate(curs, an_universitar="2025-2026"):
+    """keys: gated, responses, min, has_content.
+    `gated` is True when the course has fewer than `min` responses, in which case
+    get_course_comments returns nothing at all -- see taxonomy.COMMENTS_MIN_RESPONSES for why
+    prose needs a stricter floor than the deck's >=3 ranking rule."""
+    return taxonomy.comments_gate(curs, an_universitar)
+
+
+def get_course_comments(curs, intrebare=None, sentiment=None, an_universitar="2025-2026"):
+    """list of dicts: intrebare, comentariu, sentiment.
+
+    `sentiment` is one of pozitiv/neutru/negativ/incert, or None -- always PRESENT as a key,
+    even when there is no model and even for `difficulty` (which is never labelled). Its
+    presence is part of the contract; whether a model happens to be on disk is not.
+
+    Returns [] for a course below the response gate. Filters: `intrebare` (one slot) and
+    `sentiment` (one label)."""
+    by_slot = taxonomy.course_comments(curs, an_universitar)
+    rows = []
+    for slot in comments.SLOTS:
+        if intrebare and slot != intrebare:
+            continue
+        for c in by_slot.get(slot, []):
+            if sentiment and c["sentiment"] != sentiment:
+                continue
+            rows.append({"intrebare": slot, "comentariu": c["text"], "sentiment": c["sentiment"]})
+    return rows
+
+
+def get_comment_counts(curs, an_universitar="2025-2026"):
+    """{slot: {total, pozitiv, neutru, negativ, incert}} -- what the distribution bar and the
+    per-question option labels are built from. Empty counts for a gated course."""
+    return taxonomy.comment_counts(curs, an_universitar)
+
+
+def get_sentiment_model_info():
+    """keys: available, accuracy, per_field, attempt_tier_accuracy, corpus, trained_at, labels.
+    The UI must state that the labels are ESTIMATED, and by a model trained on synthetic text
+    -- see templates/_chips.html: model_badge."""
+    return taxonomy.sentiment_model_info()
 
 
 def get_taxonomy_issues():

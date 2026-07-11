@@ -326,6 +326,25 @@ def _order_by(default, allowed):
     return v
 
 
+def _one_of(param, default, allowed):
+    """A query param constrained to an allowlist -- same discipline as _order_by: an unknown
+    value is a 400, never a silent fallback to the default."""
+    v = request.args.get(param, default=default)
+    if v not in allowed:
+        abort(400, f"{param} necunoscut")
+    return v
+
+
+def _page(total, per_page):
+    """1-based page number, clamped. `request.args.get(type=int)` quietly returns None on
+    garbage, which would swallow ?page=abc; this page count is user-visible, so say 400."""
+    raw = request.args.get("page", "1")
+    if not raw.isdigit() or raw == "0":
+        abort(400, "page invalid")
+    pages = max(1, math.ceil(total / per_page))
+    return min(int(raw), pages), pages
+
+
 @app.route("/top10-cursuri")
 def top10_cursuri():
     order_by = _order_by("evaluare_curs", ("evaluare_curs", "proc_feedback"))
@@ -458,11 +477,111 @@ def curs_detaliu():
     )
 
 
+COMMENTS_PER_PAGE = 25
+SENTIMENTE = ("toate", "pozitiv", "neutru", "negativ", "incert")
+
+
+@app.route("/comentarii")
+def comentarii():
+    """The free-text answers, one question at a time.
+
+    Two things this page does NOT do, on purpose:
+
+    * it ignores the `serie` filter, and says so. The response gate is applied per logical
+      course; if comments honoured `serie`, a reader could pull seria A, then seria B, and
+      difference the two -- reconstructing per-series sets that each sit below the gate.
+
+    * it never shows an attempt id, an index, or a row number. taxonomy destroyed the link
+      between a comment and its author (and its author's other three answers); re-introducing
+      any stable per-comment identifier here would hand it straight back.
+
+    The gate itself lives in the data layer, not here -- `_export_url` re-emits every query
+    argument by design, so a check in this function or in the template would be walked around
+    by ?export=csv.
+    """
+    f = current_filters()
+    _rows, eff = build_cascade(f)
+    an_universitar = f["an_universitar"]
+
+    scope = queries.get_scope_courses({d: eff.get(d, "") for d in STRUCT})
+    curs = eff.get("curs") or (scope[0]["curs"] if scope else None)
+    denumire = next((c["denumire"] for c in scope if c["curs"] == curs), "")
+    if not denumire and curs:
+        denumire = next((c["denumire"] for c in queries.get_scope_courses({}) if c["curs"] == curs), curs)
+
+    intrebari = queries.get_comments_questions()
+    intrebare = _one_of("intrebare", "positive", tuple(intrebari))
+    # `difficulty` asks for a cause, not an opinion, and carries no sentiment label at all --
+    # so there is nothing to filter by. Forcing it here keeps a stale ?sentiment= in the URL
+    # from silently emptying the list.
+    sentiment_filter = "toate" if intrebare == "difficulty" else _one_of("sentiment", "toate", SENTIMENTE)
+
+    gate = (
+        queries.get_comments_gate(curs, an_universitar)
+        if curs
+        else {"gated": True, "responses": 0, "min": 5, "has_content": False}
+    )
+    rows = queries.get_course_comments(
+        curs,
+        intrebare=intrebare,
+        sentiment=None if sentiment_filter == "toate" else sentiment_filter,
+        an_universitar=an_universitar,
+    )
+
+    if request.args.get("export") == "csv":
+        # deliberately the FULL filtered list, not the page on screen: one page of 25 comments
+        # is a useless export. Said out loud in the caption and the button's title.
+        return _csv(
+            pd.DataFrame(rows, columns=["intrebare", "sentiment", "comentariu"]),
+            f"comentarii-{intrebare}-{curs or 'curs'}",
+        )
+
+    page, pages = _page(len(rows), COMMENTS_PER_PAGE)
+    start = (page - 1) * COMMENTS_PER_PAGE
+    counts = queries.get_comment_counts(curs, an_universitar) if curs else {}
+    model = queries.get_sentiment_model_info()
+
+    dist = []
+    row = counts.get(intrebare, {})
+    total_labelled = sum(row.get(k, 0) for k in ("pozitiv", "neutru", "negativ", "incert"))
+    if total_labelled:
+        for label in ("pozitiv", "neutru", "negativ", "incert"):
+            n = row.get(label, 0)
+            if n:
+                dist.append({"eticheta": label, "num": n, "pct": round(100 * n / total_labelled, 1)})
+
+    crumbs = [denumire or "—", an_universitar]
+    return render_template(
+        "comentarii.html",
+        curs=curs,
+        denumire=denumire,
+        breadcrumb=" · ".join(crumbs),
+        intrebari=intrebari,
+        intrebare=intrebare,
+        sentiment_filter=sentiment_filter,
+        sentimente=SENTIMENTE,
+        rows=rows[start : start + COMMENTS_PER_PAGE],
+        total=len(rows),
+        page=page,
+        pages=pages,
+        counts=counts,
+        dist=dist,
+        gate=gate,
+        model=model,
+        date_demonstrative=queries.get_content_is_synthetic(),
+    )
+
+
 @app.route("/despre-date")
 def despre_date():
     """What is measured vs. demonstrative, and where every number comes from --
     written for a first-time viewer of the (synthetic) public demo."""
-    return render_template("despre_date.html", source=queries.get_data_source())
+    return render_template(
+        "despre_date.html",
+        source=queries.get_data_source(),
+        model=queries.get_sentiment_model_info(),
+        comments_min=queries.get_comments_gate(None)["min"],
+    )
 
 
 @app.route("/taxonomie")

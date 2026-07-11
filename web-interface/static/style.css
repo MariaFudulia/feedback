@@ -66,6 +66,24 @@
   --asistent-bg: light-dark(#e9f7ee, #16301f);
   --asistent-fg: light-dark(#2e9e5b, #5fd18f);
 
+  /* the model chip: a DIFFERENT hue from --demo-*, because it says a different thing.
+     'date demonstrative' answers "are these numbers real?"; this one answers "is this label
+     reported, or guessed by a model?" -- two independent axes, and on /comentarii both are on. */
+  --model-bg: light-dark(#eef0fb, #22243a);
+  --model-fg: light-dark(#5b5bd6, #a5a6f6);
+  --model-border: light-dark(#d3d6f4, #3d3f63);
+
+  /* sentiment chips. 'incert' is deliberately colourless -- a hue would imply a verdict the
+     model explicitly declined to give. */
+  --sent-pos-bg: light-dark(#e9f7ee, #16301f);
+  --sent-pos-fg: light-dark(#1f7a3f, #5fd18f);
+  --sent-neg-bg: light-dark(#fdeceb, #3a1e1d);
+  --sent-neg-fg: light-dark(#c0392b, #ff8a80);
+  --sent-neu-bg: light-dark(#f2f4f7, #262b34);
+  --sent-neu-fg: light-dark(#5a6070, #a2aab8);
+
+  --comment-bg: light-dark(#fbfbfc, #191d24);
+
   /* switch */
   --switch-off: light-dark(#c9ced8, #3a4150);
   --switch-knob: light-dark(#fff, #dfe3ea);
@@ -480,3 +498,48 @@ main form:not(.filters) select { padding: 5px 9px; border: 1px solid var(--borde
 @media (max-width: 520px) {
   .metrics { grid-template-columns: 1fr; }
 }
+
+/* ---------- Comments ----------
+   The only place in this app that renders prose a student typed. Two rules are load-bearing
+   rather than cosmetic: `pre-wrap` keeps the line breaks people actually type, and
+   `overflow-wrap: anywhere` stops one pasted 80-character URL from blowing the page out
+   sideways. `max-width` is a reading measure, not decoration -- long lines are unreadable. */
+.model-chip {
+  font: 600 12px system-ui, sans-serif;
+  background: var(--model-bg); color: var(--model-fg); border: 1px solid var(--model-border);
+  padding: 2px 9px; border-radius: 5px; cursor: help;
+}
+.comment-list { display: flex; flex-direction: column; gap: 9px; margin-top: 14px; }
+.comment-card {
+  display: flex; gap: 12px; align-items: flex-start; justify-content: space-between;
+  background: var(--comment-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.comment-text {
+  margin: 0; font-size: 14px; line-height: 1.65; color: var(--text);
+  max-width: 78ch; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.sent-chip {
+  flex: none; font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+}
+.sent-pozitiv { background: var(--sent-pos-bg); color: var(--sent-pos-fg); }
+.sent-negativ { background: var(--sent-neg-bg); color: var(--sent-neg-fg); }
+.sent-neutru,
+.sent-incert  { background: var(--sent-neu-bg); color: var(--sent-neu-fg); }
+
+.empty-state {
+  border: 1px dashed var(--border-control); border-radius: 11px;
+  padding: 22px 24px; margin-top: 14px; max-width: 78ch;
+}
+.empty-state p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: var(--text-4); }
+.empty-state p:last-child { margin-bottom: 0; }
+.empty-state strong { color: var(--text); }
+
+.pager { display: flex; gap: 6px; align-items: center; margin-top: 16px; font-size: 13px; }
+.pager a, .pager span {
+  padding: 3px 10px; border-radius: 20px; text-decoration: none;
+  color: var(--text-4); background: var(--surface-2);
+}
+.pager a:hover { background: var(--surface-3); }
+.pager .current { background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.pager .gap { background: none; }

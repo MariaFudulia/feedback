@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %} — Comentarii{% endblock %}
+
+{% block sidebar_context %}
+{% if curs and not gate.gated %}
+<form class="filters" method="get" action="{{ url_for('comentarii') }}">
+  <div class="field">
+    <span class="field-label">Întrebarea</span>
+    {# No hidden `page`: changing the question must land on page 1, not on page 7 of a
+       list that now has two pages. #}
+    <select name="intrebare" onchange="this.form.requestSubmit()">
+      {% for slot, question in intrebari.items() %}
+      <option value="{{ slot }}" {{ "selected" if intrebare == slot else "" }}>
+        {{ {"positive": "Aspecte pozitive", "negative": "De îmbunătățit",
+            "difficulty": "Dificultăți", "other": "Alte comentarii"}[slot] }}
+        ({{ counts.get(slot, {}).get("total", 0) }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  {% if intrebare != "difficulty" and model.available %}
+  <div class="field">
+    <span class="field-label">Sentiment</span>
+    <select name="sentiment" onchange="this.form.requestSubmit()">
+      {% for s in sentimente %}
+      <option value="{{ s }}" {{ "selected" if sentiment_filter == s else "" }}>
+        {{ "Toate" if s == "toate" else s|capitalize }}
+        {%- if s != "toate" %} ({{ counts.get(intrebare, {}).get(s, 0) }}){% endif %}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+</form>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% from "_chips.html" import demo_badge, model_badge %}
+{% from "_charts.html" import share_bar %}
+{% from "_export.html" import csv_btn with context %}
+
+{% if not curs %}
+  <h1>Comentarii</h1>
+  <p class="caption">Alege un curs din filtrele din stânga.</p>
+{% else %}
+
+<h1>{{ denumire or curs }}</h1>
+<div class="breadcrumb">
+  <span>{{ breadcrumb }}</span>
+  {# The serie filter is deliberately NOT applied here -- see the route docstring: honouring it
+     would let a reader difference two series and rebuild sets that each sit under the gate. #}
+  <span class="agg-chip">agregare: pe curs (toate seriile)</span>
+  {% if date_demonstrative %}{{ demo_badge("Comentariile de mai jos sunt fabricate de scripturile de generare, nu scrise de studenți. Structura (curs, serie, taxonomie) e reală.") }}{% endif %}
+  {% if model.available %}{{ model_badge() }}{% endif %}
+</div>
+
+{# ---- (a) no content export in this instance at all ---- #}
+{% if not gate.has_content or (gate.responses == 0 and gate.gated) %}
+<div class="empty-state">
+  <p><strong>Nu există comentarii în această instanță.</strong></p>
+  <p>Structura și cascada de filtre sunt reale, dar răspunsurile la întrebările deschise
+     lipsesc: nu e încărcat niciun export de conținut.
+     <a href="{{ url_for('despre_date') }}">Despre date</a>.</p>
+</div>
+
+{# ---- (b) below the response gate: the whole privacy argument, said out loud ---- #}
+{% elif gate.gated %}
+<div class="empty-state">
+  <p><strong>Cursul are {{ gate.responses }} răspuns{{ "uri" if gate.responses != 1 else "" }},
+     sub pragul de {{ gate.min }}. Comentariile nu se afișează.</strong></p>
+  <p>Anonimatul Moodle este la nivel de <em>răspuns</em>: elimină autorul, nu conținutul. La
+     câțiva respondenți, un comentariu devine practic atribuibil — iar numele titularului și al
+     asistentului se află în <em>același rând</em> cu el, deci comentariul se leagă și de o
+     persoană anume.</p>
+  <p>Pragul de ≥{{ gate.min }} răspunsuri e fix în cod și nu poate fi modificat din interfață.
+     Regula ≥3 din deck a fost gândită pentru clasamente, nu pentru text liber.</p>
+</div>
+
+{% else %}
+
+<div class="section-head">
+  <h2>{{ intrebari[intrebare] }}</h2>
+  <span class="hint-chip">{{ total }} comentari{{ "u" if total == 1 else "i" }}</span>
+  {{ csv_btn() }}
+</div>
+<p class="caption">
+  Din {{ gate.responses }} răspunsuri la curs. Ordinea e stabilă, dar nu e cea în care au fost
+  scrise: listele fiecărei întrebări sunt reordonate independent, ca răspunsurile aceluiași
+  student să nu poată fi puse la loc cap la cap. Numele cadrelor didactice sunt eliminate din
+  text.
+  {% if model.available and intrebare != "difficulty" %}
+  Eticheta de sentiment e <em>estimată</em> de un model, nu declarată de student.
+  {% endif %}
+  Exportul CSV conține lista filtrată <em>completă</em>, nu doar pagina afișată.
+</p>
+
+{% if dist and intrebare != "difficulty" %}
+<div class="chart-card">
+  <div class="chart-title">Distribuția sentimentului estimat</div>
+  {{ share_bar(dist, "eticheta", "num", "pct", unit="comentarii") }}
+</div>
+{% endif %}
+
+{% if intrebare == "difficulty" %}
+<p class="caption">
+  Această întrebare cere o <em>cauză</em>, nu o opinie („dificultatea principală provine
+  din:”), deci nu primește etichetă de sentiment — nu există adevăr de referință pentru ea, iar
+  o etichetă ar fi un număr inventat.
+</p>
+{% endif %}
+
+{# ---- (d) the filter matched nothing (distinct from "nobody wrote anything") ---- #}
+{% if not rows %}
+<div class="empty-state">
+  {% if sentiment_filter != "toate" %}
+  <p><strong>Niciun comentariu „{{ sentiment_filter }}” la această întrebare.</strong></p>
+  <p>Sunt {{ counts.get(intrebare, {}).get("total", 0) }} comentarii în total aici.</p>
+  {% else %}
+  {# ---- (c) above the gate, but nobody answered THIS question ---- #}
+  <p><strong>Nimeni nu a răspuns la această întrebare.</strong></p>
+  <p>Cursul are {{ gate.responses }} răspunsuri, dar toți au lăsat acest câmp gol — ceea ce e
+     obișnuit: majoritatea studenților completează doar notele.</p>
+  {% endif %}
+</div>
+{% else %}
+
+<div class="comment-list">
+  {% for r in rows %}
+  <div class="comment-card">
+    <p class="comment-text">{{ r.comentariu }}</p>
+    {% if r.sentiment %}
+    <span class="sent-chip sent-{{ r.sentiment }}"
+          title="Estimare a modelului, nu o declarație a studentului.">{{ r.sentiment }}</span>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% if pages > 1 %}
+<div class="pager">
+  {% if page > 1 %}
+  <a href="{{ url_for('comentarii', intrebare=intrebare, sentiment=sentiment_filter, page=page - 1) }}">‹ înapoi</a>
+  {% endif %}
+  <span class="gap">pagina {{ page }} din {{ pages }}</span>
+  {% if page < pages %}
+  <a href="{{ url_for('comentarii', intrebare=intrebare, sentiment=sentiment_filter, page=page + 1) }}">înainte ›</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endif %}
+{% endif %}
+{% endif %}
+{% endblock %}
