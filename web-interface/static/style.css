@@ -3,11 +3,12 @@
    value and its dark value side by side, so the two can never drift apart -- there
    is no second palette to keep in sync when a colour changes.
 
-   Which half of each light-dark() pair is used is decided by `color-scheme`, which
-   is `light` here and stays that way until something switches it: this commit is a
-   pure refactor and renders exactly as before. `color-scheme` is also what lets the
-   browser darken the things CSS cannot reach -- scrollbars, native select popups,
-   the canvas behind the page.
+   Which half of each light-dark() pair is used is decided by `color-scheme`, and
+   `color-scheme` is driven straight off the radio the server rendered as :checked
+   (see the theme picker in base.html). So: no JS, and no flash of the wrong theme
+   -- the page arrives already themed. `color-scheme` is also what lets the browser
+   darken the things CSS cannot reach: scrollbars, native select popups, form
+   controls, the canvas behind the page.
 
    Brand red and the chart hues stay recognisable across both themes -- they carry
    meaning (identity, series identity) -- but the dark values are lifted enough to
@@ -78,6 +79,10 @@
   --series-graylight: light-dark(#c9ced8, #59616f);
   --series-avg: light-dark(#c2c7d0, #4e5666);
 }
+
+/* The picker is the state. `light` needs no rule -- it is the :root default. */
+body:has(#tema-dark:checked) { color-scheme: dark; }
+body:has(#tema-auto:checked) { color-scheme: light dark; }  /* defer to the OS */
 
 * { box-sizing: border-box; }
 body {
@@ -216,6 +221,45 @@ body {
   text-decoration: none;
 }
 .sidebar nav a:hover { background: var(--nav-hover); color: var(--text); }
+
+/* Theme picker: a three-way segmented control. The radios *are* the state --
+   the rules at the top of this file read them directly -- so there is nothing to
+   style here but the labels sitting on top of them. */
+.theme {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.seg {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--surface-2);
+}
+.seg input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.seg label {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 5px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-2);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.seg label:hover { color: var(--text); }
+.seg input:checked + label {
+  background: var(--control-bg);
+  color: var(--text);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+/* keyboard: the radio is invisible, so its focus ring has to land on the label */
+.seg input:focus-visible + label { outline: 2px solid var(--brand); outline-offset: 1px; }
 
 /* ---------- Main ---------- */
 main {
@@ -419,6 +463,11 @@ main form:not(.filters) select { padding: 5px 9px; border: 1px solid var(--borde
   .filters-toggle:checked ~ .filters-summary::after { content: "▴"; }
   .filter-body { display: none; }
   .filters-toggle:checked ~ .filter-body { display: block; margin-top: 12px; }
+
+  /* the picker keeps its place but sheds its label -- the segments say what they
+     are, and a phone header cannot afford a line of chrome to repeat it */
+  .theme { margin-top: 12px; padding-top: 12px; }
+  .theme .field-label { display: none; }
 
   main { padding: 18px 16px 32px; }
   .metrics { grid-template-columns: repeat(2, 1fr); }
