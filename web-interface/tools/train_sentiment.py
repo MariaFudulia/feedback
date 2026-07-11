@@ -106,9 +106,10 @@ def fit(rows):
 
     logprior = {label: math.log(docs[label] / total) if docs[label] else -30.0 for label in sentiment.LABELS}
     denom = {label: sum(counts[label].values()) + SMOOTHING * len(vocab) for label in sentiment.LABELS}
-    logp_unseen = {
-        label: math.log(SMOOTHING / denom[label]) if denom[label] else -30.0 for label in sentiment.LABELS
-    }
+    # Laplace smoothing gives every IN-VOCABULARY token a weight for EVERY label, so there is
+    # no "seen for one label, unseen for another" case and the model needs no separate unseen
+    # mass. A token the model has never seen is skipped at inference, not charged. Do not add
+    # one back: it would be a parameter nothing reads.
     logp = {}
     for token in vocab:
         logp[token] = {
@@ -117,7 +118,6 @@ def fit(rows):
         }
     return {
         "logprior": {k: round(v, 4) for k, v in logprior.items()},
-        "logp_unseen": {k: round(v, 4) for k, v in logp_unseen.items()},
         "logp": logp,
     }
 

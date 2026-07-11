@@ -598,11 +598,6 @@
      "pozitiv": -5.9848
     }
    },
-   "logp_unseen": {
-    "negativ": -9.6441,
-    "neutru": -7.8372,
-    "pozitiv": -7.7765
-   },
    "logprior": {
     "negativ": -0.3677,
     "neutru": -1.9712,
@@ -866,11 +861,6 @@
      "neutru": -5.9269,
      "pozitiv": -7.146
     }
-   },
-   "logp_unseen": {
-    "negativ": -8.0288,
-    "neutru": -5.9269,
-    "pozitiv": -7.146
    },
    "logprior": {
     "negativ": -0.6622,
@@ -1530,11 +1520,6 @@
      "neutru": -5.0106,
      "pozitiv": -4.2676
     }
-   },
-   "logp_unseen": {
-    "negativ": -8.3601,
-    "neutru": -7.8438,
-    "pozitiv": -8.9589
    },
    "logprior": {
     "negativ": -1.1529,

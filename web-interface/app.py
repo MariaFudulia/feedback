@@ -516,11 +516,10 @@ def comentarii():
     # from silently emptying the list.
     sentiment_filter = "toate" if intrebare == "difficulty" else _one_of("sentiment", "toate", SENTIMENTE)
 
-    gate = (
-        queries.get_comments_gate(curs, an_universitar)
-        if curs
-        else {"gated": True, "responses": 0, "min": 5, "has_content": False}
-    )
+    # No `if curs` branch: comments_gate already handles a missing course, and hand-rolling a
+    # fallback here meant restating COMMENTS_MIN_RESPONSES as a literal 5 -- a pinned safety
+    # threshold copied into a second place, free to go stale.
+    gate = queries.get_comments_gate(curs, an_universitar)
     rows = queries.get_course_comments(
         curs,
         intrebare=intrebare,

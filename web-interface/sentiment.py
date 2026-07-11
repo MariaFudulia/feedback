@@ -111,18 +111,21 @@ def classify(model, field, text):
     params = model["fields"][field]
     logprior = params["logprior"]
     logp = params["logp"]
-    unseen = params["logp_unseen"]
 
+    # Every row of `logp` carries a smoothed weight for all three labels (the trainer emits
+    # them from one Laplace-smoothed table), so there is no "token seen for label A but not
+    # for label B" case to fall back on. An out-of-vocabulary token is simply SKIPPED -- and
+    # the trainer scores its holdout through this same function, so the accuracy we publish is
+    # the accuracy of exactly this behaviour.
     seen_any = False
     scores = {label: logprior.get(label, 0.0) for label in LABELS}
     for token in tokens(text):
         row = logp.get(token)
         if row is None:
-            continue  # out-of-vocabulary tokens are skipped, not charged to unseen mass;
-            # the trainer scores its holdout the same way, or the shipped number is a lie
+            continue
         seen_any = True
         for label in LABELS:
-            scores[label] += row.get(label, unseen.get(label, 0.0))
+            scores[label] += row[label]
 
     if not seen_any:
         return None

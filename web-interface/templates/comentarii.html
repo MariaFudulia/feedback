@@ -56,8 +56,8 @@
   {% if model.available %}{{ model_badge() }}{% endif %}
 </div>
 
-{# ---- (a) no content export in this instance at all ---- #}
-{% if not gate.has_content or (gate.responses == 0 and gate.gated) %}
+{# ---- (a) no comment data in this deployment at all ---- #}
+{% if not gate.has_content %}
 <div class="empty-state">
   <p><strong>Nu există comentarii în această instanță.</strong></p>
   <p>Structura și cascada de filtre sunt reale, dar răspunsurile la întrebările deschise

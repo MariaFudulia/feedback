@@ -831,14 +831,20 @@ def _demo_comments(curs, n_responses):
 
 
 def comments_gate(curs, an_universitar="2024-2025"):
-    """Why a course's comments are or aren't shown. `responses` is the count the gate is
-    applied to; `has_content` says whether any comment exists in this instance at all."""
+    """Why a course's comments are or aren't shown.
+
+    `responses` is the count the gate is applied to. `has_content` means what it says: is
+    there ANY comment content in this instance -- a real export, or the demo corpus the
+    synthetic fallback draws from. It is NOT "is a course selected": the page must be able to
+    tell "nobody wrote anything here" apart from "this deployment has no comment data at all",
+    and blaming the students for a missing file is the wrong message.
+    """
     responses = course_responses(curs, an_universitar) if curs else 0
     return {
         "gated": responses < COMMENTS_MIN_RESPONSES,
         "responses": responses,
         "min": COMMENTS_MIN_RESPONSES,
-        "has_content": bool(curs),
+        "has_content": _CONTENT is not None or bool(_DEMO_CORPUS),
     }
 
 
