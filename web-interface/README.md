@@ -1,7 +1,14 @@
 # Interfață web feedback — Flask
 
-Vezi `docs/index.html` (rădăcina repo) pentru planul complet — obiective, arhitectură,
-contractul de date, împărțirea muncii. Rezumat aici doar pentru pornire rapidă.
+Dashboard peste rezultatele de feedback: cascadă de filtre derivată din arborele real de
+categorii Moodle, clasamente, detaliu pe curs, și comentariile la întrebările deschise cu
+sentiment estimat.
+
+Documentația care contează:
+[`docs/spec-general.md`](docs/spec-general.md) (arhitectură, decizii, contract) și
+[`docs/data-layer-decisions.md`](docs/data-layer-decisions.md) (de ce stratul de date arată
+așa). `docs/index.html` din rădăcina repo-ului e planul inițial — **depășit**, păstrat ca
+istoric.
 
 ## Rulare
 
@@ -12,63 +19,93 @@ pip install -r requirements.txt
 flask --app app run --debug
 ```
 
-Chiar acum, tot ce vezi rulează pe **date mock** din `mocks.py` (numere reale din deck-ul
-coordonatorului, acolo unde slide-ul a fost lizibil — vezi comentariile din `mocks.py` pentru
-cele câteva serii care sunt doar placeholder de formă). Nimeni nu așteaptă baza de date reală
-(PR #3, încă open) ca să înceapă.
+Nu are nevoie de nimic altceva. Fără date, aplicația cade pe un dataset sintetic
+determinist și pornește.
 
-## Cum lucrăm în paralel, de azi
+## De unde vin datele
 
-Regula de bază: **rutele Flask importă doar din `queries.py`**, niciodată din `mocks.py`
-direct. Asta e contractul — semnăturile din `queries.py` sunt fixate, restul poate schimba.
+**Structura e reală** — cicluri, domenii, specializări, ani, semestre, serii, cursuri — și e
+derivată din arborele de categorii Moodle (`taxonomy.py`). Cascada de filtre e construită din
+ea, deci nu poți compune un scop contradictoriu.
 
-- **Coleg A — strat de date**
-  `db/init.sql` (schema PR #3, deja copiată aici) → `db/make_fixture.py` (bază SQLite mică, de
-  test) → înlocuiește corpul fiecărei funcții din `queries.py` cu interogări SQL reale peste
-  fixture, apoi peste `moodle_analytics.db` când PR #3 face merge. Portează pragurile de
-  selecție din `analysis/` (curs ≥7%&≥3fb · titular mediu≥7%&≥15fb · asistent≥10fb) — sunt deja
-  aplicate în `mocks.py` ca referință de comportament așteptat.
+**Conținutul nu e real.** Note, cadre didactice, înscriși, comentarii — toate sunt fabricate.
+Nu avem acces la răspunsurile reale ale studenților. Există două surse de conținut fals, și
+niciuna nu se dă drept adevărată:
 
-- **Coleg B — shell, filtre, sumar**
-  `app.py` (rute + shell), `templates/base.html` (layout comun), `templates/sumar.html`
-  (slide 3), `templates/completare_evaluare.html` (slide-uri 4-6).
+- **fără niciun export** → scoruri generate determinist din id-ul cursului (`_hashf`), plus
+  comentarii dintr-un corpus mic (`models/demo_comments.json`);
+- **cu un export din `generate-feedback/`** → `feedback_contents/` + `users/`, exact formatul
+  pe care l-ar avea un export real din Moodle.
 
-- **Coleg C — clasamente și ani de studiu**
-  `templates/pe_ani_de_studiu.html` (slide-uri 7-9), `templates/top10_cursuri.html`,
-  `templates/top10_titulari.html`, `templates/top10_asistenti.html` (slide-uri 10-16),
-  `templates/evaluare_pe_zone.html` (slide-uri 17-19).
+```bash
+# generezi un dataset complet și îl dai interfeței
+cd ../generate-feedback && python3 convert_script.py && python3 main.py --seed 1
+cd ../web-interface
+FEEDBACK_DATA_DIR=../generate-feedback/out flask --app app run
+```
 
-Niciunul dintre B și C nu așteaptă pe A — deja rulează pe mock. Când A termină o funcție reală,
-nimic din B/C nu se schimbă (aceleași coloane, același nume de funcție).
+(Pickle-urile trebuie să stea lângă `feedback_contents/` și `users/`; interfața ignoră
+exportul dacă lipsește vreunul din cele două directoare.)
 
-Există deja un schelet Flask funcțional (cele 7 rute de mai sus răspund 200,
-`tests/test_smoke.py`) — minimal: formulare simple, fără filtrele în cascadă complete.
-Fiecare completează partea lui peste ce există deja.
+## Badge-urile — regula, nu decorul
 
-## Workflow Git
+Trei badge-uri, trei întrebări diferite:
 
-Branch propriu per coleg (`username-a/...`, `username-b/...`, `username-c/...`), NU pe main.
-Draft PR devreme. Merge-uiește când pagina ta rulează fără erori pe mock.
+| Badge | Răspunde la |
+|---|---|
+| ✓ **date reale** | structura vine din arborele Moodle real |
+| ⚠ **date demonstrative** | cifrele nu sunt reale |
+| ⚗ **sentiment estimat** | eticheta e ghicită de un model, nu declarată de student |
 
-## De clarificat cu coordonatorul (nu blochează codul de mai sus)
+Badge-ul demonstrativ **nu dispare doar fiindcă există un export de conținut**. Generatorul
+produce un export perfect valid și complet inventat; dacă simpla lui prezență ar stinge
+badge-ul, interfața ar prezenta drept reale niște note și niște nume născocite. Regula e
+*fail-closed*: conținutul e considerat real doar dacă cineva declară explicit
+`FEEDBACK_CONTENT_SYNTHETIC=0`, iar un export care se declară singur sintetic (prin
+`manifest.json`) nu poate fi promovat nici așa.
 
-`num_utilizatori` (enrolment) e rezolvat pe partea de CSV: `dump_enrolled_users.py` +
-`mappings/num_students_per_course` produc `num_users.csv`. Nu apare în schema DB din PR #3,
-deci rămâne de adăugat acolo dacă trecem pe bază de date.
+Badge-ul de model rămâne aprins **și** peste date reale — atunci contează cel mai mult să știi
+că eticheta e o presupunere.
 
-PR #20 (Vlad, Flask „Hello World") — acum că mergem tot pe Flask, merită văzut cu Vlad dacă
-branch-ul ăla se coordonează cu munca de aici, sau rămâne separat.
+## Structura
+
+| Fișier | Ce face |
+|---|---|
+| `app.py` | Rutele. Importă **doar** din `queries.py`. |
+| `queries.py` | Contractul de date. Nu importă niciodată flask. Testat coloană cu coloană în `tests/test_contract.py`. |
+| `taxonomy.py` | Arborele de categorii → cascadă, cursuri, serii; adaptorul de conținut; proveniența (fail-closed) și pragul comentariilor. |
+| `aggregates.py` | Clasamente și distribuții peste substratul taxonomiei. |
+| `mocks.py` | Doar Sumarul și acoperirea — cifre transcrise din deck, nerecalculabile din datele pe care le avem. |
+| `comments.py` | Textul liber: redactare de nume, separare pe întrebări, ruperea legăturii cu autorul. |
+| `sentiment.py` | Naive-Bayes din biblioteca standard; greutățile sunt antrenate offline și livrate în `models/`. |
+| `tools/train_sentiment.py` | Antrenorul (offline; aplicația nu-l importă niciodată). |
+| `templates/`, `static/` | Jinja + htmx (`hx-boost`), zero JS scris de mână. Temă light/dark/auto pe tokeni `light-dark()`. |
+
+## Comentarii și confidențialitate
+
+Cele patru întrebări deschise sunt singurul loc unde apare text scris de un student, și au un
+prag propriu: **sub 5 răspunsuri, un curs nu afișează niciun comentariu.** Anonimatul Moodle e
+la nivel de *răspuns* — elimină autorul, nu conținutul — iar numele titularului și al
+asistentului se află în același rând cu comentariul. Pragul e fix în codul stratului de date,
+nu în template: exportul CSV re-emite toți parametrii din URL, deci o verificare în view ar
+fi ocolită de `?export=csv`.
+
+În plus: numele complete ale cadrelor sunt eliminate din text, iar cele patru răspunsuri ale
+unui student sunt reordonate independent, ca să nu poată fi puse la loc cap la cap. Detalii și
+limite — pagina `/despre-date`.
+
+## Teste și CI
+
+```bash
+pytest tests/ -q          # conftest forțează datasetul sintetic
+ruff check . && ruff format --check .
+```
+
+CI rulează exact astea două pe orice push care atinge `web-interface/`.
 
 ## Demo public (Render)
 
-Repo-ul conține un blueprint Render (`render.yaml`, în rădăcina repo-ului) care
-publică interfața ca demo, **exclusiv pe datele sintetice**: exportul real
-(`data/*.p`) este gitignored, deci nu ajunge nici în repo, nici pe host —
-`taxonomy.py` cade automat pe datasetul sintetic, iar `/taxonomie` afișează
-sursa datelor.
+`render.yaml` (rădăcina repo-ului) publică interfața ca demo. Exportul real nu ajunge nici în
+repo, nici pe host, deci demo-ul rulează pe datele sintetice și își spune asta prin badge.
 
-Pași (o singură dată): cont pe render.com → *New → Blueprint* → conectezi
-fork-ul `MariaFudulia/feedback`, branch `develop` → Render citește
-`render.yaml` și publică serviciul. Redeploy automat la fiecare push pe
-`develop`. Planul free adoarme după inactivitate; primul request după pauză
-durează ~30s.
+Plan free: adoarme după inactivitate, primul request după pauză durează ~30s.

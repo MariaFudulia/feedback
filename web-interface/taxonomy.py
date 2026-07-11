@@ -15,12 +15,16 @@ run without the private data.
 STRUCTURE (cascade, course list, series) is REAL. Per-question SCORES, teacher
 (titular/asistent) names, and enrolment counts are deterministic-synthetic while the
 response contents (feedback_contents/) and enrolled-users (users/) exports are absent.
-The seam for real scores is already in place: each offering carries `feedback_ids` (the
-join key to feedback_contents/<id>.json), and `_load_content` is the single adapter to
-implement -- once it returns data, course_detail / course_students / course_responses /
-faculty_average read from it and `content_is_synthetic()` flips, clearing the
-'date demonstrative' badge app-wide. Until then everything falls back to the `_hashf`
-generators below.
+The seam for real scores is in place: each offering carries `feedback_ids` (the join key to
+feedback_contents/<id>.json), and `_load_content` is the single adapter -- once it returns
+data, course_detail / course_students / course_responses / faculty_average / course_comments
+all read from it. Absent it, everything falls back to the `_hashf` generators below.
+
+Content being PRESENT is not content being REAL, and the badge follows the latter: see
+`_content_is_generated`. The in-tree generator (../generate-feedback) produces a perfectly
+well-formed feedback_contents/ + users/ pair, and loading it must NOT claim the numbers are
+real. `content_is_synthetic()` therefore fails closed -- only an export explicitly declared
+real clears the badge.
 """
 
 import hashlib

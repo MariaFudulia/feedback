@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block title %} — Despre date{% endblock %}
 {% block content %}
-{% from "_chips.html" import demo_badge, real_badge %}
+{% from "_chips.html" import demo_badge, real_badge, model_badge %}
 <h1>Despre date</h1>
 <p class="caption">Ce e măsurat, ce e demonstrativ, și de unde vine fiecare număr din interfață.</p>
 
-<div class="section-head"><h2>Cele două badge-uri</h2></div>
+<div class="section-head"><h2>Cele trei badge-uri</h2></div>
+<p class="caption">Răspund la întrebări diferite: <em>e reală structura?</em>, <em>sunt reale
+  cifrele?</em> și <em>eticheta e raportată sau ghicită?</em>. Se pot aprinde independent.</p>
 <table>
   <thead><tr><th>Badge</th><th>Înseamnă</th></tr></thead>
   <tbody>
@@ -19,10 +21,22 @@
       <td>{{ demo_badge() }}</td>
       <td>Numere <strong>demonstrative</strong>: fie transcrise din deck-ul de referință al
           coordonatorului (Sumar, acoperire), fie generate pe structura reală (note, cadre
-          didactice, procente). Badge-ul dispare doar la importul unui export <em>real</em>
-          din Moodle. Un dataset produs de scripturile de generare rămâne marcat ca
-          demonstrativ, oricât de bine format ar fi — altfel interfața ar prezenta drept
-          reale niște note și nume inventate.</td>
+          didactice, procente, comentarii).
+          <br><br>
+          Badge-ul <strong>nu</strong> dispare doar pentru că există un export de conținut.
+          Scripturile din <code>generate-feedback/</code> produc un export perfect valid, dar
+          inventat; dacă simpla lui prezență ar stinge badge-ul, interfața ar prezenta drept
+          reale niște note și niște nume născocite. Regula e <em>fail-closed</em>: conținutul e
+          considerat real doar dacă cineva declară explicit asta
+          (<code>FEEDBACK_CONTENT_SYNTHETIC=0</code>). Un export care se declară singur sintetic
+          (prin <code>manifest.json</code>) nu poate fi promovat nici măcar așa.</td>
+    </tr>
+    <tr>
+      <td>{{ model_badge() }}</td>
+      <td>Eticheta de sentiment de pe un comentariu este <strong>estimată de un model</strong>,
+          nu declarată de student. Alt tip de întrebare decât celelalte două: badge-ul ăsta
+          rămâne aprins <em>și</em> peste date reale — atunci contează cel mai mult să știi că
+          eticheta e o presupunere. Textul comentariului e mereu cel original.</td>
     </tr>
   </tbody>
 </table>

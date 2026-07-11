@@ -344,13 +344,15 @@ series, and the offer counts on the summary page — all derived from the provid
 
 ### 6.2 What is synthetic, and why
 
-The **content** — per-question scores, cadru names (titular/asistent), enrolment counts — is
-**not** in the export we have. The zip is explicitly structure-only (`no-feedback-contents`): it
-lacks `feedback_contents/` (the responses) and `users/` (roles/enrolment). Until those arrive,
-those numbers are generated **deterministically** from the real course id
-[`web-interface/taxonomy.py`, the `_hashf` generators] — stable and plausible, but placeholders.
+The **content** — per-question scores, cadru names (titular/asistent), enrolment counts, free
+text — is **not** in the export we have. The zip is explicitly structure-only
+(`no-feedback-contents`): it lacks `feedback_contents/` (the responses) and `users/`
+(roles/enrolment). And it never will contain them: the coordinator refused access to real
+student data, and told us to improve the generator instead [Slack]. That is a settled answer,
+not a pending one, and the design assumes it.
 
-The placeholder data now has three sources, and they are different things:
+The placeholder data has **five** sources, and they are different things — conflating them is
+how you end up presenting a guess as a measurement:
 
 1. **Computed from the content substrate.** The Top-10 tables, score-zones, and the per-period /
    per-year breakdowns are **recomputed** from the taxonomy structure + the content adapter
@@ -362,32 +364,75 @@ The placeholder data now has three sources, and they are different things:
    the first is a 9-year history not reconstructable from our single year of structure; the
    second counts courses with *no* feedback, which the feedback-scoped taxonomy excludes.
 3. **Deterministic synthetic scores.** The per-course scores/cadre — feeding both the detail page
-   and the computed aggregates above — come from the `_hashf` generators until the export lands.
+   and the computed aggregates above — come from the `_hashf` generators when no content export
+   is loaded.
+4. **A generated content export.** `generate-feedback/` emits real-shaped
+   `feedback_contents/` + `users/`, which `_load_content` consumes exactly as it would a real
+   one. Richer than `_hashf`: each course, titular and asistent carries a hidden quality, so the
+   rankings and the deck's selection thresholds actually discriminate rather than filtering
+   nothing. Fabricated, and carries a `manifest.json` saying so — which the app honours (§6.4).
+5. **Free text, and a label that is not data at all.** The comments come either from that export
+   or, with no export, from a small corpus (`models/demo_comments.json`). The sentiment beside
+   each one is an **estimate from a model**, not something a student declared — a different kind
+   of not-real from all of the above, which is why it gets its own badge. It also gets its own
+   floor: no comments are shown for a course with fewer than 5 responses, because Moodle's
+   anonymity is per-*response* (it strips the author, not the content) and the titular's name
+   sits in the same row as the complaint about him.
 
 ### 6.3 The seam where real scores plug in
 
 The swap to real scores is a **single adaptor**, not a rewrite. Each course carries its
 `feedback_ids` (the join key to `feedback_contents/<id>.json`); `_load_content` reads those
-responses + `users/<course_id>.json` and aggregates per course, and once it returns data the four
-content functions read it and the "date demonstrative" badge clears automatically
-[`web-interface/taxonomy.py`].
+responses + `users/<course_id>.json` and aggregates per course, and the content functions —
+`course_detail`, `course_students`, `course_responses`, `faculty_average`, `course_comments` —
+read it when it is there [`web-interface/taxonomy.py`].
 
 The adapter is **implemented against the pipeline's verified format** — 25-slot *positional*
 responses (the pipeline never matches on question text), Likert read from `rawval` and reversed
 `6 - x` (5 = best), roles via `editingteacher`/`asistent` — and tested against a fixture in the
 real shape [`web-interface/tests/test_content_adapter.py`; format from
-`process-feedback/processor.py`]. Two mappings and the scale carry a `# VERIFY` comment: the
-best-guess bridges of the real 18-question form onto our 6 keys (the asistent "clarity" slot;
-the "objectives" key), to confirm against the first real `feedback_contents` file — a ~10-minute
-check, not a re-implementation. Until the export lands, `_load_content` returns `None` and
-everything stays synthetic.
+`process-feedback/processor.py`]. That format is now pinned in one place we control:
+`generate-feedback/slots.py`, checked against `anon.json` (a real anonymized Moodle dump) and
+enforced by `generate-feedback/validate.py` against both consumers' acceptance rules.
+
+> **The seam is filled, and the badge did not move.** `_load_content` no longer waits on the
+> coordinator: `generate-feedback/` emits exactly that pair. But **content being present is not
+> content being real**, and this is where a naive version of this design would have failed. If
+> loading an export cleared the badge, then pointing the app at the generator's output — a
+> perfectly valid file of fabricated scores and invented staff names — would have made the
+> dashboard assert that fake numbers are real. On a public demo, that is the one thing this
+> project must never do. See §6.4.
 
 ### 6.4 Honesty made visible: the badge discipline
 
-Every page that shows placeholder numbers carries a **"date demonstrative"** badge; the one
-panel that is real structure carries **"date reale"** [`web-interface/templates/_chips.html`].
-This is a rule, not decoration: a reviewer opening "Top-10 titulari" sees at a glance that the
-ranking is illustrative and cannot mistake a placeholder for a measurement.
+Every page showing placeholder numbers carries a **"date demonstrative"** badge; real structure
+carries **"date reale"**; an inferred sentiment label carries **"sentiment estimat"**
+[`web-interface/templates/_chips.html`]. This is a rule, not decoration: a reviewer opening
+"Top-10 titulari" sees at a glance that the ranking is illustrative and cannot mistake a
+placeholder for a measurement.
+
+Three badges because there are **three independent questions**, and conflating them is how you
+end up lying by omission:
+
+| Badge | Answers |
+|---|---|
+| date reale | is the *structure* real? |
+| date demonstrative | are the *numbers* real? |
+| sentiment estimat | is this *label* reported, or inferred? |
+
+**The demo badge fails closed.** Content counts as real only when someone explicitly declares
+it (`FEEDBACK_CONTENT_SYNTHETIC=0`); an export that declares itself synthetic via
+`manifest.json` can never be promoted, not even by that variable; and no manifest — or an
+unreadable one — means synthetic. The asymmetry is deliberate: showing the badge over real data
+is a harmless understatement, while hiding it over fabricated data is the app lying about its
+own numbers. We do not vouch for data whose provenance nobody recorded
+[`taxonomy.py: _content_is_generated`].
+
+**The model badge is not gated on the other two, and that is the point.** It renders
+unconditionally on `/comentarii`. The day a real export lands, the demo badge switches off —
+and a sentiment chip that was gated on it would then sit beside real student comments with no
+caveat at all, at exactly the moment the caveat matters most. The text of a comment is always
+the original; only the label is a guess.
 
 ---
 
@@ -449,28 +494,55 @@ diverge. Our category-tree model is offered as the candidate for that shared ans
   (feature branch → PR → review → merge) [PR #4, merged; PR #5, merged for the test-suite fix].
   **Nothing was merged into the central repository or into `master`** — this is internal team
   integration only.
-- On `develop` now: the taxonomy, cascade, course-detail explorer, offer-structure panel, and
-  the real/demonstrative badge system. Structure is real; content (scores/cadre) is
-  deterministic-synthetic behind the documented seam (§6).
+- On `develop` now: the taxonomy, cascade, course-detail explorer, offer-structure panel, the
+  badge system, the aggregates layer (rankings, distributions, CSV export, charts), a
+  light/dark/auto theme, `/despre-date`, `/comentarii` with an estimated-sentiment model, and
+  `generate-feedback/` — the fixed generator, merged in after we sent it upstream as a PR.
+- Structure is real. **All content is fabricated**, and the app is built to say so rather than
+  to hope for better (§6.2, §6.4).
 
-### 8.2 Open items, and the source still owed
+### 8.2 Open items
 
-1. **The content export.** Real scores/cadre/enrolment need `feedback_contents/` + `users/` (or
-   the pipeline's processed CSVs). This is the single dependency that turns the demonstrative
-   numbers real and clears the badge — a concrete ask to the coordinator.
-2. **The noise-filter policy.** The pipeline excludes master-research codes but nothing else, so
+The headline of this section used to be *"the one piece of real data still owed"*. That framing
+is dead: **we asked, and the answer was no.** The coordinator refused access to real feedback
+responses and pointed us at the generator instead [Slack]. So the content export stopped being a
+dependency and became a thing we build — and the honesty machinery (§6.4) stopped being a
+placeholder courtesy and became the load-bearing part of the design, because from here on
+*everything* the app shows is fabricated, and only the app knows it.
+
+1. **The noise-filter policy.** The pipeline excludes master-research codes but nothing else, so
    ~39 non-teaching "courses" (voluntariat, practică, examene, educație fizică, limbi, pedagogie)
    currently pass through. Whether to exclude them is a policy decision, not a derivation — posed
    as one grouped question to the coordinator. The exclusion mechanism (mirroring the existing
    denylist) is ready either way.
-3. **One mis-filed Moodle course.** "Practică pedagogică (2)" sits under a bare "Semestrul 2"
+2. **One mis-filed Moodle course.** "Practică pedagogică (2)" sits under a bare "Semestrul 2"
    category with no ciclu/domeniu/an above it, so it cannot be placed from the tree [empiric]. It
    is surfaced in the `/taxonomie` view, not silently dropped — a data-entry fix on the Moodle
    side.
+3. **The comments page is surface nobody scoped.** The ≥5-response gate and the staff-name
+   redaction are choices we made in the absence of *any* privacy policy in this project — there
+   is none, anywhere in the repo, and we went looking. Moodle anonymity is per-response, the
+   teacher's name rides in the same row as the comment, and the coordinator's long-term plan is
+   for "part of the data" to become public to students without an account. Raw student prose is
+   exactly the artifact that decision has to cover, and it has not been made. Worth putting in
+   front of him rather than letting it ship quietly.
+4. **The sentiment model is trained on our own synthetic text.** Its accuracy figure describes
+   performance on text like the training text. Real student prose is out of distribution and it
+   will do worse — and we cannot say by how much, because we have no labelled real text to
+   measure against. That is stated on `/despre-date`, not buried here.
 
 ### 8.3 Summary
 
 The data layer stands on a real, authoritative source (the category tree), exposes a frozen
-contract the rest of the team builds against, is honest in the UI about what is measured versus
-placeholder, and has a single, tested seam for the one piece of real data still owed. The
-decisions above were each made on evidence, and each cites where that evidence can be checked.
+contract the rest of the team builds against, and is honest in the UI about what is measured
+versus what is invented.
+
+That last clause carried less weight when it was written than it does now. Back then it meant
+"a few placeholder numbers until the export arrives". The export is never arriving — and the
+generator we built in its place produces content so faithful that *nothing downstream can tell
+it from the real thing*. Which is precisely why the app has to. Every mechanism in §6.4 exists
+to stop this dashboard from doing the one thing it must never do: put fabricated scores, and
+invented people's names, in front of a reader as fact.
+
+The decisions above were each made on evidence, and each cites where that evidence can be
+checked.

@@ -3,7 +3,7 @@
    ... {{ demo_badge() }} / {{ real_badge() }}
    Pass a tooltip arg to override the default hover text for a specific page. #}
 
-{% macro demo_badge(tooltip="Numere din deck-ul de referință (CTI). Devin reale la importul feedback_contents/ + users/.") -%}
+{% macro demo_badge(tooltip="Numerele nu sunt reale. Badge-ul dispare doar pentru un export declarat explicit ca real (FEEDBACK_CONTENT_SYNTHETIC=0) — un dataset produs de scripturile de generare rămâne marcat, oricât de bine format ar fi.") -%}
 <span class="demo-chip" title="{{ tooltip }}">⚠ date demonstrative</span>
 {%- endmacro %}
 
