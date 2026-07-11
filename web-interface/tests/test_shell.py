@@ -2,6 +2,7 @@
 Forces the synthetic taxonomy so no private data is needed (same as test_smoke.py)."""
 
 import os
+import re
 
 os.environ["FEEDBACK_DATA_DIR"] = "/tmp/feedback-no-such-data-dir"
 
@@ -134,3 +135,52 @@ def test_share_link_offered_only_when_scoped(client):
     _set(client, ciclu="L")
     page = client.get("/").get_data(as_text=True)
     assert "share-link" in page and "ciclu=L" in page
+
+
+# ---- theme -------------------------------------------------------------------
+# The theme is carried entirely by which radio the server renders as :checked --
+# the stylesheet keys off it (body:has(#tema-dark:checked)) and there is no JS to
+# fall back on. So "the right radio is checked" IS the feature, and these tests
+# guard it: lose the `checked` and every page silently renders in the wrong theme.
+
+
+def _checked_theme(client, path="/"):
+    page = client.get(path).get_data(as_text=True)
+    found = re.findall(r'id="tema-(\w+)"([^>]*)', page)
+    return [t for t, attrs in found if "checked" in attrs]
+
+
+def test_theme_defaults_to_auto(client):
+    # no choice made yet -> defer to the OS (prefers-color-scheme), never a guess
+    assert _checked_theme(client) == ["auto"]
+
+
+def test_theme_choice_persists_across_pages(client):
+    client.post("/tema", data={"tema": "dark"})
+    for path in ("/", "/top10-cursuri", "/despre-date"):
+        assert _checked_theme(client, path) == ["dark"], f"theme lost on {path}"
+
+
+def test_theme_post_swaps_nothing(client):
+    # the CSS already flipped client-side; the POST only makes it stick, so it must
+    # stay a 204 -- returning a body here would make htmx swap the page away
+    r = client.post("/tema", data={"tema": "dark"})
+    assert r.status_code == 204
+    assert r.get_data() == b""
+
+
+def test_unknown_theme_falls_back_to_auto(client):
+    # the value lands in an HTML attribute, so it is never trusted
+    client.post("/tema", data={"tema": '"><script>alert(1)</script>'})
+    with client.session_transaction() as sess:
+        assert sess.get("tema") == "auto"
+    assert "<script>alert(1)</script>" not in client.get("/").get_data(as_text=True)
+
+
+def test_reset_filters_keeps_the_theme(client):
+    # theme is a display preference, not part of the data scope -- resetting the
+    # filters must not throw the user back into light mode
+    client.post("/tema", data={"tema": "dark"})
+    _set(client, ciclu="L")
+    client.get("/reset-filters?next=/")
+    assert _checked_theme(client) == ["dark"]
