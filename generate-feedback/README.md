@@ -72,6 +72,37 @@ position and reject anything unexpected, so the labels cannot live in-band. They
 sentiment classifier can be trained and evaluated on the free-text answers without a manual
 labelling pass.
 
+## Feeding the web interface
+
+```bash
+python3 convert_script.py && python3 main.py --seed 1     # -> out/
+cd ../web-interface
+FEEDBACK_DATA_DIR=../generate-feedback/out flask --app app run
+```
+
+The pickles must sit alongside `feedback_contents/` and `users/`; `convert_script.py` writes them
+to `pickles/`, so either copy them into `out/` or point `FEEDBACK_DATA_DIR` at a directory holding
+all three.
+
+**The badge stays on, and that is the point.** The app does not clear its "date demonstrative"
+badge just because a content export appeared — this export is well-formed and entirely invented,
+and `manifest.json` says so. Nothing you can pass to the app will promote it. See
+`web-interface/README.md`.
+
+### If you change the text
+
+The sentiment model shipped with the web interface is trained on *this generator's* output. Edit
+`textbank.py` and the model is stale — retrain it:
+
+```bash
+cd ../web-interface
+python3 tools/train_sentiment.py --out-dir ../generate-feedback/out --seed 1234
+```
+
+That rewrites `models/sentiment_ro.json` (the weights, plus the per-question accuracy the UI
+publishes) and `models/demo_comments.json` (the corpus the app falls back on when no export is
+present). The app never trains; run this by hand and commit the result.
+
 ## The 25-slot contract
 
 A feedback attempt is **exactly 25 responses, read by position** — never by question text (the

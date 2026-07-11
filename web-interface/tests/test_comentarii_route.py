@@ -1,6 +1,8 @@
 """The /comentarii route: param validation, pagination, and the gate the export must not walk
 around."""
 
+import os
+
 import pytest
 
 import app as app_module
@@ -114,4 +116,9 @@ def test_the_gate_threshold_is_never_restated_as_a_literal():
     import queries
 
     assert queries.get_comments_gate(None)["min"] == taxonomy.COMMENTS_MIN_RESPONSES
-    assert '"min": 5' not in open("app.py", encoding="utf-8").read()
+
+    # resolved from THIS file, not the cwd: CI happens to run pytest from web-interface/, but a
+    # test that only passes from one directory is a trap for whoever runs it from the repo root
+    app_py = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "app.py")
+    with open(app_py, encoding="utf-8") as f:
+        assert '"min": 5' not in f.read()

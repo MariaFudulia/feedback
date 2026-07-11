@@ -94,6 +94,55 @@ fi ocolită de `?export=csv`.
 unui student sunt reordonate independent, ca să nu poată fi puse la loc cap la cap. Detalii și
 limite — pagina `/despre-date`.
 
+## Configurare (variabile de mediu)
+
+Toate au valori implicite rezonabile; aplicația pornește fără niciuna.
+
+| Variabilă | Implicit | Ce face |
+|---|---|---|
+| `FEEDBACK_DATA_DIR` | `web-interface/data/` | Directorul cu exportul: pickle-urile (`categories.p`, `courses.p`, `feedbacks.p`) **plus** `feedback_contents/` și `users/`. Dacă lipsesc pickle-urile → structură sintetică. Dacă lipsește oricare din cele două directoare → **conținutul e ignorat complet** (nu parțial). |
+| `FEEDBACK_CONTENT_SYNTHETIC` | *nesetat* | **Singurul mod de a declara conținutul ca real.** Vezi mai jos — citește secțiunea înainte s-o setezi. |
+| `FEEDBACK_SECRET_KEY` | cheie de dev | Semnează cookie-ul de sesiune (în el stau filtrele). Setează una reală oriunde e expus public. |
+| `FEEDBACK_FACULTY_CAT` | `7` | Categoria Moodle a facultății (7 = ACS). |
+| `FEEDBACK_SENTIMENT_MODEL` | `models/sentiment_ro.json` | Greutățile modelului de sentiment. Lipsă sau corupt → comentariile se afișează **fără** etichete, nu crapă. |
+| `FEEDBACK_DB_PATH` | `db/fixture.db` | Vestigiu; `queries.py` nu citește SQL. |
+
+### `FEEDBACK_CONTENT_SYNTHETIC` — citește asta înainte s-o setezi
+
+E singurul lucru care poate stinge badge-ul „date demonstrative”. Regula e *fail-closed*:
+
+```
+manifest.json spune "synthetic": true   →  SINTETIC. Nimic nu poate suprascrie asta.
+FEEDBACK_CONTENT_SYNTHETIC=0            →  real
+FEEDBACK_CONTENT_SYNTHETIC=1            →  sintetic
+nimic din cele de mai sus               →  SINTETIC (proveniență necunoscută)
+```
+
+**Nu o seta pe `0` pentru date pe care nu le-ai scos tu din Moodle.** Asimetria e voită: un badge afișat peste date reale e o subestimare inofensivă; un badge ascuns peste date fabricate e aplicația care minte despre propriile cifre — pe un demo public, cu note și nume de profesori inventate.
+
+## Rețete
+
+```bash
+# 1. dataset sintetic complet, dat interfeței
+cd ../generate-feedback && python3 convert_script.py && python3 main.py --seed 1
+cd ../web-interface
+FEEDBACK_DATA_DIR=../generate-feedback/out flask --app app run
+#    (badge-ul rămâne aprins: exportul are manifest.json cu "synthetic": true)
+
+# 2. reantrenezi modelul de sentiment după ce schimbi textele din generator
+python3 tools/train_sentiment.py --out-dir ../generate-feedback/out --seed 1234
+#    rescrie models/sentiment_ro.json (greutăți + acuratețe per întrebare)
+#    și models/demo_comments.json (corpusul pe care cade demo-ul fără export)
+#    Antrenorul NU e importat niciodată de aplicație. Rulează-l manual, comite rezultatul.
+
+# 3. cândva, date reale din Moodle
+cd ../retrieve-feedback && cp moodle.template.conf moodle.conf   # completezi credențialele
+./dump_categories.py -c moodle.conf -d ../export/categories.p    # etc. — vezi README-ul de acolo
+cd ../web-interface
+FEEDBACK_DATA_DIR=../export FEEDBACK_CONTENT_SYNTHETIC=0 flask --app app run
+#    abia acum dispare badge-ul demonstrativ
+```
+
 ## Teste și CI
 
 ```bash

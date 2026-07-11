@@ -1,11 +1,20 @@
 # Render blueprint for the public demo of the feedback web interface.
 #
-# The demo runs on the SYNTHETIC dataset by design: the real Moodle export
-# (web-interface/data/*.p) is gitignored and never reaches the repo or the
-# host, so the deployed app contains no institutional or personal data. The
-# taxonomy layer falls back to the synthetic structure automatically when the
-# pickles are absent (web-interface/taxonomy.py), and the /taxonomie page
-# banners the data source so nobody can mistake the demo for real data.
+# The demo runs on SYNTHETIC data by design, and contains no institutional or
+# personal data: no real export is committed (web-interface/data/ is gitignored),
+# so taxonomy.py falls back to a synthetic structure, deterministic scores, and a
+# small corpus of fabricated comments (web-interface/models/demo_comments.json).
+#
+# FEEDBACK_CONTENT_SYNTHETIC is deliberately NOT set here, and must not be. It is
+# the only switch that can clear the "date demonstrative" badge, and every number
+# on this deployment is invented -- scores, teacher names, student comments. The
+# provenance check fails closed (taxonomy.py: _content_is_generated), so leaving
+# it unset is what keeps the badge on. Setting it to "0" here would make a public
+# dashboard assert that fabricated rankings about named people are real.
+#
+# The sentiment labels on /comentarii carry their own badge for a separate reason:
+# they are a MODEL'S ESTIMATE, not something a student wrote, and that stays true
+# even if this demo is ever pointed at real data.
 services:
   - type: web
     name: feedback-upb-demo
