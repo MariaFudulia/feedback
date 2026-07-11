@@ -79,6 +79,22 @@
     <a href="{{ url_for('curs_detaliu') }}">Detaliu curs</a>
     <a href="{{ url_for('despre_date') }}">Despre date</a>
   </nav>
+
+  {# Theme picker. The server renders the active radio as :checked, so the page
+     arrives already themed -- no flash, and the choice is readable straight from
+     the markup. Checking a radio repaints instantly with no round-trip (the
+     stylesheet keys off `body:has(#tema-dark:checked)`); the hx-post only makes
+     the choice stick for the next navigation, so it swaps nothing. Still zero
+     hand-written JS, same session-backed idiom as the filters above. #}
+  <form class="theme" hx-post="{{ url_for('set_theme') }}" hx-trigger="change" hx-swap="none">
+    <span class="field-label">Temă</span>
+    <div class="seg" role="group" aria-label="Temă">
+      {% for t in teme %}
+      <input type="radio" name="tema" id="tema-{{ t }}" value="{{ t }}" {{ "checked" if tema == t else "" }}>
+      <label for="tema-{{ t }}">{{ theme_label[t] }}</label>
+      {% endfor %}
+    </div>
+  </form>
 </aside>
 <main>
   {% block content %}{% endblock %}

@@ -39,6 +39,12 @@ TOATE_LABEL = {
     "specializare": "Toate specializările",
 }
 
+# Theme is a per-session preference, stored like the filters. "auto" defers to
+# the OS setting (prefers-color-scheme) -- the default, so a first visit already
+# matches the machine it lands on.
+THEMES = ("auto", "light", "dark")
+THEME_LABEL = {"auto": "Auto", "light": "Luminos", "dark": "Întunecat"}
+
 # fixed nivel -> chart color, so filtering never repaints the surviving series
 NIVEL_SERIES = [
     {"key": "total", "label": "Total", "color": "red", "unit": ""},
@@ -62,6 +68,11 @@ def _safe_next(target):
     if target and target.startswith("/") and not target.startswith("//"):
         return target
     return None
+
+
+def current_theme():
+    t = session.get("tema", "auto")
+    return t if t in THEMES else "auto"
 
 
 def current_filters():
@@ -130,6 +141,9 @@ def inject_sidebar():
         "academic_years": queries.get_academic_years(),
         "share_qs": share_qs,
         "export_url": _export_url,
+        "tema": current_theme(),
+        "teme": THEMES,
+        "theme_label": THEME_LABEL,
     }
 
 
@@ -169,6 +183,20 @@ def scope_from_url():
 def set_filters():
     _apply_scope(request.form)
     return redirect(_safe_next(request.form.get("next")) or url_for("sumar"))
+
+
+@app.route("/tema", methods=["POST"])
+def set_theme():
+    """Remember the theme picked in the sidebar.
+
+    The CSS has already flipped on the client the instant the radio was checked
+    (the stylesheet keys off :checked -- see `body:has()` in style.css), so this
+    request has nothing to re-render: it only makes the choice survive the next
+    navigation. Hence 204 and hx-swap="none" on the form.
+    """
+    tema = request.form.get("tema", "")
+    session["tema"] = tema if tema in THEMES else "auto"
+    return "", 204
 
 
 @app.route("/reset-filters")
