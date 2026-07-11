@@ -463,6 +463,52 @@ def _load_content(data_dir, offerings):
     return (out or None), skipped
 
 
+def _content_is_generated(data_dir):
+    """True when the loaded content export is itself synthetic.
+
+    Content being PRESENT is not the same as content being REAL. The feedback generator
+    (generate-feedback/) produces a perfectly well-formed feedback_contents/ + users/
+    pair, and without this check loading it would clear the 'date demonstrative' badge
+    app-wide -- i.e. the public demo would assert that fabricated scores, teacher names
+    and rankings are real. That is the one thing this app must never do.
+
+    FAILS CLOSED. The two mistakes are not symmetric: showing the badge over real data is
+    a harmless understatement, while hiding it over fabricated data is the app lying about
+    its own numbers. So content counts as real only when something says so, and an export
+    that declares ITSELF synthetic can never be promoted -- not even by the env var. That
+    ordering matters: a deployment that once served real data keeps FEEDBACK_CONTENT_
+    SYNTHETIC=0 set, and the day someone points it at generator output, a manifest that
+    could not veto would clear the badge over fabricated scores and invented staff names.
+
+    Precedence:
+      manifest says "synthetic": true  -> synthetic. Nothing overrides this.
+      FEEDBACK_CONTENT_SYNTHETIC set   -> whatever it says ("0" = real).
+      manifest says "synthetic": false -> real.
+      no manifest / unreadable one     -> synthetic (provenance unknown).
+    """
+    declared = _manifest_synthetic(data_dir)
+    if declared is True:
+        return True
+    if config.CONTENT_SYNTHETIC is not None:
+        return config.CONTENT_SYNTHETIC != "0"
+    if declared is False:
+        return False
+    return True
+
+
+def _manifest_synthetic(data_dir):
+    """The export's own claim about itself: True, False, or None when it doesn't say.
+    An unreadable manifest counts as a claim of 'synthetic' -- we cannot trust what we
+    cannot read."""
+    try:
+        with open(os.path.join(data_dir, "manifest.json"), encoding="utf-8") as f:
+            return bool(json.load(f).get("synthetic", True))
+    except FileNotFoundError:
+        return None
+    except _PARSE_ERRORS:
+        return True
+
+
 def _content_for(curs):
     """Merged real content for a logical curs (summed across its series' course_ids),
     or None while no content is loaded -- the single point real scores flow through."""
@@ -493,6 +539,7 @@ def _init():
         _SOURCE, \
         _CONTENT, \
         _CONTENT_SKIPPED, \
+        _CONTENT_GENERATED, \
         _MALFORMED
     data_dir = config.FEEDBACK_DATA_DIR
     if _pickles_present(data_dir):
@@ -508,6 +555,7 @@ def _init():
     _MALFORMED = stats.get("malformed", 0)
     # None until feedback_contents/ + users/ arrive; skip-count surfaced in consistency_issues
     _CONTENT, _CONTENT_SKIPPED = _load_content(data_dir, _OFFERINGS)
+    _CONTENT_GENERATED = _content_is_generated(data_dir)
     _BY_CURS = {}
     for r in _OFFERINGS:
         _BY_CURS.setdefault(r["curs"], r)
@@ -627,11 +675,16 @@ def data_source():
 
 
 def content_is_synthetic():
-    """True while scores/teacher names/enrolment are placeholder -- i.e. no content
-    export loaded. Flips to False automatically the moment _load_content returns data,
-    which clears the 'date demonstrative' badge across the app. Independent of whether
-    the STRUCTURE is real or synthetic."""
-    return _CONTENT is None
+    """True while scores/teacher names/enrolment are not real -- which is what drives the
+    'date demonstrative' badge across the app. Two ways to be synthetic:
+
+      * no content export at all -> the _hashf placeholder generators are in use
+      * a content export that is itself GENERATED (generate-feedback), which is
+        well-formed but fabricated
+
+    Only a real Moodle export clears the badge. Independent of whether the STRUCTURE is
+    real or synthetic."""
+    return _CONTENT is None or _CONTENT_GENERATED
 
 
 def academic_years():

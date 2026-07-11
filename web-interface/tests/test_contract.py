@@ -253,10 +253,13 @@ def test_content_seam_routes_to_real_content_when_present():
         "num_feedback": 7,
         **{k: 4.5 for k in taxonomy.QUESTION_KEYS},
     }
+    saved_generated = taxonomy._CONTENT_GENERATED
     taxonomy._CONTENT = {None: {"responses": 42, "students": 100, "cadre": [probe]}}
+    taxonomy._CONTENT_GENERATED = False  # a real export; a GENERATED one keeps the badge on
     try:
         assert taxonomy.content_is_synthetic() is False
         assert taxonomy.course_detail(curs)[0]["nume"] == "SeamProbe"
     finally:
         taxonomy._CONTENT = None
+        taxonomy._CONTENT_GENERATED = saved_generated
     assert taxonomy.content_is_synthetic() is True

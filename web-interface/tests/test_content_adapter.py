@@ -10,6 +10,7 @@ synthetic singleton (same approach as test_real_data.py).
 import json
 import os
 
+import config
 import taxonomy
 
 _FIX = os.path.join(os.path.dirname(__file__), "fixtures", "content")
@@ -101,10 +102,16 @@ def test_seam_flips_and_public_functions_read_real_content():
     # end-to-end: fixture content, installed, flows through the public API and flips the badge
     offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "seam-curs", "serie": None}]
     content, _ = taxonomy._load_content(_FIX, offerings)
-    saved = (taxonomy._OFFERINGS, taxonomy._BY_CURS, taxonomy._CONTENT)
+    saved = (
+        taxonomy._OFFERINGS,
+        taxonomy._BY_CURS,
+        taxonomy._CONTENT,
+        taxonomy._CONTENT_GENERATED,
+    )
     taxonomy._OFFERINGS = offerings
     taxonomy._BY_CURS = {"seam-curs": offerings[0]}
     taxonomy._CONTENT = content
+    taxonomy._CONTENT_GENERATED = False  # i.e. a real Moodle export, explicitly declared
     try:
         assert taxonomy.content_is_synthetic() is False  # badge clears app-wide
         assert taxonomy.course_responses("seam-curs") == 2
@@ -113,4 +120,62 @@ def test_seam_flips_and_public_functions_read_real_content():
         assert detail["Ion Popescu"]["comport"] == 5.0  # real score, not synthetic
         assert set(taxonomy.faculty_average()) == set(taxonomy.QUESTION_KEYS)
     finally:
-        taxonomy._OFFERINGS, taxonomy._BY_CURS, taxonomy._CONTENT = saved
+        (
+            taxonomy._OFFERINGS,
+            taxonomy._BY_CURS,
+            taxonomy._CONTENT,
+            taxonomy._CONTENT_GENERATED,
+        ) = saved
+
+
+def test_generated_content_keeps_the_demonstrative_badge_on():
+    """Content being PRESENT is not content being REAL.
+
+    generate-feedback produces a well-formed feedback_contents/ + users/ pair. Loading it
+    must NOT clear the badge, or the public demo asserts that fabricated scores, teacher
+    names and rankings are real. The check fails closed: only an export explicitly
+    declared real (FEEDBACK_CONTENT_SYNTHETIC=0) clears it.
+    """
+    offerings = [{"course_id": 2802, "feedback_ids": [9978], "curs": "seam-curs", "serie": None}]
+    content, _ = taxonomy._load_content(_FIX, offerings)
+    saved = (taxonomy._CONTENT, taxonomy._CONTENT_GENERATED)
+    taxonomy._CONTENT = content
+    try:
+        taxonomy._CONTENT_GENERATED = True  # a generated export, or provenance unknown
+        assert taxonomy.content_is_synthetic() is True
+    finally:
+        taxonomy._CONTENT, taxonomy._CONTENT_GENERATED = saved
+
+
+def test_content_provenance_fails_closed(tmp_path, monkeypatch):
+    # no manifest, unreadable manifest, or a manifest marking the export synthetic ->
+    # all count as synthetic. Only an explicit "synthetic": false says otherwise.
+    monkeypatch.setattr(config, "CONTENT_SYNTHETIC", None)  # don't read the dev's shell
+
+    assert taxonomy._content_is_generated(str(tmp_path)) is True  # no manifest at all
+
+    (tmp_path / "manifest.json").write_text('{"synthetic": true}', encoding="utf-8")
+    assert taxonomy._content_is_generated(str(tmp_path)) is True
+
+    (tmp_path / "manifest.json").write_text("{ not json", encoding="utf-8")
+    assert taxonomy._content_is_generated(str(tmp_path)) is True
+
+    (tmp_path / "manifest.json").write_text('{"synthetic": false}', encoding="utf-8")
+    assert taxonomy._content_is_generated(str(tmp_path)) is False
+
+
+def test_synthetic_manifest_cannot_be_overridden_by_the_env_var(tmp_path, monkeypatch):
+    """A stale FEEDBACK_CONTENT_SYNTHETIC=0 must not promote a generated export to real.
+
+    The realistic accident: a deployment that once served a real Moodle export keeps the
+    env var set, then gets pointed at generate-feedback output. If the env var won, the
+    public dashboard would drop the 'date demonstrative' badge over fabricated scores and
+    invented teacher names. An export that declares itself synthetic is un-promotable.
+    """
+    monkeypatch.setattr(config, "CONTENT_SYNTHETIC", "0")  # "this data is real"
+    (tmp_path / "manifest.json").write_text('{"synthetic": true}', encoding="utf-8")
+    assert taxonomy._content_is_generated(str(tmp_path)) is True  # the manifest wins
+
+    # ...but the env var still works where the export makes no claim about itself.
+    (tmp_path / "manifest.json").unlink()
+    assert taxonomy._content_is_generated(str(tmp_path)) is False
