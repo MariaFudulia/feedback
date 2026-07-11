@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "fullname": "Ion Popescu",
+    "roles": [
+      {
+        "shortname": "editingteacher"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "fullname": "Maria Ionescu",
+    "roles": [
+      {
+        "shortname": "asistent"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "fullname": "Student 0",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "fullname": "Student 1",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "fullname": "Student 2",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "fullname": "Student 3",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "fullname": "Student 4",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "fullname": "Student 5",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "fullname": "Student 6",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "fullname": "Student 7",
+    "roles": [
+      {
+        "shortname": "student"
+      }
+    ]
+  }
+]

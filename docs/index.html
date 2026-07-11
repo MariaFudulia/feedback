@@ -35,6 +35,47 @@
     le discutăm.
   </p>
 
+  <div class="callout warn">
+    <p><strong>Document istoric — depășit. Nu-l folosi ca sursă de adevăr.</strong></p>
+    <p>
+      Ăsta e planul <em>inițial</em>, de dinainte să scriem codul. L-am păstrat ca să se vadă
+      ce am crezut la început și unde ne-am înșelat — dar mai multe lucruri marcate aici
+      „decis” s-au dovedit greșite și au fost înlocuite. Cele mai importante:
+    </p>
+    <ul>
+      <li>
+        <strong>Interfața nu citește CSV-uri din <code>process-feedback/</code>.</strong> Am
+        încercat, și shortname-ul cursului — pe care se baza tot planul de filtrare — e
+        inconsistent în datele reale. Sursa e acum arborele de categorii Moodle.
+      </li>
+      <li>
+        <strong>Nu se citește nicio bază SQLite.</strong> Planul „înlocuim corpul funcțiilor din
+        <code>queries.py</code> cu SQL” nu s-a întâmplat niciodată.
+      </li>
+      <li>
+        <strong>Cascada de filtre e alta:</strong> ciclu → domeniu → specializare → an → sem →
+        serie → curs. Nu cea din acest document.
+      </li>
+      <li>
+        <strong>Generatorul propriu de date arată altfel decât scria aici.</strong> Nu produce
+        rânduri CSV pe 26 de coloane; produce JSON în forma reală a unui export Moodle. Și e
+        gata, nu în plan.
+      </li>
+      <li>
+        <strong>Nu primim date reale.</strong> Coordonatorul a refuzat accesul la răspunsurile
+        studenților. Tot conținutul e fabricat, iar aplicația e construită să spună asta.
+      </li>
+    </ul>
+    <p>
+      Ce e adevărat azi:
+      <a href="../web-interface/docs/spec-general.md"><code>web-interface/docs/spec-general.md</code></a>
+      (arhitectură, decizii, contract) și
+      <a href="../web-interface/docs/data-layer-decisions.md"><code>data-layer-decisions.md</code></a>
+      (de ce stratul de date arată așa, cu dovezi). Pentru generator:
+      <a href="../generate-feedback/README.md"><code>generate-feedback/README.md</code></a>.
+    </p>
+  </div>
+
   <section id="obiective">
     <h2>Obiective</h2>
     <p>

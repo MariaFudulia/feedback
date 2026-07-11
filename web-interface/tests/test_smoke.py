@@ -16,6 +16,8 @@ ROUTES = [
     "/top10-asistenti",
     "/evaluare-pe-zone",
     "/curs-detaliu",
+    "/comentarii",
+    "/despre-date",  # was missing from this list
     "/taxonomie",
 ]
 

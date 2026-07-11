@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block title %} — Despre date{% endblock %}
 {% block content %}
-{% from "_chips.html" import demo_badge, real_badge %}
+{% from "_chips.html" import demo_badge, real_badge, model_badge %}
 <h1>Despre date</h1>
 <p class="caption">Ce e măsurat, ce e demonstrativ, și de unde vine fiecare număr din interfață.</p>
 
-<div class="section-head"><h2>Cele două badge-uri</h2></div>
+<div class="section-head"><h2>Cele trei badge-uri</h2></div>
+<p class="caption">Răspund la întrebări diferite: <em>e reală structura?</em>, <em>sunt reale
+  cifrele?</em> și <em>eticheta e raportată sau ghicită?</em>. Se pot aprinde independent.</p>
 <table>
   <thead><tr><th>Badge</th><th>Înseamnă</th></tr></thead>
   <tbody>
@@ -18,9 +20,23 @@
     <tr>
       <td>{{ demo_badge() }}</td>
       <td>Numere <strong>demonstrative</strong>: fie transcrise din deck-ul de referință al
-          coordonatorului (Sumar, acoperire), fie generate determinist pe structura reală
-          (note, cadre didactice, procente). Devin reale automat la importul
-          <code>feedback_contents/</code> + <code>users/</code> — fără modificări de cod.</td>
+          coordonatorului (Sumar, acoperire), fie generate pe structura reală (note, cadre
+          didactice, procente, comentarii).
+          <br><br>
+          Badge-ul <strong>nu</strong> dispare doar pentru că există un export de conținut.
+          Scripturile din <code>generate-feedback/</code> produc un export perfect valid, dar
+          inventat; dacă simpla lui prezență ar stinge badge-ul, interfața ar prezenta drept
+          reale niște note și niște nume născocite. Regula e <em>fail-closed</em>: conținutul e
+          considerat real doar dacă cineva declară explicit asta
+          (<code>FEEDBACK_CONTENT_SYNTHETIC=0</code>). Un export care se declară singur sintetic
+          (prin <code>manifest.json</code>) nu poate fi promovat nici măcar așa.</td>
+    </tr>
+    <tr>
+      <td>{{ model_badge() }}</td>
+      <td>Eticheta de sentiment de pe un comentariu este <strong>estimată de un model</strong>,
+          nu declarată de student. Alt tip de întrebare decât celelalte două: badge-ul ăsta
+          rămâne aprins <em>și</em> peste date reale — atunci contează cel mai mult să știi că
+          eticheta e o presupunere. Textul comentariului e mereu cel original.</td>
     </tr>
   </tbody>
 </table>
@@ -46,4 +62,69 @@
 </table>
 <p class="caption">Pragurile oglindesc scripturile <code>analysis/select_*</code> din pipeline și nu
 sunt configurabile din interfață — aceeași regulă, o singură sursă de adevăr.</p>
+
+<div class="section-head"><h2>Comentariile și pragul lor separat</h2></div>
+<p>
+  Cele patru întrebări deschise sunt singurul loc unde apare text scris de studenți, și au un
+  prag propriu, mai strict: <strong>un curs cu mai puțin de {{ comments_min }} răspunsuri nu
+  afișează niciun comentariu</strong>.
+</p>
+<p>
+  Motivul: anonimatul Moodle e la nivel de <em>răspuns</em> — elimină autorul, nu conținutul. La
+  doi-trei respondenți, un comentariu devine practic atribuibil; în plus, numele titularului și
+  al asistentului se află în <em>același rând</em> cu el, deci textul se leagă și de o persoană
+  anume. Regula ≥3 din deck a fost gândită pentru <em>clasamente</em> (ca să nu ierarhizezi pe
+  două răspunsuri), nu pentru proză.
+</p>
+<p>
+  Ce mai facem, ca apărare în adâncime: numele complete ale cadrelor didactice sunt eliminate din
+  text (<code>[cadru didactic]</code>), iar listele fiecărei întrebări sunt reordonate independent,
+  ca cele patru răspunsuri ale aceluiași student să nu poată fi puse la loc cap la cap.
+  <strong>Nu e o garanție:</strong> un nume scris greșit, o poreclă sau doar numele de familie trec
+  de filtru — numele de familie nu sunt eliminate intenționat, fiindcă „State”, „Marin” sau „Ursu”
+  sunt și cuvinte obișnuite, iar un fals pozitiv ar rescrie tăcut ce a scris studentul.
+</p>
+
+<div class="section-head"><h2>Sentimentul comentariilor</h2></div>
+{% if not model.available %}
+<p>Modelul de sentiment nu este încărcat în această instanță: comentariile se afișează, dar fără
+   etichete.</p>
+{% else %}
+<p>
+  Eticheta (pozitiv / neutru / negativ) este o <strong>estimare a unui model</strong>, nu ceva ce a
+  declarat studentul. E un naive-Bayes din biblioteca standard, antrenat <em>offline</em> — aplicația
+  nu poate învăța singură, fiindcă etichetele adevărate stau într-un fișier pe care generatorul îl
+  scrie separat și care nu va exista deloc pentru date reale.
+</p>
+<p>
+  <strong>Antrenat pe corpusul sintetic al generatorului</strong> — adică pe propriile noastre
+  șabloane. Cifra de acuratețe de mai jos descrie performanța pe <em>text ca cel de antrenament</em>.
+  Proza reală a studenților folosește un vocabular pe care modelul nu l-a văzut niciodată: va greși
+  mai des, și <em>nu putem spune cu cât</em>, fiindcă nu avem text real etichetat pe care să-l măsurăm.
+</p>
+<table>
+  <thead><tr><th>Întrebarea</th><th>Acuratețe (holdout sintetic)</th></tr></thead>
+  <tbody>
+    {% for field, acc in model.per_field.items() %}
+    <tr>
+      <td>{{ {"positive": "Aspecte pozitive", "negative": "De îmbunătățit",
+              "other": "Alte comentarii"}.get(field, field) }}</td>
+      <td>{{ "%.3f"|format(acc) if acc else "—" }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td><em>Toate la un loc</em></td><td><em>{{ "%.3f"|format(model.accuracy) }}</em></td></tr>
+  </tbody>
+</table>
+<p class="caption">
+  Există câte un model separat pentru fiecare întrebare, fiindcă același cuvânt înseamnă lucruri
+  opuse de la o întrebare la alta: „nimic” la „ce trebuie îmbunătățit” e o veste bună, iar la
+  „aspecte pozitive” e una proastă. Un singur model comun ar fi ascuns exact întrebarea la care se
+  descurcă cel mai prost.
+</p>
+<p class="caption">
+  „Dificultăți” nu primește etichetă deloc: întrebarea cere o <em>cauză</em>, nu o opinie, și nu
+  există adevăr de referință pentru ea. Când modelul nu e destul de sigur, răspunde
+  <em>incert</em> în loc să dea cu banul.
+</p>
+{% endif %}
 {% endblock %}

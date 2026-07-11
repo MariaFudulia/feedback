@@ -64,8 +64,8 @@ Maria's or Vlad's templates.
 
 A render is **route → `queries.py` → (`taxonomy.py` for structure / `mocks.py` for deck
 aggregates) → Jinja template**. Routes hold only request/session logic; all data logic sits below
-the contract. There are **9 view pages** plus two state routes (`/set-filters`,
-`/reset-filters`) [`app.py`].
+the contract. There are **11 view pages** plus three state routes (`/set-filters`,
+`/reset-filters`, `/tema`) [`app.py`].
 
 ### 2.3 The global filter cascade (the cross-cutting piece)
 
@@ -83,10 +83,31 @@ contradiction-proof filter cascade**: `ciclu → domeniu → specializare → an
 
 ### 2.4 Honesty as an architectural rule
 
-Because much of the *content* is still placeholder (companion §6), the UI is **required** to
-label it. A small Jinja macro module (`templates/_chips.html`) provides two badges —
-**"date demonstrative"** (mock/deck numbers) and **"date reale"** (real structure) — and every
-page showing placeholder data carries one. Enforced by convention across all report pages.
+All of the *content* is placeholder (companion §6), so the UI is **required** to say so.
+`templates/_chips.html` provides three badges, answering three independent questions:
+
+| Badge | Question |
+|---|---|
+| **date reale** | is the *structure* real? (the Moodle category tree) |
+| **date demonstrative** | are the *numbers* real? |
+| **sentiment estimat** | is this *label* reported, or inferred by a model? |
+
+Two consequences that are load-bearing rather than cosmetic:
+
+**The demo badge fails closed.** It used to mean "no content export is present", and flipped
+off the moment any well-formed `feedback_contents/` + `users/` pair appeared. Once we had our
+own generator (§4), that became a hole: the generator produces a perfectly valid export of
+entirely fabricated numbers and invented staff names, and its mere presence would have cleared
+the badge — the app asserting that fake data is real. Content now counts as real only when
+someone says so explicitly (`FEEDBACK_CONTENT_SYNTHETIC=0`), and an export that declares
+itself synthetic (`manifest.json`) can never be promoted, not even by that variable. No
+manifest, or an unreadable one, means synthetic: we do not vouch for data whose provenance
+nobody recorded [`taxonomy.py: _content_is_generated`].
+
+**The model badge is not gated on the other two.** It renders unconditionally on
+`/comentarii`. When a real export finally lands, the demo badge switches off — and the
+sentiment chips would otherwise sit beside real comments with no caveat, at exactly the moment
+the caveat matters most.
 
 ### 2.5 Who owns which files
 
@@ -107,6 +128,8 @@ page showing placeholder data carries one. Enforced by convention across all rep
 | **Plain HTML forms** | Filters submit as normal forms (`onchange="this.form.requestSubmit()"`) — zero hand-written JS, nothing to debug on the client [`base.html`]. Sufficient for an admin tool. |
 | **htmx (boost)** | Wired: a vendored `htmx.min.js` + `hx-boost` on `<body>` sends those same form/link round-trips over AJAX and swaps the page in place — no reload flash, same server templates, still no JS front-end [`base.html`]. Fragment-level swaps (`hx-target`) remain the approved next step *when needed*; rationale in companion §2.3. |
 | **pandas** | Data layer only (`queries.py`/`mocks.py`) — the report functions return DataFrames. |
+| **CSS `light-dark()` tokens** | One token table declares every colour's light and dark value side by side, so the two can never drift. The theme picker is a server-rendered radio; the stylesheet keys off `:checked` via `body:has()`, so the switch is instant and there is still **zero hand-written JS** — the strongest example of this table's own thesis [`static/style.css`, `app.py: /tema`]. |
+| **naive Bayes (stdlib)** | The sentiment labels on `/comentarii`. No scikit-learn, no numpy: the app's dependencies stay flask + pandas + gunicorn. Trained **offline** (`tools/train_sentiment.py`) and shipped as weights, because the labels live in the generator's `groundtruth/` sidecar — outside what the app reads, and non-existent for a real export. One model **per question**: the same word flips sign between them ("nimic" is good news under *ce trebuie îmbunătățit*, bad news under *aspecte pozitive*), and that split is what exposed the number a pooled model hides — `negative` scores 0.855 where the others reach 0.97. |
 | **ruff + pytest** | Lint/format + tests, on every commit (pre-commit) and PR (CI) — §9. |
 
 > **Note:** The Streamlit prototype was deleted once we moved to Flask (nobody had built on it);
@@ -180,8 +203,19 @@ functions, not the UI: **curs ≥7% & ≥3 feedback-uri · titular ≥7% mediu &
   `get_scope_courses`, `get_course_list`, `get_course_series`, `get_course_detail`,
   `get_course_students`, `get_course_responses`, `get_faculty_average`, `get_taxonomy_issues`,
   `get_taxonomy_tree`.
-- **New (real/mock discipline):** `get_offer_structure` (real offer counts),
-  `get_data_source` (`"real"`/`"synthetic"`), `get_content_is_synthetic` (drives the badge).
+- **Provenance (the real/synthetic discipline):** `get_offer_structure` (real offer counts),
+  `get_data_source` (`"real"`/`"synthetic"` structure), `get_content_is_synthetic` (drives the
+  badge — see §2.4 for why it fails closed).
+- **Free text + sentiment:** `get_comments_questions`, `get_comments_gate`,
+  `get_course_comments`, `get_comment_counts`, `get_sentiment_model_info`.
+
+  Two shape rules here are contract, not implementation detail. Every comment carries a
+  `sentiment` key that is **always present and sometimes `None`** — if it vanished when the
+  model file is absent, the contract test's assertions would depend on whether an artifact
+  happens to be on disk. And `get_course_comments` returns `[]` for a course below the response
+  gate: **the gate is enforced in the data layer, not the view**, because `_export_url`
+  re-emits every query argument by design and a gate the CSV export can walk around is not a
+  gate.
 
 [all in `queries.py`]
 
@@ -257,9 +291,40 @@ findings are why the data layer took the direction it did.
   questions), but a **column shift** remains: it adds an extra "evaluare generală" question, so
   the field `process_feedback.py` reads as `eval_overall` is actually the expected grade
   [empiric].
-- **Decision:** rather than depend on either broken generator or `migrate.py`, write a small own
-  generator that emits rows *directly* in the 26-column format `process_feedback.py` reads
-  [`docs/index.html`]. Decision framing: companion §4.2.
+### 8.1 What we did about it — and it shipped
+
+The original plan was to sidestep the broken generator with a small one of our own, emitting
+rows directly in the 26-column format `process_feedback.py` reads [`docs/index.html`]. **That
+is not what we built,** and the change of direction matters.
+
+When we asked the coordinator for real data he refused, and pointed us back at the same
+generator: *"Soluția bună este să actualizați scripturile de generare"* [Slack]. So we fixed it
+instead of routing around it, and opened a PR upstream. `generate-feedback/` is now in this
+repo.
+
+The root cause of the 12-vs-25 failure turned out to be simpler and worse than a count
+mismatch: the generator emitted **12 responses per attempt where both consumers require exactly
+25 and skip anything else** — so every file it produced was discarded whole, not partially
+used. Four more bugs sat underneath it, each individually silent:
+
+- courses were looked up by `category`, but the Moodle dumps key on `categoryid` — the lookup
+  always returned `None`;
+- the `Subject` slot carried `fullname (category)` where the real export carries the course
+  **shortname**, which is what every join in `analysis/` and `mappings/` uses;
+- **every teacher of every course was the string `"Prenume NUME"`** — the whole faculty
+  collapsed onto one person, which is what made the Top-10 pages meaningless;
+- `courses4categories.p` came back from JSON with **string** keys (JSON has no integer keys),
+  so `processor.courses4category(7)` — which swallows the `KeyError` — reported **zero courses
+  for every category**.
+
+It also emits Moodle-shaped JSON (`feedback_contents/<id>.json`, 25 slots read by position;
+`users/<course_id>.json`), not 26-column CSV, because that is what the *web interface*
+consumes and what a real export actually looks like. `slots.py` is the single source of truth
+for that contract, and `validate.py` checks an export against both consumers' acceptance rules.
+
+The numbers are no longer uniform noise either: each course, titular and asistent carries a
+hidden quality, so the rankings and the selection thresholds (7%/3, 7%/15, 10) actually
+discriminate instead of filtering nothing. Details: [`generate-feedback/README.md`].
 
 ---
 
@@ -281,13 +346,30 @@ findings are why the data layer took the direction it did.
 
 ## 10. Current status & roadmap
 
-- On `develop`: the taxonomy + cascade + curs-detaliu + offer-structure + badge system
-  [PR #4, merged], with an order-independent test suite [PR #5, merged]. Structure is real;
-  scores/cadre are deterministic-synthetic behind a documented seam.
-- **Pending — the one real dependency:** the **content export** (`feedback_contents/` + `users/`,
-  or the pipeline's processed CSVs) turns the demonstrative numbers real and clears the badges.
-- **Open question to the coordinator:** the noise-filter policy (~39 non-teaching "courses").
-- Full data-layer status and the exact asks: companion doc §8.
+On `develop`: the taxonomy + cascade + curs-detaliu + offer-structure + badge system
+[PR #4, merged], an order-independent test suite [PR #5, merged], the aggregates layer
+(rankings, distributions, CSV export, charts, shareable scope), a light/dark/auto theme, the
+`/despre-date` page, the `/comentarii` page with an estimated-sentiment model, and — merged in
+from our own PR to the generator repo — `generate-feedback/` itself.
+
+**The content export is no longer the blocking dependency.** That was the story for most of
+this project's life, and it stopped being true when we fixed the generator (§8): it now emits
+exactly the `feedback_contents/` + `users/` pair the app consumes, so realistic content is a
+`python3 main.py` away and does not require the coordinator to hand over student data.
+
+What that does **not** mean is that the numbers became real. They are fabricated, and the app
+says so — see §2.4 on why importing an export deliberately does *not* clear the badge.
+
+Still open:
+
+- **Real feedback responses.** Refused by the coordinator, and that is the settled answer, not
+  a pending one [Slack]. Everything downstream is built to work without them.
+- **The noise-filter policy** (~39 non-teaching "courses") — a question to the coordinator.
+- **The comments page is new surface the spec never scoped.** The ≥5 response gate and the
+  staff-name redaction were choices we made in the absence of any privacy policy in this
+  project. If the "part of the data becomes public for students" plan ever happens, raw
+  comments are exactly the artifact that decision has to cover.
+- Full data-layer status: companion doc §8.
 
 ---
 
@@ -321,12 +403,18 @@ In the UI:
 - Pick **Ciclu = Master** → **An** collapses to 1–2. The cascade cannot offer an impossible
   scope (companion §5.4).
 - Open **`/taxonomie`** → the full valid tree, with a data-source banner ("sintetică" here).
-- Notice the **"date reale"** vs **"date demonstrative"** badges (§2.4).
+- Open **`/comentarii`** → the free-text answers, one question at a time. Most courses here sit
+  under the ≥5-response gate and say so; pick a large first-year course to see a populated
+  list. **Dificultăți** deliberately carries no sentiment chip — it asks for a *cause*, not an
+  opinion, and there is no ground truth for it.
+- Open **`/despre-date`** → the three badges, the gate, and the model's per-question accuracy,
+  including the weak one.
+- Flip the **theme** picker in the sidebar. No page reload, no hand-written JS.
 
 Tests are synthetic too (no private data):
 
 ```bash
-pytest tests/ -q                       # 40 passing (conftest forces the synthetic dataset)
+pytest tests/ -q                       # 141 passing (conftest forces the synthetic dataset)
 ruff check . && ruff format --check .
 ```
 

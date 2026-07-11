@@ -36,12 +36,14 @@
 </div>
 {%- endmacro %}
 
-{% macro share_bar(rows, label_key, value_key, pct_key) -%}
+{# `unit` defaults to the original caller's noun so nothing changes for it; pass your own
+   ("comentarii") rather than reading "pozitiv: 41 cursuri" on a page about comments. #}
+{% macro share_bar(rows, label_key, value_key, pct_key, unit="cursuri") -%}
 {% set seg_colors = ["red", "gray", "graylight"] %}
 <div class="sharebar">
   {% for r in rows %}
   <div class="share-seg bar-{{ seg_colors[loop.index0 % 3] }}" style="flex: 0 0 {{ r[pct_key] }}%"
-       title="{{ r[label_key] }}: {{ r[value_key] }} cursuri ({{ r[pct_key] }}%)"></div>
+       title="{{ r[label_key] }}: {{ r[value_key] }} {{ unit }} ({{ r[pct_key] }}%)"></div>
   {% endfor %}
 </div>
 <div class="chart-legend sharebar-legend">

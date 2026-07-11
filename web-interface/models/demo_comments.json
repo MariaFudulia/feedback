@@ -1,0 +1,2006 @@
+{
+ "synthetic": true,
+ "note": "Fabricated comments from generate-feedback. Not written by students.",
+ "comments": [
+  {
+   "field": "negative",
+   "text": "Doar un detaliu: nu se raspunde pe forum.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "cadrul didactic răspunde pe forum și dă exemple din industrie",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "exemplele sunt din practică, iar proiectul mi s-a părut aplicat.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "notarea nu e transparenta si laboratorul nu are legatura cu cursul",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "seminarul este prea haotic, iar notarea nu e transparenta.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate în suportul de curs",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "ar ajuta dacă seminarul ar fi restructurat.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "materialul de curs mi s-a părut aplicat",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "materialul de curs este util și se vede că materia e stăpânită",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi. Ar ajuta dacă materialul de curs ar fi corelat cu laboratorul",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "laboratorul este interesant, dar ritmul e prea alert.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "temele sunt aplicate, dar notarea nu e transparenta",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert. Materia trebuie regandita din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "suportul de curs ar putea fi publicat din timp.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "nu se răspunde pe forum și nu există exemple rezolvate",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Sala e prea rece",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Foarte clar laboratorul. asistentul corecteaza rapid temele.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar laboratoarele completeaza bine cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca notiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "seminarul e ok.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Nu prea am ce sa laud; ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Greu de găsit ceva; nu se răspunde pe forum.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Greu de găsit ceva; slide-urile sunt incomplete",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "n/a",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Recomand materia: se poate aplica in proiecte reale.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii. Ar ajuta daca tematica ar fi restructurata",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate in suportul de curs",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi si laboratorul nu are legatura cu cursul",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "tematica e dezorganizată; notarea nu e transparentă.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicațiile de la curs, care sar peste pași",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca notiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "suportul de curs mi s-a parut coerent si se poate aplica in proiecte reale.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Mi-a placut laboratoarele si faptul ca se vede ca materia e stapanita.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "notarea nu e transparenta",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "In general bine, desi deadline-urile se suprapun cu alte materii.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "tematica este interesantă și se poate aplica în proiecte reale.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Partea buna e ca se poate aplica in proiecte reale",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca notiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "laboratoarele sunt confuze; notarea nu e transparenta",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "materialul de curs ar putea fi restructurat.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Mulțumesc pentru semestru.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate în suportul de curs",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "prea multe teme in paralel cu alte discipline",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "nu am ce să reproșez",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Cea mai buna materie din semestru, am inteles la ce foloseste.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "laboratoarele sunt plictisitoare; echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic. slide-urile sunt incomplete.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "decalajul dintre curs si laborator",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Continuați așa.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "n/a",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii și ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "suportul de curs e plictisitor; laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: nu există exemple rezolvate, slide-urile sunt incomplete.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Ar ajuta daca suportul de curs ar fi restructurat.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "Aproape nimic.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Foarte bine structurat laboratorul. titularul explică pe înțeles.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate in suportul de curs",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unei bibliografii clare",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Ar ajuta daca tematica ar fi publicata din timp.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "Nu am ce să reproșez.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: ritmul e prea alert, deadline-urile se suprapun cu alte materii.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert si laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nu prea am ce să laud; nu există exemple rezolvate",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "laboratorul este ok.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate in suportul de curs",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "nu exista exemple rezolvate. Materia trebuie regandita din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Sper să se schimbe ceva anul viitor.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "exemplele de la curs sunt coerente si exemplele sunt din practica.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am intampinat dificultati deosebite",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Felicitari echipei.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. echipamentele din laborator sunt vechi si nimeni nu pare sa observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Sper sa se schimbe ceva anul viitor.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate in suportul de curs",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "foarte slab. nu exista exemple rezolvate si nimeni nu pare sa observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "organizarea mea a timpului",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "partea practică e aplicată și se poate aplica în proiecte reale",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Multumesc pentru semestru.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar se poate aplica în proiecte reale.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "ritmul e potrivit, iar laboratoarele sunt interesante",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. nu se raspunde pe forum si nimeni nu pare sa observe",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "temele mi s-au părut chiar coerente; exemplele sunt din practică.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Aproape nimic.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "cursul mi s-a părut prea teoretic, iar ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "profesorul are răbdare cu studenții și e disponibil la întrebări.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Foarte util materialul de curs. profesorul e disponibil la intrebari",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme in aceeasi saptamana.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Cea mai buna materie din semestru, ritmul e potrivit.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "exemplele de la curs mi s-au părut prea haotice, iar nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "organizarea mea a timpului",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "exemplele de la curs mi s-au parut interesante.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete și echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "mi-a plăcut că am înțeles la ce folosește",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Partea bună e că se poate aplica în proiecte reale.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "temele mi s-au părut prea dezorganizate, iar notarea nu e transparentă.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "mi-a plăcut că se vede că materia e stăpânită.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "seminarul e prea plictisitor, iar notarea nu e transparenta.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Greu de găsit ceva; echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Doar temele, in rest laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi. Materia trebuie regandita din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "titularul e disponibil la întrebări și răspunde pe forum.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "organizarea mea a timpului",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că noțiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Doar proiectul, in rest slide-urile sunt incomplete.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Putine. echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Multumesc pentru semestru.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Sala e prea rece.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "am inteles la ce foloseste, iar cursul este aplicat.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "exemplele de la curs sunt coerente, dar laboratorul nu are legătură cu cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "proiectul mi s-a parut teoretic; laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la restul materiilor",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Ar ajuta dacă partea practică ar fi corelată cu laboratorul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "prea multe teme în paralel cu alte discipline",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "nu se raspunde pe forum. Materia trebuie regandita din temelie",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am întâmpinat dificultăți deosebite",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "seminarul este coerent, dar laboratorul nu are legătură cu cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "nu există exemple rezolvate și slide-urile sunt incomplete",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "profesorul corecteaza rapid temele.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "suportul de curs este extrem de teoretic. nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca nu am reusit sa tin ritmul",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "laboratorul mi s-a parut coerent.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "cantitatea de materie fata de numarul de credite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că noțiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Felicitari echipei.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "seminarul ar trebui publicat din timp.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca nu am reusit sa tin ritmul",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "-",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la restul materiilor",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii. Ar ajuta daca temele ar fi publicate din timp.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert. Ar ajuta daca exemplele de la curs ar fi restructurate.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "mi-a placut ca laboratoarele completeaza bine cursul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Continuati asa",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "titularul răspunde pe forum.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "seminarul e extrem de plictisitor. laboratorul nu are legătură cu cursul",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Puține. nu se răspunde pe forum.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "n/a",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am intampinat dificultati deosebite",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii. Materia trebuie regandita din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Doar proiectul, în rest slide-urile sunt incomplete.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Ar ajuta daca partea practica ar fi actualizata.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "Doar un detaliu: notarea nu e transparentă.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Foarte util cursul. profesorul e disponibil la întrebări",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Ar ajuta daca cursul ar fi explicat mai pe indelete",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Sper să se schimbe ceva anul viitor",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Continuați așa.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "proiectul este prea superficial, iar ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar ritmul e potrivit",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca notiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Totul: laboratorul nu are legătură cu cursul, nu există exemple rezolvate",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. nu se răspunde pe forum și nimeni nu pare să observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "totul: nu exista exemple rezolvate, notarea nu e transparenta.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Puține. ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la numărul de credite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca nu am reusit sa tin ritmul",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unei bibliografii clare",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Puține. ritmul e prea alert.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "se vede ca materia e stapanita, iar tematica e clara.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "prea multe teme in paralel cu alte discipline",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "proiectul mi s-a părut bine organizat, dar slide-urile sunt incomplete.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am întâmpinat dificultăți deosebite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa cunoștințelor de la structuri de date",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "cea mai bună materie din semestru, laboratoarele completează bine cursul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "cantitatea de materie fata de numarul de credite",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Totul: nu exista exemple rezolvate, notarea nu e transparenta",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. ritmul e prea alert si nimeni nu pare sa observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "nimic",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "asistentul da exemple din industrie",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "cea mai slaba materie de pana acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unei bibliografii clare",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar laboratoarele completează bine cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme in aceeasi saptamana",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Sala e prea rece.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Foarte aplicată partea practică. asistentul corectează rapid temele.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "partea bună e că laboratoarele completează bine cursul",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "n/a",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "decalajul dintre curs si laborator",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. deadline-urile se suprapun cu alte materii și nimeni nu pare să observe",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la numarul de credite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la timpul disponibil",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Nimic. laboratorul nu are legatura cu cursul",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "tematica este bine structurata, dar ritmul e prea alert.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "nimic anume",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la numarul de credite",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "exemplele de la curs ar trebui publicate din timp.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "cursul este ok.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "Ar ajuta daca proiectul ar fi actualizat.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "mi-a placut exemplele de la curs si faptul ca am inteles la ce foloseste.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "nu exista exemple rezolvate. Ar ajuta daca suportul de curs ar fi explicat mai pe indelete",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Putine. deadline-urile se suprapun cu alte materii",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "prea multe teme in paralel cu alte discipline",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am intampinat dificultati deosebite",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la timpul disponibil",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Nimic major; poate laboratorul ar putea fi corelat cu laboratorul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa cunostintelor de la algebra",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar se vede ca materia e stapanita.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "ar trebui schimbat titularul",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar am inteles la ce foloseste.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "Doar un detaliu: echipamentele din laborator sunt vechi",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi. Ar ajuta daca suportul de curs ar fi corelat cu laboratorul.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "seminarul ar putea fi explicat mai pe îndelete.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Materia trebuie regândită din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Sper să se schimbe ceva anul viitor.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Cea mai bună materie din semestru, laboratoarele completează bine cursul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar laboratoarele completeaza bine cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "recomand materia: se poate aplica în proiecte reale",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: slide-urile sunt incomplete, echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "exemplele de la curs sunt dezorganizate; laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Nu prea am ce sa laud; notarea nu e transparenta.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar se vede ca materia e stapanita",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Mi-a plăcut temele și faptul că se poate aplica în proiecte reale",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert si laboratorul nu are legatura cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slaba materie de pana acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "laboratorul nu are legatura cu cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unei bibliografii clare",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "partea practică e ok",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar ritmul e potrivit.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Nu am alte comentarii.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Continuați așa.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "În general se vede că materia e stăpânită.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul că noțiunile noi nu sunt introduse gradual",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la timpul disponibil",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa cunostintelor de la structuri de date",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "exemplele de la curs sunt extrem de confuze. slide-urile sunt incomplete",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "temele sunt extrem de dezorganizate. deadline-urile se suprapun cu alte materii",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Sper sa se schimbe ceva anul viitor.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: laboratorul nu are legătură cu cursul, nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "greu de găsit ceva; nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Aproape nimic.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "notarea nu e transparenta.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Doar temele, in rest nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Materia trebuie regandita din temelie",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Felicitări echipei",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. notarea nu e transparentă și nimeni nu pare să observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la timpul disponibil",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "partea practică este plictisitoare; laboratorul nu are legătură cu cursul.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate in suportul de curs",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slaba materie de pana acum",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Nu prea am ce sa laud; nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "organizarea mea a timpului",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Nu am alte comentarii.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am întâmpinat dificultăți deosebite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "n/a",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "deadline-urile se suprapun cu alte materii. Ar ajuta daca laboratoarele ar fi publicate din timp.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "laboratoarele sunt extrem de teoretice. echipamentele din laborator sunt vechi",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "doar temele, în rest ritmul e prea alert",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca laboratorul presupune lucruri neexplicate",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Greu de găsit ceva; nu se răspunde pe forum.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la numarul de credite",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "partea practică e bine organizată, dar deadline-urile se suprapun cu alte materii.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca se presupun notiuni de programare",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am întâmpinat dificultăți deosebite",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "explicatiile de la curs, care sar peste pasi",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "faptul ca nu am reusit sa tin ritmul",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "suportul de curs e confuz; nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Mulțumesc pentru semestru.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. notarea nu e transparenta si nimeni nu pare sa observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Poate mai multe laboratoare aplicate.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "greu de gasit ceva; nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Nu am alte comentarii.",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Partea buna e ca exemplele sunt din practica.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Prea multe teme în aceeași săptămână.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "proiectul ar trebui explicat mai pe indelete",
+   "label": "neutru"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic. echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Ar ajuta dacă exemplele de la curs ar fi restructurate",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Felicitari echipei.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "volumul mare de teme raportat la timpul disponibil",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slaba materie de pana acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "echipamentele din laborator sunt vechi. Materia trebuie regandita din temelie.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "organizarea mea a timpului",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "niciun aspect pozitiv",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Orarul de la ora 8 e brutal.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "ritmul alert al cursului",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "cantitatea de materie fata de numarul de credite",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. nu exista exemple rezolvate si nimeni nu pare sa observe",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "exemplele de la curs sunt prea dezorganizate, iar nu se raspunde pe forum",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slaba materie de pana acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Mi-a plăcut că laboratoarele completează bine cursul.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unei bibliografii clare",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "timpul insuficient pentru a termina laboratorul",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Sper sa se schimbe ceva anul viitor.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Partea buna e ca laboratoarele completeaza bine cursul",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: notarea nu e transparentă, nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "slide-urile sunt incomplete. Materia trebuie regandita din temelie",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar trebui schimbat titularul.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "Totul: nu se raspunde pe forum, nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "temele sunt bine organizate, dar ritmul e prea alert.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am intampinat dificultati deosebite",
+   "label": null
+  },
+  {
+   "field": "other",
+   "text": "Cea mai slabă materie de până acum.",
+   "label": "negativ"
+  },
+  {
+   "field": "difficulty",
+   "text": "nu am intampinat dificultati deosebite",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "profesorul explica pe inteles si da exemple din industrie.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "slide-urile incomplete",
+   "label": null
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate în suportul de curs",
+   "label": null
+  },
+  {
+   "field": "positive",
+   "text": "În general se poate aplica în proiecte reale",
+   "label": "pozitiv"
+  },
+  {
+   "field": "negative",
+   "text": "Foarte slab. notarea nu e transparentă și nimeni nu pare să observe.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "partea practică mi s-a părut extrem de plictisitoare. echipamentele din laborator sunt vechi.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "laboratorul nu are legatura cu cursul. Ar ajuta daca suportul de curs ar fi publicat din timp",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "doar un detaliu: ritmul e prea alert.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "Nimic deosebit, dar exemplele sunt din practică.",
+   "label": "neutru"
+  },
+  {
+   "field": "other",
+   "text": "Felicitari echipei.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "In general bine, desi deadline-urile se suprapun cu alte materii.",
+   "label": "neutru"
+  },
+  {
+   "field": "negative",
+   "text": "ritmul e prea alert și nu există exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "negative",
+   "text": "temele sunt prea teoretice, iar nu exista exemple rezolvate.",
+   "label": "negativ"
+  },
+  {
+   "field": "positive",
+   "text": "Niciun aspect pozitiv.",
+   "label": "negativ"
+  },
+  {
+   "field": "other",
+   "text": "Ar merge mai multe exemple.",
+   "label": "pozitiv"
+  },
+  {
+   "field": "positive",
+   "text": "temele mi s-au părut coerente, dar laboratorul nu are legătură cu cursul.",
+   "label": "neutru"
+  },
+  {
+   "field": "difficulty",
+   "text": "lipsa unor exemple rezolvate în suportul de curs",
+   "label": null
+  },
+  {
+   "field": "negative",
+   "text": "Nu mi-a plăcut că slide-urile sunt incomplete.",
+   "label": "negativ"
+  }
+ ]
+}

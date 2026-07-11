@@ -15,12 +15,16 @@ run without the private data.
 STRUCTURE (cascade, course list, series) is REAL. Per-question SCORES, teacher
 (titular/asistent) names, and enrolment counts are deterministic-synthetic while the
 response contents (feedback_contents/) and enrolled-users (users/) exports are absent.
-The seam for real scores is already in place: each offering carries `feedback_ids` (the
-join key to feedback_contents/<id>.json), and `_load_content` is the single adapter to
-implement -- once it returns data, course_detail / course_students / course_responses /
-faculty_average read from it and `content_is_synthetic()` flips, clearing the
-'date demonstrative' badge app-wide. Until then everything falls back to the `_hashf`
-generators below.
+The seam for real scores is in place: each offering carries `feedback_ids` (the join key to
+feedback_contents/<id>.json), and `_load_content` is the single adapter -- once it returns
+data, course_detail / course_students / course_responses / faculty_average / course_comments
+all read from it. Absent it, everything falls back to the `_hashf` generators below.
+
+Content being PRESENT is not content being REAL, and the badge follows the latter: see
+`_content_is_generated`. The in-tree generator (../generate-feedback) produces a perfectly
+well-formed feedback_contents/ + users/ pair, and loading it must NOT claim the numbers are
+real. `content_is_synthetic()` therefore fails closed -- only an export explicitly declared
+real clears the badge.
 """
 
 import hashlib
@@ -29,7 +33,9 @@ import os
 import pickle
 import re
 
+import comments
 import config
+import sentiment
 
 CICLU_LABEL = {"L": "Licență", "M": "Master", "P": "Postuniversitar"}
 
@@ -333,6 +339,42 @@ _NUMERIC_SLOTS = {"expected_grade", "part", "assign_time"}  # kept as-is (not re
 # startup and defeat the synthetic fallback -- it is skipped and counted instead.
 _PARSE_ERRORS = (ValueError, OSError, KeyError, TypeError, AttributeError)
 
+# Free text is not shown at all for a course with fewer responses than this.
+#
+# Moodle's anonymity is per-attempt: it removes the author, not the content. Among 2 or 3
+# respondents a comment is close to attributable -- and the titular's and asistent's names sit
+# in slots 1-2 of the very same row, so the comment is joinable to a named person as well. The
+# deck's >=3 rule exists to stop thin-sample RANKINGS; it was never meant to protect prose, and
+# it is too weak for it.
+#
+# Pinned here, deliberately not tunable from the UI, and enforced in this layer -- below the
+# route, below the template, below the CSV export. A gate the export can walk around is not a
+# gate. [see queries.get_course_comments]
+COMMENTS_MIN_RESPONSES = 5
+
+# The sentiment model is an estimate shipped as weights (see sentiment.py). Absent or corrupt
+# -> None -> comments still render, just with no labels. Never a hard failure.
+_SENT_MODEL = sentiment.load()
+
+
+def _load_demo_corpus():
+    """The fabricated comments the synthetic fallback draws from, grouped by question. Missing
+    or unreadable -> {} -> the comments page is simply empty, never broken."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "demo_comments.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            payload = json.load(f)
+    except _PARSE_ERRORS + (FileNotFoundError,):
+        return {}
+    out = {}
+    for row in payload.get("comments", []):
+        if row.get("text") and row.get("field") in comments.SLOTS:
+            out.setdefault(row["field"], []).append(row)
+    return out
+
+
+_DEMO_CORPUS = _load_demo_corpus()
+
 
 def _likert(raw):
     """Moodle raw option index (1 = top option) -> 5-is-best score, or None if not an int."""
@@ -403,9 +445,14 @@ def _cadru(nume, tip_default, rows, key_slots, role_of):
 
 
 def _aggregate_course(attempts, students, role_of):
-    """Decoded attempts -> {responses, students, cadre}. Cadre are grouped by the titular
-    (slot `prof`) and asistent (slot `assist`) names; each gets the mean of its role-specific
-    slots plus the course-level eval_gen / indepl_ob (shared by all cadre of the course)."""
+    """Decoded attempts -> {responses, students, cadre, comments}. Cadre are grouped by the
+    titular (slot `prof`) and asistent (slot `assist`) names; each gets the mean of its
+    role-specific slots plus the course-level eval_gen / indepl_ob (shared by all cadre).
+
+    This is also where the free text (slots 21-24) stops being attributable: comments.build
+    redacts staff names and re-orders each question's answers by a hash of their own text, so
+    the attempt row -- the only thing tying a comment to its author, and to that author's
+    three other answers -- is discarded here and never reaches _CONTENT."""
     by_titular, by_asistent = {}, {}
     for a in attempts:
         if a.get("prof"):
@@ -414,7 +461,12 @@ def _aggregate_course(attempts, students, role_of):
             by_asistent.setdefault(a["assist"], []).append(a)
     cadre = [_cadru(n, "titular", rows, _KEY_SLOTS_TITULAR, role_of) for n, rows in by_titular.items()]
     cadre += [_cadru(n, "asistent", rows, _KEY_SLOTS_ASISTENT, role_of) for n, rows in by_asistent.items()]
-    return {"responses": len(attempts), "students": students, "cadre": cadre}
+    return {
+        "responses": len(attempts),
+        "students": students,
+        "cadre": cadre,
+        "comments": comments.build(attempts, role_of, _SENT_MODEL),
+    }
 
 
 def _load_content(data_dir, offerings):
@@ -463,6 +515,52 @@ def _load_content(data_dir, offerings):
     return (out or None), skipped
 
 
+def _content_is_generated(data_dir):
+    """True when the loaded content export is itself synthetic.
+
+    Content being PRESENT is not the same as content being REAL. The feedback generator
+    (generate-feedback/) produces a perfectly well-formed feedback_contents/ + users/
+    pair, and without this check loading it would clear the 'date demonstrative' badge
+    app-wide -- i.e. the public demo would assert that fabricated scores, teacher names
+    and rankings are real. That is the one thing this app must never do.
+
+    FAILS CLOSED. The two mistakes are not symmetric: showing the badge over real data is
+    a harmless understatement, while hiding it over fabricated data is the app lying about
+    its own numbers. So content counts as real only when something says so, and an export
+    that declares ITSELF synthetic can never be promoted -- not even by the env var. That
+    ordering matters: a deployment that once served real data keeps FEEDBACK_CONTENT_
+    SYNTHETIC=0 set, and the day someone points it at generator output, a manifest that
+    could not veto would clear the badge over fabricated scores and invented staff names.
+
+    Precedence:
+      manifest says "synthetic": true  -> synthetic. Nothing overrides this.
+      FEEDBACK_CONTENT_SYNTHETIC set   -> whatever it says ("0" = real).
+      manifest says "synthetic": false -> real.
+      no manifest / unreadable one     -> synthetic (provenance unknown).
+    """
+    declared = _manifest_synthetic(data_dir)
+    if declared is True:
+        return True
+    if config.CONTENT_SYNTHETIC is not None:
+        return config.CONTENT_SYNTHETIC != "0"
+    if declared is False:
+        return False
+    return True
+
+
+def _manifest_synthetic(data_dir):
+    """The export's own claim about itself: True, False, or None when it doesn't say.
+    An unreadable manifest counts as a claim of 'synthetic' -- we cannot trust what we
+    cannot read."""
+    try:
+        with open(os.path.join(data_dir, "manifest.json"), encoding="utf-8") as f:
+            return bool(json.load(f).get("synthetic", True))
+    except FileNotFoundError:
+        return None
+    except _PARSE_ERRORS:
+        return True
+
+
 def _content_for(curs):
     """Merged real content for a logical curs (summed across its series' course_ids),
     or None while no content is loaded -- the single point real scores flow through."""
@@ -475,6 +573,8 @@ def _content_for(curs):
         "responses": sum(p["responses"] for p in parts),
         "students": sum(p["students"] for p in parts),
         "cadre": [row for p in parts for row in p["cadre"]],
+        # .get: a payload built by hand (tests) or by an older cache may have no comments key
+        "comments": comments.merge([p.get("comments", {}) for p in parts]),
     }
 
 
@@ -493,6 +593,7 @@ def _init():
         _SOURCE, \
         _CONTENT, \
         _CONTENT_SKIPPED, \
+        _CONTENT_GENERATED, \
         _MALFORMED
     data_dir = config.FEEDBACK_DATA_DIR
     if _pickles_present(data_dir):
@@ -508,6 +609,7 @@ def _init():
     _MALFORMED = stats.get("malformed", 0)
     # None until feedback_contents/ + users/ arrive; skip-count surfaced in consistency_issues
     _CONTENT, _CONTENT_SKIPPED = _load_content(data_dir, _OFFERINGS)
+    _CONTENT_GENERATED = _content_is_generated(data_dir)
     _BY_CURS = {}
     for r in _OFFERINGS:
         _BY_CURS.setdefault(r["curs"], r)
@@ -627,11 +729,16 @@ def data_source():
 
 
 def content_is_synthetic():
-    """True while scores/teacher names/enrolment are placeholder -- i.e. no content
-    export loaded. Flips to False automatically the moment _load_content returns data,
-    which clears the 'date demonstrative' badge across the app. Independent of whether
-    the STRUCTURE is real or synthetic."""
-    return _CONTENT is None
+    """True while scores/teacher names/enrolment are not real -- which is what drives the
+    'date demonstrative' badge across the app. Two ways to be synthetic:
+
+      * no content export at all -> the _hashf placeholder generators are in use
+      * a content export that is itself GENERATED (generate-feedback), which is
+        well-formed but fabricated
+
+    Only a real Moodle export clears the badge. Independent of whether the STRUCTURE is
+    real or synthetic."""
+    return _CONTENT is None or _CONTENT_GENERATED
 
 
 def academic_years():
@@ -696,6 +803,78 @@ def course_responses(curs, an_universitar="2024-2025"):
     if hit is not None:
         return hit["responses"]
     return _course_responses(an_universitar, curs)
+
+
+def _demo_comments(curs, n_responses):
+    """Comments for the synthetic fallback, drawn from the corpus the generator's trainer
+    emitted (models/demo_comments.json).
+
+    Without this the public demo -- which carries no content export -- would show an empty
+    comments page forever, and nobody could see the feature. Every other number in this app
+    already has a deterministic synthetic stand-in; this is the same idea, and the 'date
+    demonstrative' badge is already on, because content_is_synthetic() is True whenever we are
+    on this path. Deterministic per curs, so the list does not reshuffle between requests.
+    """
+    if not _DEMO_CORPUS:
+        return {slot: [] for slot in comments.SLOTS}
+    out = {}
+    for slot in comments.SLOTS:
+        pool = _DEMO_CORPUS.get(slot, [])
+        if not pool:
+            out[slot] = []
+            continue
+        # roughly one answer per two respondents, as in the real thing
+        take = min(len(pool), max(0, _h(curs + "|nc" + slot, max(1, n_responses // 2) + 1)))
+        start = _h(curs + "|c" + slot, len(pool))
+        picked = [pool[(start + i * 7) % len(pool)] for i in range(take)]
+        out[slot] = [
+            {"text": c["text"], "sentiment": sentiment.classify(_SENT_MODEL, slot, c["text"])} for c in picked
+        ]
+        out[slot].sort(key=lambda c: hashlib.md5(c["text"].encode("utf-8")).hexdigest())
+    return out
+
+
+def comments_gate(curs, an_universitar="2024-2025"):
+    """Why a course's comments are or aren't shown.
+
+    `responses` is the count the gate is applied to. `has_content` means what it says: is
+    there ANY comment content in this instance -- a real export, or the demo corpus the
+    synthetic fallback draws from. It is NOT "is a course selected": the page must be able to
+    tell "nobody wrote anything here" apart from "this deployment has no comment data at all",
+    and blaming the students for a missing file is the wrong message.
+    """
+    responses = course_responses(curs, an_universitar) if curs else 0
+    return {
+        "gated": responses < COMMENTS_MIN_RESPONSES,
+        "responses": responses,
+        "min": COMMENTS_MIN_RESPONSES,
+        "has_content": _CONTENT is not None or bool(_DEMO_CORPUS),
+    }
+
+
+def course_comments(curs, an_universitar="2024-2025"):
+    """{slot: [{"text", "sentiment"}, ...]} -- empty for a course below the response gate.
+
+    The gate is enforced HERE, not in the view: app.py's export re-emits every query argument
+    by design, so a check that lived in the template would be walked around by ?export=csv.
+    """
+    if not curs:
+        return {slot: [] for slot in comments.SLOTS}
+    if comments_gate(curs, an_universitar)["gated"]:
+        return {slot: [] for slot in comments.SLOTS}
+
+    hit = _content_for(curs)
+    if hit is not None:
+        return hit.get("comments") or {slot: [] for slot in comments.SLOTS}
+    return _demo_comments(curs, _course_responses(an_universitar, curs))
+
+
+def comment_counts(curs, an_universitar="2024-2025"):
+    return comments.counts(course_comments(curs, an_universitar))
+
+
+def sentiment_model_info():
+    return sentiment.info(_SENT_MODEL)
 
 
 def faculty_average(an_universitar="2024-2025"):
@@ -850,6 +1029,11 @@ def consistency_issues():
         issues.append(f"{_CONTENT_SKIPPED} feedback/users content files could not be parsed and were skipped")
     if _MALFORMED:
         issues.append(f"{_MALFORMED} course records were missing required fields and were skipped")
+    if _SENT_MODEL is None:
+        issues.append(
+            "the sentiment model (models/sentiment_ro.json) is missing or unreadable — "
+            "comments still render, without labels"
+        )
     return issues
 
 

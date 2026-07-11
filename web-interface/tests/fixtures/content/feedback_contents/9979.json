@@ -1,0 +1,950 @@
+{
+  "attempts": [],
+  "totalattempts": 0,
+  "anonattempts": [
+    {
+      "id": 8000,
+      "courseid": 0,
+      "number": 1,
+      "responses": [
+        {
+          "id": 100000,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100001,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100002,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100003,
+          "name": "eval_overall",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100004,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100005,
+          "name": "load",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100006,
+          "name": "equipment",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100007,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100008,
+          "name": "prof_know",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100009,
+          "name": "prof_teach",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100010,
+          "name": "prof_interact",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100011,
+          "name": "prof_behave",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100012,
+          "name": "lecture_doc",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100013,
+          "name": "assist_know",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100014,
+          "name": "assist_teach",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100015,
+          "name": "assist_interact",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100016,
+          "name": "assist_behave",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100017,
+          "name": "lab_doc",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100018,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100019,
+          "name": "assign_diff",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100020,
+          "name": "assign_useful",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100021,
+          "name": "positive",
+          "printval": "Ion Popescu explică foarte clar.",
+          "rawval": ""
+        },
+        {
+          "id": 100022,
+          "name": "negative",
+          "printval": "Nimic de reproșat.",
+          "rawval": ""
+        },
+        {
+          "id": 100023,
+          "name": "difficulty",
+          "printval": "volumul mare de teme",
+          "rawval": ""
+        },
+        {
+          "id": 100024,
+          "name": "other",
+          "printval": "",
+          "rawval": ""
+        }
+      ]
+    },
+    {
+      "id": 8001,
+      "courseid": 0,
+      "number": 2,
+      "responses": [
+        {
+          "id": 100025,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100026,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100027,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100028,
+          "name": "eval_overall",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100029,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100030,
+          "name": "load",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100031,
+          "name": "equipment",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100032,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100033,
+          "name": "prof_know",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100034,
+          "name": "prof_teach",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100035,
+          "name": "prof_interact",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100036,
+          "name": "prof_behave",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100037,
+          "name": "lecture_doc",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100038,
+          "name": "assist_know",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100039,
+          "name": "assist_teach",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100040,
+          "name": "assist_interact",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100041,
+          "name": "assist_behave",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100042,
+          "name": "lab_doc",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100043,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100044,
+          "name": "assign_diff",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100045,
+          "name": "assign_useful",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100046,
+          "name": "positive",
+          "printval": "Popescu Ion e mereu disponibil.",
+          "rawval": ""
+        },
+        {
+          "id": 100047,
+          "name": "negative",
+          "printval": "Laboratorul ar trebui actualizat.",
+          "rawval": ""
+        },
+        {
+          "id": 100048,
+          "name": "difficulty",
+          "printval": "",
+          "rawval": ""
+        },
+        {
+          "id": 100049,
+          "name": "other",
+          "printval": "",
+          "rawval": ""
+        }
+      ]
+    },
+    {
+      "id": 8002,
+      "courseid": 0,
+      "number": 3,
+      "responses": [
+        {
+          "id": 100050,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100051,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100052,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100053,
+          "name": "eval_overall",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100054,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100055,
+          "name": "load",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100056,
+          "name": "equipment",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100057,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100058,
+          "name": "prof_know",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100059,
+          "name": "prof_teach",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100060,
+          "name": "prof_interact",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100061,
+          "name": "prof_behave",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100062,
+          "name": "lecture_doc",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100063,
+          "name": "assist_know",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100064,
+          "name": "assist_teach",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100065,
+          "name": "assist_interact",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100066,
+          "name": "assist_behave",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100067,
+          "name": "lab_doc",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100068,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100069,
+          "name": "assign_diff",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100070,
+          "name": "assign_useful",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100071,
+          "name": "positive",
+          "printval": "Cursul e foarte util și bine structurat.",
+          "rawval": ""
+        },
+        {
+          "id": 100072,
+          "name": "negative",
+          "printval": "Slide-urile sunt incomplete.",
+          "rawval": ""
+        },
+        {
+          "id": 100073,
+          "name": "difficulty",
+          "printval": "lipsa unei bibliografii clare",
+          "rawval": ""
+        },
+        {
+          "id": 100074,
+          "name": "other",
+          "printval": "",
+          "rawval": ""
+        }
+      ]
+    },
+    {
+      "id": 8003,
+      "courseid": 0,
+      "number": 4,
+      "responses": [
+        {
+          "id": 100075,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100076,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100077,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100078,
+          "name": "eval_overall",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100079,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100080,
+          "name": "load",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100081,
+          "name": "equipment",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100082,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100083,
+          "name": "prof_know",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100084,
+          "name": "prof_teach",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100085,
+          "name": "prof_interact",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100086,
+          "name": "prof_behave",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100087,
+          "name": "lecture_doc",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100088,
+          "name": "assist_know",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100089,
+          "name": "assist_teach",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100090,
+          "name": "assist_interact",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100091,
+          "name": "assist_behave",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100092,
+          "name": "lab_doc",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100093,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100094,
+          "name": "assign_diff",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100095,
+          "name": "assign_useful",
+          "printval": "5 - etichetă",
+          "rawval": "1"
+        },
+        {
+          "id": 100096,
+          "name": "positive",
+          "printval": "Cursul e foarte util si bine structurat.",
+          "rawval": ""
+        },
+        {
+          "id": 100097,
+          "name": "negative",
+          "printval": "notarea nu e transparenta",
+          "rawval": ""
+        },
+        {
+          "id": 100098,
+          "name": "difficulty",
+          "printval": "",
+          "rawval": ""
+        },
+        {
+          "id": 100099,
+          "name": "other",
+          "printval": "Sala e prea rece.",
+          "rawval": ""
+        }
+      ]
+    },
+    {
+      "id": 8004,
+      "courseid": 0,
+      "number": 5,
+      "responses": [
+        {
+          "id": 100100,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100101,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100102,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100103,
+          "name": "eval_overall",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100104,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100105,
+          "name": "load",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100106,
+          "name": "equipment",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100107,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100108,
+          "name": "prof_know",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100109,
+          "name": "prof_teach",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100110,
+          "name": "prof_interact",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100111,
+          "name": "prof_behave",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100112,
+          "name": "lecture_doc",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100113,
+          "name": "assist_know",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100114,
+          "name": "assist_teach",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100115,
+          "name": "assist_interact",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100116,
+          "name": "assist_behave",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100117,
+          "name": "lab_doc",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100118,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100119,
+          "name": "assign_diff",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100120,
+          "name": "assign_useful",
+          "printval": "4 - etichetă",
+          "rawval": "2"
+        },
+        {
+          "id": 100121,
+          "name": "positive",
+          "printval": "",
+          "rawval": ""
+        },
+        {
+          "id": 100122,
+          "name": "negative",
+          "printval": "Materia e predată ca și cum ar fi un curs de state machines.",
+          "rawval": ""
+        },
+        {
+          "id": 100123,
+          "name": "difficulty",
+          "printval": "organizarea mea a timpului",
+          "rawval": ""
+        },
+        {
+          "id": 100124,
+          "name": "other",
+          "printval": "",
+          "rawval": ""
+        }
+      ]
+    },
+    {
+      "id": 8005,
+      "courseid": 0,
+      "number": 6,
+      "responses": [
+        {
+          "id": 100125,
+          "name": "course",
+          "printval": "03-ACS-L-CTI-A2-S1: Structuri de date (Seria CB - 2024)",
+          "rawval": "0"
+        },
+        {
+          "id": 100126,
+          "name": "prof",
+          "printval": "Ion Popescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100127,
+          "name": "assist",
+          "printval": "Maria Ionescu",
+          "rawval": "0"
+        },
+        {
+          "id": 100128,
+          "name": "eval_overall",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100129,
+          "name": "expected_grade",
+          "printval": "8",
+          "rawval": "8"
+        },
+        {
+          "id": 100130,
+          "name": "load",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100131,
+          "name": "equipment",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100132,
+          "name": "part",
+          "printval": "5",
+          "rawval": "5"
+        },
+        {
+          "id": 100133,
+          "name": "prof_know",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100134,
+          "name": "prof_teach",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100135,
+          "name": "prof_interact",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100136,
+          "name": "prof_behave",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100137,
+          "name": "lecture_doc",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100138,
+          "name": "assist_know",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100139,
+          "name": "assist_teach",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100140,
+          "name": "assist_interact",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100141,
+          "name": "assist_behave",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100142,
+          "name": "lab_doc",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100143,
+          "name": "assign_time",
+          "printval": "3",
+          "rawval": "3"
+        },
+        {
+          "id": 100144,
+          "name": "assign_diff",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100145,
+          "name": "assign_useful",
+          "printval": "3 - etichetă",
+          "rawval": "3"
+        },
+        {
+          "id": 100146,
+          "name": "positive",
+          "printval": null,
+          "rawval": ""
+        },
+        {
+          "id": 100147,
+          "name": "negative",
+          "printval": "Totul: ritmul e prea alert, nu se răspunde pe forum.",
+          "rawval": ""
+        },
+        {
+          "id": 100148,
+          "name": "difficulty",
+          "printval": null,
+          "rawval": ""
+        },
+        {
+          "id": 100149,
+          "name": "other",
+          "printval": "",
+          "rawval": ""
+        }
+      ]
+    }
+  ],
+  "totalanonattempts": 6,
+  "warnings": []
+}

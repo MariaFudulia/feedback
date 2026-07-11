@@ -1,0 +1,1556 @@
+{
+ "corpus": {
+  "answers": 5824,
+  "label": "drawn tier (the phrase bank the words came from)",
+  "per_field": {
+   "negative": 2450,
+   "other": 1196,
+   "positive": 2178
+  },
+  "source": "generate-feedback groundtruth/sentiment.jsonl (SYNTHETIC)"
+ },
+ "fields": {
+  "negative": {
+   "logp": {
+    "a": {
+     "negativ": -4.3259,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "actualizat": {
+     "negativ": -7.5646,
+     "neutru": -4.9468,
+     "pozitiv": -4.8321
+    },
+    "actualizata": {
+     "negativ": -7.5646,
+     "neutru": -6.2277,
+     "pozitiv": -5.8306
+    },
+    "actualizate": {
+     "negativ": -8.2578,
+     "neutru": -5.1981,
+     "pozitiv": -6.1671
+    },
+    "ajuta": {
+     "negativ": -4.8991,
+     "neutru": -3.155,
+     "pozitiv": -3.699
+    },
+    "alert": {
+     "negativ": -4.2688,
+     "neutru": -4.5791,
+     "pozitiv": -5.2116
+    },
+    "alte": {
+     "negativ": -4.3358,
+     "neutru": -4.5413,
+     "pozitiv": -5.5793
+    },
+    "am": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.8253
+    },
+    "aproape": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.8447
+    },
+    "ar": {
+     "negativ": -4.2103,
+     "neutru": -2.1536,
+     "pozitiv": -2.4199
+    },
+    "are": {
+     "negativ": -4.2414,
+     "neutru": -4.7461,
+     "pozitiv": -5.5793
+    },
+    "au": {
+     "negativ": -6.0606,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "ca": {
+     "negativ": -5.0191,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "ce": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.8253
+    },
+    "confuz": {
+     "negativ": -6.1177,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "confuza": {
+     "negativ": -6.8715,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "confuze": {
+     "negativ": -6.553,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "corelat": {
+     "negativ": -6.8715,
+     "neutru": -4.5413,
+     "pozitiv": -5.2916
+    },
+    "corelata": {
+     "negativ": -8.2578,
+     "neutru": -6.0454,
+     "pozitiv": -5.4739
+    },
+    "corelate": {
+     "negativ": -7.8523,
+     "neutru": -5.5346,
+     "pozitiv": -5.4739
+    },
+    "cu": {
+     "negativ": -3.5437,
+     "neutru": -3.3598,
+     "pozitiv": -3.9479
+    },
+    "curs": {
+     "negativ": -4.6536,
+     "neutru": -3.7767,
+     "pozitiv": -4.3108
+    },
+    "cursul": {
+     "negativ": -4.0273,
+     "neutru": -4.2536,
+     "pozitiv": -4.5985
+    },
+    "daca": {
+     "negativ": -4.8991,
+     "neutru": -3.155,
+     "pozitiv": -3.699
+    },
+    "de": {
+     "negativ": -3.8359,
+     "neutru": -3.7767,
+     "pozitiv": -4.3108
+    },
+    "deadline": {
+     "negativ": -4.3358,
+     "neutru": -4.5413,
+     "pozitiv": -5.5793
+    },
+    "detaliu": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.4327
+    },
+    "dezorganizat": {
+     "negativ": -6.1783,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "dezorganizata": {
+     "negativ": -7.0791,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "dezorganizate": {
+     "negativ": -6.5995,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "din": {
+     "negativ": -3.5282,
+     "neutru": -3.7263,
+     "pozitiv": -4.28
+    },
+    "doar": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.4327
+    },
+    "e": {
+     "negativ": -3.3883,
+     "neutru": -3.9053,
+     "pozitiv": -4.5577
+    },
+    "echipamentele": {
+     "negativ": -4.2596,
+     "neutru": -4.5413,
+     "pozitiv": -5.9848
+    },
+    "este": {
+     "negativ": -4.9712,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "exemple": {
+     "negativ": -4.3558,
+     "neutru": -4.7926,
+     "pozitiv": -5.4739
+    },
+    "exemplele": {
+     "negativ": -5.6187,
+     "neutru": -4.8414,
+     "pozitiv": -5.3786
+    },
+    "exista": {
+     "negativ": -4.3558,
+     "neutru": -4.7926,
+     "pozitiv": -5.4739
+    },
+    "explicat": {
+     "negativ": -7.2462,
+     "neutru": -4.8414,
+     "pozitiv": -4.5577
+    },
+    "explicata": {
+     "negativ": -7.4468,
+     "neutru": -5.7577,
+     "pozitiv": -5.9848
+    },
+    "explicate": {
+     "negativ": -7.8523,
+     "neutru": -5.2722,
+     "pozitiv": -5.4739
+    },
+    "extrem": {
+     "negativ": -4.413,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "fi": {
+     "negativ": -4.8991,
+     "neutru": -3.155,
+     "pozitiv": -2.7396
+    },
+    "foarte": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "forum": {
+     "negativ": -4.3259,
+     "neutru": -4.8414,
+     "pozitiv": -5.2916
+    },
+    "haotic": {
+     "negativ": -5.9805,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "haotica": {
+     "negativ": -6.8109,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "haotice": {
+     "negativ": -6.5995,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "iar": {
+     "negativ": -4.8819,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "incomplete": {
+     "negativ": -4.3309,
+     "neutru": -4.3407,
+     "pozitiv": -5.2916
+    },
+    "indelete": {
+     "negativ": -6.466,
+     "neutru": -4.1736,
+     "pozitiv": -4.113
+    },
+    "la": {
+     "negativ": -5.6187,
+     "neutru": -4.8414,
+     "pozitiv": -5.3786
+    },
+    "laboratoarele": {
+     "negativ": -6.0332,
+     "neutru": -4.9468,
+     "pozitiv": -5.0685
+    },
+    "laborator": {
+     "negativ": -4.2596,
+     "neutru": -4.5413,
+     "pozitiv": -5.9848
+    },
+    "laboratorul": {
+     "negativ": -4.0129,
+     "neutru": -3.4551,
+     "pozitiv": -3.699
+    },
+    "legatura": {
+     "negativ": -4.2414,
+     "neutru": -4.7461,
+     "pozitiv": -5.5793
+    },
+    "mai": {
+     "negativ": -6.466,
+     "neutru": -4.1736,
+     "pozitiv": -4.113
+    },
+    "major": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.9923
+    },
+    "materia": {
+     "negativ": -4.297,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "materialul": {
+     "negativ": -5.8154,
+     "neutru": -4.7926,
+     "pozitiv": -5.2116
+    },
+    "materii": {
+     "negativ": -4.3358,
+     "neutru": -4.5413,
+     "pozitiv": -5.5793
+    },
+    "mi": {
+     "negativ": -4.1676,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "nimeni": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "nimic": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.2332
+    },
+    "notarea": {
+     "negativ": -4.2504,
+     "neutru": -4.5791,
+     "pozitiv": -5.2116
+    },
+    "nu": {
+     "negativ": -2.5948,
+     "neutru": -3.3828,
+     "pozitiv": -3.2547
+    },
+    "observe": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "pare": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "partea": {
+     "negativ": -5.5665,
+     "neutru": -5.0646,
+     "pozitiv": -4.9433
+    },
+    "parut": {
+     "negativ": -4.7168,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "pe": {
+     "negativ": -4.2191,
+     "neutru": -3.7767,
+     "pozitiv": -3.8645
+    },
+    "placut": {
+     "negativ": -5.0191,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "plictisitoare": {
+     "negativ": -6.0887,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "plictisitor": {
+     "negativ": -6.0332,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "poate": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.9923
+    },
+    "practica": {
+     "negativ": -5.5665,
+     "neutru": -5.0646,
+     "pozitiv": -4.9433
+    },
+    "prea": {
+     "negativ": -3.8389,
+     "neutru": -4.5791,
+     "pozitiv": -5.2116
+    },
+    "proiectul": {
+     "negativ": -5.8599,
+     "neutru": -4.7461,
+     "pozitiv": -5.0685
+    },
+    "publicat": {
+     "negativ": -6.8715,
+     "neutru": -4.8414,
+     "pozitiv": -4.7808
+    },
+    "publicata": {
+     "negativ": -7.8523,
+     "neutru": -6.0454,
+     "pozitiv": -6.1671
+    },
+    "publicate": {
+     "negativ": -7.6982,
+     "neutru": -5.4393,
+     "pozitiv": -6.1671
+    },
+    "putea": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.2122
+    },
+    "raspunde": {
+     "negativ": -4.3259,
+     "neutru": -4.8414,
+     "pozitiv": -5.2916
+    },
+    "regandita": {
+     "negativ": -4.297,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "reprosez": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.8253
+    },
+    "restructurat": {
+     "negativ": -7.005,
+     "neutru": -4.7926,
+     "pozitiv": -4.8862
+    },
+    "restructurata": {
+     "negativ": -7.5646,
+     "neutru": -5.8912,
+     "pozitiv": -5.6971
+    },
+    "restructurate": {
+     "negativ": -7.8523,
+     "neutru": -5.1291,
+     "pozitiv": -5.6971
+    },
+    "rezolvate": {
+     "negativ": -4.3558,
+     "neutru": -4.7926,
+     "pozitiv": -5.4739
+    },
+    "ritmul": {
+     "negativ": -4.2688,
+     "neutru": -4.5791,
+     "pozitiv": -5.2116
+    },
+    "s": {
+     "negativ": -4.7168,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "sa": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -3.8253
+    },
+    "se": {
+     "negativ": -3.6402,
+     "neutru": -4.0085,
+     "pozitiv": -4.7808
+    },
+    "seminarul": {
+     "negativ": -5.8154,
+     "neutru": -5.4393,
+     "pozitiv": -4.8321
+    },
+    "si": {
+     "negativ": -3.8602,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "slab": {
+     "negativ": -4.2922,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "slide": {
+     "negativ": -4.3309,
+     "neutru": -4.3407,
+     "pozitiv": -5.2916
+    },
+    "sunt": {
+     "negativ": -3.4375,
+     "neutru": -3.7596,
+     "pozitiv": -4.9433
+    },
+    "superficial": {
+     "negativ": -5.9552,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "superficiala": {
+     "negativ": -7.1592,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "superficiale": {
+     "negativ": -6.8715,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "suportul": {
+     "negativ": -5.7939,
+     "neutru": -4.8927,
+     "pozitiv": -5.4739
+    },
+    "suprapun": {
+     "negativ": -4.3358,
+     "neutru": -4.5413,
+     "pozitiv": -5.5793
+    },
+    "tematica": {
+     "negativ": -5.5332,
+     "neutru": -5.2722,
+     "pozitiv": -5.0039
+    },
+    "temele": {
+     "negativ": -5.8374,
+     "neutru": -4.7017,
+     "pozitiv": -5.4739
+    },
+    "temelie": {
+     "negativ": -4.297,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "teoretic": {
+     "negativ": -6.2429,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "teoretica": {
+     "negativ": -6.553,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "teoretice": {
+     "negativ": -6.936,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "timp": {
+     "negativ": -6.3482,
+     "neutru": -4.2818,
+     "pozitiv": -4.4443
+    },
+    "totul": {
+     "negativ": -4.3211,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "transparenta": {
+     "negativ": -4.2504,
+     "neutru": -4.5791,
+     "pozitiv": -5.2116
+    },
+    "trebui": {
+     "negativ": -9.6441,
+     "neutru": -3.4551,
+     "pozitiv": -7.7765
+    },
+    "trebuie": {
+     "negativ": -4.297,
+     "neutru": -7.8372,
+     "pozitiv": -7.7765
+    },
+    "un": {
+     "negativ": -9.6441,
+     "neutru": -7.8372,
+     "pozitiv": -3.4327
+    },
+    "urile": {
+     "negativ": -3.6427,
+     "neutru": -3.7596,
+     "pozitiv": -4.7808
+    },
+    "vechi": {
+     "negativ": -4.2596,
+     "neutru": -4.5413,
+     "pozitiv": -5.9848
+    }
+   },
+   "logprior": {
+    "negativ": -0.3677,
+    "neutru": -1.9712,
+    "pozitiv": -1.7816
+   }
+  },
+  "other": {
+   "logp": {
+    "8": {
+     "negativ": -3.3193,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "a": {
+     "negativ": -8.0288,
+     "neutru": -2.7489,
+     "pozitiv": -7.146
+    },
+    "aceeasi": {
+     "negativ": -3.4038,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "acum": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "alte": {
+     "negativ": -8.0288,
+     "neutru": -2.2634,
+     "pozitiv": -7.146
+    },
+    "am": {
+     "negativ": -8.0288,
+     "neutru": -2.2634,
+     "pozitiv": -7.146
+    },
+    "anul": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "aplicate": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -2.7152
+    },
+    "ar": {
+     "negativ": -3.3103,
+     "neutru": -5.9269,
+     "pozitiv": -2.7033
+    },
+    "asa": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.1947
+    },
+    "brutal": {
+     "negativ": -3.3193,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "cea": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "ceva": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "comentarii": {
+     "negativ": -8.0288,
+     "neutru": -2.2634,
+     "pozitiv": -7.146
+    },
+    "continuati": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.1947
+    },
+    "de": {
+     "negativ": -2.7609,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "e": {
+     "negativ": -3.3193,
+     "neutru": -2.6688,
+     "pozitiv": -7.146
+    },
+    "echipei": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.1206
+    },
+    "exemple": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -2.7033
+    },
+    "felicitari": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.1206
+    },
+    "in": {
+     "negativ": -3.4038,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "la": {
+     "negativ": -3.3193,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "laboratoare": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -2.7152
+    },
+    "mai": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -2.022
+    },
+    "materie": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "merge": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -2.7033
+    },
+    "multe": {
+     "negativ": -3.4038,
+     "neutru": -5.9269,
+     "pozitiv": -2.022
+    },
+    "multumesc": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.0855
+    },
+    "n": {
+     "negativ": -8.0288,
+     "neutru": -2.7489,
+     "pozitiv": -7.146
+    },
+    "nimic": {
+     "negativ": -8.0288,
+     "neutru": -2.6311,
+     "pozitiv": -7.146
+    },
+    "nu": {
+     "negativ": -8.0288,
+     "neutru": -2.2634,
+     "pozitiv": -7.146
+    },
+    "ora": {
+     "negativ": -3.3193,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "orarul": {
+     "negativ": -3.3193,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "pana": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "pentru": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.0855
+    },
+    "poate": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -2.7152
+    },
+    "prea": {
+     "negativ": -3.4038,
+     "neutru": -2.6688,
+     "pozitiv": -7.146
+    },
+    "rece": {
+     "negativ": -8.0288,
+     "neutru": -2.6688,
+     "pozitiv": -7.146
+    },
+    "sa": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "sala": {
+     "negativ": -8.0288,
+     "neutru": -2.6688,
+     "pozitiv": -7.146
+    },
+    "saptamana": {
+     "negativ": -3.4038,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "schimbat": {
+     "negativ": -3.3103,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "schimbe": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "se": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "semestru": {
+     "negativ": -8.0288,
+     "neutru": -5.9269,
+     "pozitiv": -3.0855
+    },
+    "slaba": {
+     "negativ": -3.598,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "sper": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "teme": {
+     "negativ": -3.4038,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "titularul": {
+     "negativ": -3.3103,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "trebui": {
+     "negativ": -3.3103,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    },
+    "viitor": {
+     "negativ": -3.5401,
+     "neutru": -5.9269,
+     "pozitiv": -7.146
+    }
+   },
+   "logprior": {
+    "negativ": -0.6622,
+    "neutru": -1.9724,
+    "pozitiv": -1.0637
+   }
+  },
+  "positive": {
+   "logp": {
+    "a": {
+     "negativ": -8.3601,
+     "neutru": -4.3781,
+     "pozitiv": -3.6556
+    },
+    "alert": {
+     "negativ": -4.3711,
+     "neutru": -4.5858,
+     "pozitiv": -8.9589
+    },
+    "alte": {
+     "negativ": -4.3347,
+     "neutru": -4.7084,
+     "pozitiv": -8.9589
+    },
+    "am": {
+     "negativ": -3.7351,
+     "neutru": -5.0713,
+     "pozitiv": -4.2768
+    },
+    "aplica": {
+     "negativ": -8.3601,
+     "neutru": -5.1358,
+     "pozitiv": -4.3538
+    },
+    "aplicat": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -5.4932
+    },
+    "aplicata": {
+     "negativ": -8.3601,
+     "neutru": -7.1507,
+     "pozitiv": -6.7617
+    },
+    "aplicate": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -6.6563
+    },
+    "are": {
+     "negativ": -4.4889,
+     "neutru": -4.9535,
+     "pozitiv": -5.3213
+    },
+    "asistentul": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.1747
+    },
+    "aspect": {
+     "negativ": -3.978,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "au": {
+     "negativ": -8.3601,
+     "neutru": -5.1358,
+     "pozitiv": -5.5916
+    },
+    "bine": {
+     "negativ": -8.3601,
+     "neutru": -3.0903,
+     "pozitiv": -3.6359
+    },
+    "buna": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.0389
+    },
+    "ca": {
+     "negativ": -8.3601,
+     "neutru": -5.0106,
+     "pozitiv": -3.2032
+    },
+    "cadrul": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.9886
+    },
+    "ce": {
+     "negativ": -3.7351,
+     "neutru": -5.0713,
+     "pozitiv": -4.2768
+    },
+    "cea": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "ceva": {
+     "negativ": -3.8714,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "chiar": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8646
+    },
+    "clar": {
+     "negativ": -8.3601,
+     "neutru": -7.1507,
+     "pozitiv": -5.8234
+    },
+    "clara": {
+     "negativ": -8.3601,
+     "neutru": -6.2344,
+     "pozitiv": -6.561
+    },
+    "clare": {
+     "negativ": -8.3601,
+     "neutru": -6.2344,
+     "pozitiv": -6.1863
+    },
+    "coerent": {
+     "negativ": -8.3601,
+     "neutru": -6.0521,
+     "pozitiv": -5.7809
+    },
+    "coerenta": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -6.7617
+    },
+    "coerente": {
+     "negativ": -8.3601,
+     "neutru": -6.0521,
+     "pozitiv": -6.394
+    },
+    "completeaza": {
+     "negativ": -8.3601,
+     "neutru": -5.0713,
+     "pozitiv": -4.3538
+    },
+    "corecteaza": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0271
+    },
+    "cu": {
+     "negativ": -3.7253,
+     "neutru": -4.155,
+     "pozitiv": -5.3213
+    },
+    "curs": {
+     "negativ": -4.9261,
+     "neutru": -4.4766,
+     "pozitiv": -4.1968
+    },
+    "cursul": {
+     "negativ": -4.317,
+     "neutru": -3.9726,
+     "pozitiv": -4.0837
+    },
+    "da": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.1977
+    },
+    "dar": {
+     "negativ": -8.3601,
+     "neutru": -2.7687,
+     "pozitiv": -8.9589
+    },
+    "de": {
+     "negativ": -3.5809,
+     "neutru": -4.4766,
+     "pozitiv": -4.1968
+    },
+    "deadline": {
+     "negativ": -4.3347,
+     "neutru": -4.7084,
+     "pozitiv": -8.9589
+    },
+    "deosebit": {
+     "negativ": -8.3601,
+     "neutru": -3.333,
+     "pozitiv": -8.9589
+    },
+    "desi": {
+     "negativ": -8.3601,
+     "neutru": -3.5,
+     "pozitiv": -8.9589
+    },
+    "didactic": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.9886
+    },
+    "din": {
+     "negativ": -4.2012,
+     "neutru": -4.2885,
+     "pozitiv": -3.6408
+    },
+    "disponibil": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0877
+    },
+    "doar": {
+     "negativ": -3.7061,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "e": {
+     "negativ": -3.6505,
+     "neutru": -3.1617,
+     "pozitiv": -2.9331
+    },
+    "echipamentele": {
+     "negativ": -4.2012,
+     "neutru": -5.0106,
+     "pozitiv": -8.9589
+    },
+    "este": {
+     "negativ": -8.3601,
+     "neutru": -4.4766,
+     "pozitiv": -4.9886
+    },
+    "exemple": {
+     "negativ": -4.2492,
+     "neutru": -5.2048,
+     "pozitiv": -5.1977
+    },
+    "exemplele": {
+     "negativ": -5.721,
+     "neutru": -4.5116,
+     "pozitiv": -4.0173
+    },
+    "exista": {
+     "negativ": -4.2492,
+     "neutru": -5.2048,
+     "pozitiv": -8.9589
+    },
+    "explica": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.2954
+    },
+    "faptul": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.9336
+    },
+    "foarte": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "foloseste": {
+     "negativ": -8.3601,
+     "neutru": -5.0713,
+     "pozitiv": -4.2768
+    },
+    "forum": {
+     "negativ": -4.1554,
+     "neutru": -5.6466,
+     "pozitiv": -5.3213
+    },
+    "gasit": {
+     "negativ": -3.8714,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "general": {
+     "negativ": -8.3601,
+     "neutru": -3.5,
+     "pozitiv": -4.493
+    },
+    "greu": {
+     "negativ": -3.8714,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "iar": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "in": {
+     "negativ": -3.7061,
+     "neutru": -3.333,
+     "pozitiv": -3.7332
+    },
+    "incomplete": {
+     "negativ": -4.0974,
+     "neutru": -4.6658,
+     "pozitiv": -8.9589
+    },
+    "industrie": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.1977
+    },
+    "inteles": {
+     "negativ": -8.3601,
+     "neutru": -5.0713,
+     "pozitiv": -3.9753
+    },
+    "interesant": {
+     "negativ": -8.3601,
+     "neutru": -5.8979,
+     "pozitiv": -5.6631
+    },
+    "interesanta": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -7.1672
+    },
+    "interesante": {
+     "negativ": -8.3601,
+     "neutru": -6.0521,
+     "pozitiv": -6.0145
+    },
+    "intrebari": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0877
+    },
+    "la": {
+     "negativ": -5.721,
+     "neutru": -4.625,
+     "pozitiv": -3.6859
+    },
+    "laboratoarele": {
+     "negativ": -5.721,
+     "neutru": -4.4099,
+     "pozitiv": -4.0761
+    },
+    "laborator": {
+     "negativ": -4.2012,
+     "neutru": -5.0106,
+     "pozitiv": -8.9589
+    },
+    "laboratorul": {
+     "negativ": -4.4088,
+     "neutru": -4.548,
+     "pozitiv": -5.4932
+    },
+    "laud": {
+     "negativ": -3.7351,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "legatura": {
+     "negativ": -4.4889,
+     "neutru": -4.9535,
+     "pozitiv": -8.9589
+    },
+    "mai": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "materia": {
+     "negativ": -8.3601,
+     "neutru": -5.0106,
+     "pozitiv": -3.7999
+    },
+    "materialul": {
+     "negativ": -6.0575,
+     "neutru": -5.6466,
+     "pozitiv": -5.2213
+    },
+    "materie": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "materii": {
+     "negativ": -4.3347,
+     "neutru": -4.7084,
+     "pozitiv": -8.9589
+    },
+    "mi": {
+     "negativ": -8.3601,
+     "neutru": -4.0152,
+     "pozitiv": -3.5252
+    },
+    "niciun": {
+     "negativ": -3.978,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "nimic": {
+     "negativ": -3.9656,
+     "neutru": -3.333,
+     "pozitiv": -8.9589
+    },
+    "notarea": {
+     "negativ": -4.2996,
+     "neutru": -4.7528,
+     "pozitiv": -8.9589
+    },
+    "nu": {
+     "negativ": -2.5549,
+     "neutru": -3.7495,
+     "pozitiv": -8.9589
+    },
+    "ok": {
+     "negativ": -8.3601,
+     "neutru": -3.6097,
+     "pozitiv": -8.9589
+    },
+    "organizat": {
+     "negativ": -8.3601,
+     "neutru": -6.2344,
+     "pozitiv": -5.4932
+    },
+    "organizata": {
+     "negativ": -8.3601,
+     "neutru": -6.2344,
+     "pozitiv": -6.7617
+    },
+    "organizate": {
+     "negativ": -8.3601,
+     "neutru": -5.8979,
+     "pozitiv": -6.474
+    },
+    "partea": {
+     "negativ": -6.0575,
+     "neutru": -5.0713,
+     "pozitiv": -4.2676
+    },
+    "parut": {
+     "negativ": -8.3601,
+     "neutru": -4.0152,
+     "pozitiv": -4.3946
+    },
+    "pe": {
+     "negativ": -4.1554,
+     "neutru": -5.6466,
+     "pozitiv": -4.6282
+    },
+    "placut": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.0611
+    },
+    "poate": {
+     "negativ": -8.3601,
+     "neutru": -5.1358,
+     "pozitiv": -4.3538
+    },
+    "potrivit": {
+     "negativ": -8.3601,
+     "neutru": -5.2789,
+     "pozitiv": -4.2861
+    },
+    "pozitiv": {
+     "negativ": -3.978,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "practica": {
+     "negativ": -6.0575,
+     "neutru": -4.3175,
+     "pozitiv": -4.0611
+    },
+    "prea": {
+     "negativ": -3.3166,
+     "neutru": -4.5858,
+     "pozitiv": -8.9589
+    },
+    "profesorul": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0671
+    },
+    "proiecte": {
+     "negativ": -8.3601,
+     "neutru": -5.1358,
+     "pozitiv": -4.3538
+    },
+    "proiectul": {
+     "negativ": -5.9622,
+     "neutru": -6.0521,
+     "pozitiv": -5.3754
+    },
+    "putine": {
+     "negativ": -3.765,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "rabdare": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.3213
+    },
+    "rapid": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0271
+    },
+    "raspunde": {
+     "negativ": -4.1554,
+     "neutru": -5.6466,
+     "pozitiv": -5.3213
+    },
+    "reale": {
+     "negativ": -8.3601,
+     "neutru": -5.1358,
+     "pozitiv": -4.3538
+    },
+    "recomand": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.7693
+    },
+    "rest": {
+     "negativ": -3.7061,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "rezolvate": {
+     "negativ": -4.2492,
+     "neutru": -5.2048,
+     "pozitiv": -8.9589
+    },
+    "ritmul": {
+     "negativ": -4.3711,
+     "neutru": -4.2063,
+     "pozitiv": -4.2861
+    },
+    "s": {
+     "negativ": -8.3601,
+     "neutru": -4.0152,
+     "pozitiv": -4.3946
+    },
+    "sa": {
+     "negativ": -3.7351,
+     "neutru": -7.8438,
+     "pozitiv": -8.9589
+    },
+    "se": {
+     "negativ": -3.5561,
+     "neutru": -3.733,
+     "pozitiv": -3.6214
+    },
+    "semestru": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -4.8158
+    },
+    "seminarul": {
+     "negativ": -6.4142,
+     "neutru": -4.9535,
+     "pozitiv": -5.4326
+    },
+    "si": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -3.7014
+    },
+    "slide": {
+     "negativ": -4.0974,
+     "neutru": -4.6658,
+     "pozitiv": -8.9589
+    },
+    "stapanita": {
+     "negativ": -8.3601,
+     "neutru": -5.0106,
+     "pozitiv": -4.2676
+    },
+    "structurat": {
+     "negativ": -8.3601,
+     "neutru": -5.8979,
+     "pozitiv": -5.5916
+    },
+    "structurata": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -6.561
+    },
+    "structurate": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -6.0686
+    },
+    "studentii": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.3213
+    },
+    "sunt": {
+     "negativ": -3.4622,
+     "neutru": -3.3552,
+     "pozitiv": -3.935
+    },
+    "suportul": {
+     "negativ": -6.1628,
+     "neutru": -5.3589,
+     "pozitiv": -5.3754
+    },
+    "suprapun": {
+     "negativ": -4.3347,
+     "neutru": -4.7084,
+     "pozitiv": -8.9589
+    },
+    "tematica": {
+     "negativ": -5.7951,
+     "neutru": -5.2789,
+     "pozitiv": -5.4326
+    },
+    "temele": {
+     "negativ": -5.8752,
+     "neutru": -4.7528,
+     "pozitiv": -4.3538
+    },
+    "titularul": {
+     "negativ": -8.3601,
+     "neutru": -7.8438,
+     "pozitiv": -5.0469
+    },
+    "transparenta": {
+     "negativ": -4.2996,
+     "neutru": -4.7528,
+     "pozitiv": -8.9589
+    },
+    "urile": {
+     "negativ": -3.5238,
+     "neutru": -4.0152,
+     "pozitiv": -8.9589
+    },
+    "util": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -5.8679
+    },
+    "utila": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -6.8795
+    },
+    "utile": {
+     "negativ": -8.3601,
+     "neutru": -6.7452,
+     "pozitiv": -5.9632
+    },
+    "vechi": {
+     "negativ": -4.2012,
+     "neutru": -5.0106,
+     "pozitiv": -8.9589
+    },
+    "vede": {
+     "negativ": -8.3601,
+     "neutru": -5.0106,
+     "pozitiv": -4.2676
+    }
+   },
+   "logprior": {
+    "negativ": -1.1529,
+    "neutru": -1.7491,
+    "pozitiv": -0.6727
+   }
+  }
+ },
+ "holdout": {
+  "accuracy": 0.924,
+  "attempt_tier_accuracy": 0.905,
+  "attempt_tier_per_field": {
+   "negative": 0.845,
+   "other": 0.95,
+   "positive": 0.947
+  },
+  "n": 1166,
+  "note": "Synthetic holdout. Measures performance on text like the training text. Real student prose is out of distribution and will score worse; we have no labelled real data to say by how much.",
+  "per_field": {
+   "negative": 0.855,
+   "other": 0.975,
+   "positive": 0.972
+  },
+  "seed": 1234,
+  "split": 0.2
+ },
+ "labels": [
+  "pozitiv",
+  "neutru",
+  "negativ"
+ ],
+ "schema": 1,
+ "trained_by": "tools/train_sentiment.py"
+}
